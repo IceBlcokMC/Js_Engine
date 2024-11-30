@@ -18,7 +18,7 @@ on:
   workflow_dispatch: # 允许手动触发
 
 env:
-  BUILD_TYPE: Release
+  BUILD_TYPE: RelWithDebInfo
 
 jobs:
   build:
@@ -42,7 +42,7 @@ jobs:
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: js_engine-windows
+          name: js_engine-windows-x64-${{env.BUILD_TYPE}}-${{github.sha}}
           path: |
             bin/endstone_js_engine.dll
             bin/endstone_js_engine.pdb
