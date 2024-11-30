@@ -1,3 +1,25 @@
+name: Build JS Engine
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - src/**
+      - third-party/**
+      - CMakeLists.txt
+      - .github/workflows/build.yml
+  pull_request:
+    branches: [main]
+    paths:
+      - src/**
+      - third-party/**
+      - CMakeLists.txt
+      - .github/workflows/build.yml
+  workflow_dispatch: # 允许手动触发
+
+env:
+  BUILD_TYPE: Release
+
 jobs:
   build:
     runs-on: windows-latest
@@ -12,10 +34,10 @@ jobs:
 
       - name: Configure CMake
         run: |
-          cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=Release
+          cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
 
       - name: Build
-        run: cmake --build ${{github.workspace}}/build --config Release
+        run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
