@@ -1,0 +1,10 @@
+{
+    "C_Cpp.intelliSenseEngine": "default",
+    "C_Cpp.codeAnalysis.runAutomatically": true,
+    "C_Cpp.formatting": "clangFormat",
+    "C_Cpp.autoAddFileAssociations": true,
+    "C_Cpp.autocompleteAddParentheses": true,
+    "C_Cpp.autocomplete": "default",
+    "C_Cpp.errorSquiggles": "enabledIfIncludesResolve",
+    "clangd.enable": false
+}
