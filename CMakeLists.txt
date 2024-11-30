@@ -5,7 +5,7 @@ project(js_engine CXX)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # set(CMAKE_BUILD_TYPE Release)
-
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 # 定义补丁相关的变量
 set(LOGGER_ORIGINAL "${CMAKE_BINARY_DIR}/_deps/endstone-src/include/endstone/logger.h")
@@ -37,7 +37,14 @@ include(third-party/CMakeLists.txt)
 file(MAKE_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
 
 # 创建插件目标并设置依赖
-endstone_add_plugin(${PROJECT_NAME} src/Entry.cc)
+file(GLOB_RECURSE SOURCE_FILES 
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cc"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/*.hpp"
+)
+
+endstone_add_plugin(${PROJECT_NAME} ${SOURCE_FILES})
 target_link_libraries(${PROJECT_NAME} PRIVATE ScriptX)
 
 # 全局设置 MSVC 运行时库

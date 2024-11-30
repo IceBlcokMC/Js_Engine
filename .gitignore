@@ -2,3 +2,5 @@ build
 *.lnk
 bin
 .vs
+.xmake
+compile_commands.json

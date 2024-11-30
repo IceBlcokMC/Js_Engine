@@ -6,5 +6,6 @@
     "C_Cpp.autocompleteAddParentheses": true,
     "C_Cpp.autocomplete": "default",
     "C_Cpp.errorSquiggles": "enabledIfIncludesResolve",
-    "clangd.enable": false
+    "clangd.enable": false,
+    "configurationProvider": "ms-vscode.cmake-tools"
 }
