@@ -1,82 +1,62 @@
 #include "Entry.h"
+#include "Engine/Using.h"
+#include "Engine/EngineManager.h"
+#include "API/APIHelper.h"
 
 ENDSTONE_PLUGIN("js_engine", "0.1.0", Entry)
 {
     description = "JavaScript Engine";
 }
 
-void Entry::onLoad()
+// Entry *__Entry = new Entry();
+Entry *__Entry = nullptr;
+Entry *GetEntry()
 {
-    getLogger().info("Js_Engine loading...");
+    return __Entry;
 }
 
-#include <endstone/command/command.h>
-#include <ScriptX/ScriptX.h>
-#include <iostream>
-
-script::Local<script::Value> SLOG(script::Arguments const &args)
+void Entry::onLoad()
 {
-
-    try
-    {
-        std::stringstream oss;
-        for (int i = 0; i < args.size(); i++)
-        {
-            oss << args[i].asString().toString() << "";
-        }
-        std::cout << oss.str() << std::endl;
-
-        return script::Boolean::newBoolean(true);
-    }
-    catch (script::Exception &e)
-    {
-        std::cout << e.what() << std::endl;
-        return script::Boolean::newBoolean(false);
-    }
-    catch (std::exception &e)
-    {
-        std::cout << e.what() << std::endl;
-        return script::Boolean::newBoolean(false);
-    }
-    catch (...)
-    {
-        std::cout << "Unknown error" << std::endl;
-        return script::Boolean::newBoolean(false);
-    }
+    __Entry = this;
+    getLogger().info("Js_Engine loading...");
 }
 
 void Entry::onEnable()
 {
-    getLogger().info("Js_Engine enabled");
-    // endstone::
-    auto *eng = new script::ScriptEngineImpl();
-    script::EngineScope scope(eng);
+    auto eng = jse::EngineManager::getInstance().createEngine();
+    EngineScope scope(eng);
 
-    eng->set("log", script::Function::newFunction(SLOG)); // bind function
-
-    eng->eval("'use strict'");
     try
     {
         eng->eval(R"(
-            'use strict'
-            a = 1;
-            b = 2;
-            log("a + b = ", String(a + b));
+            const a = {
+                a: 1,
+                b: 2,
+                c: 3,
+                d: [1, 2, 3, 4, 5],
+                e: function() {
+                    
+                },
+                f: {
+                    g: 1,
+                    h: 2,
+                    i: 3
+                }
+            }
+            logger.log(logger.log);
+            logger.log(a);
         )");
     }
-    catch (const script::Exception &e) {
-        std::cerr << e.what() << '\n';
-    }
-    catch (const std::exception &e)
+    catch (script::Exception &e)
     {
-        std::cerr << e.what() << '\n';
+        jse::PrintException(e);
     }
-    catch (...) {
-        std::cerr << "Unknown error\n";
-    }
+
+    getLogger().info("Js_Engine enabled");
 }
 
 void Entry::onDisable()
 {
+    __Entry = nullptr;
     getLogger().info("Js_Engine disabled");
 }

@@ -10,3 +10,5 @@ public:
 
   void onDisable() override;
 };
+
+extern Entry *GetEntry();

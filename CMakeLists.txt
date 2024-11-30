@@ -28,7 +28,14 @@ FetchContent_Declare(
     GIT_REPOSITORY https://github.com/EndstoneMC/endstone.git
     GIT_TAG main
 )
-FetchContent_MakeAvailable(endstone)
+
+# 添加 magic_enum
+FetchContent_Declare(
+    magic_enum
+    GIT_REPOSITORY https://github.com/Neargye/magic_enum.git
+    GIT_TAG v0.9.7
+)
+FetchContent_MakeAvailable(endstone magic_enum)
 
 # 包含 third-party
 include(third-party/CMakeLists.txt)
@@ -38,14 +45,24 @@ file(MAKE_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
 
 # 创建插件目标并设置依赖
 file(GLOB_RECURSE SOURCE_FILES 
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cc"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/*.hpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cc"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/Engine/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/Engine/*.cc"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/API/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/API/*.cc"
 )
 
 endstone_add_plugin(${PROJECT_NAME} ${SOURCE_FILES})
-target_link_libraries(${PROJECT_NAME} PRIVATE ScriptX)
+target_link_libraries(${PROJECT_NAME} PRIVATE 
+    ScriptX
+    magic_enum::magic_enum  # 添加 magic_enum 依赖
+)
+target_include_directories(${PROJECT_NAME} PRIVATE 
+    ${CMAKE_CURRENT_SOURCE_DIR}/src
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Engine
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/API
+)
 
 # 全局设置 MSVC 运行时库
 if(MSVC)

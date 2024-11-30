@@ -1,15 +1,10 @@
 #pragma once
 #include <unordered_map>
 #include "Using.h"
+#include "EngineSelfData.h"
 
 namespace jse
 {
-    struct EngineSelfData
-    {
-        int mEngineId;
-    };
-    using EngineSelfDataPtr = std::shared_ptr<EngineSelfData>;
-
     class EngineManager final
     {
     public:

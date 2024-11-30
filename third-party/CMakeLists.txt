@@ -23,3 +23,7 @@ target_include_directories(ScriptX PUBLIC
 
 # 链接 QuickJS 库到 ScriptX
 target_link_libraries(ScriptX PRIVATE quickjs)
+
+# include
+include_directories(${CMAKE_CURRENT_LIST_DIR}/scriptx/src/include)
+include_directories(${CMAKE_CURRENT_LIST_DIR}/quickjs/include)

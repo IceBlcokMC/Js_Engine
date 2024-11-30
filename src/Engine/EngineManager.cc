@@ -1,10 +1,12 @@
 #include "EngineManager.h"
 
+#include "API/LoggerAPI.h"
+
 namespace jse
 {
     void EngineManager::bindAPI(ScriptEngine *engine)
     {
-        // TODO: 绑定API
+        engine->registerNativeClass(LoggerAPIBuilder);
     }
 
     EngineSelfDataPtr EngineManager::getEngineSelfData(ScriptEngine *engine)
