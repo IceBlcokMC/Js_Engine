@@ -1,5 +1,5 @@
-cmake -B build -S . -DCMAKE_BUILD_TYPE=Release
+cmake -B build -S . -DCMAKE_BUILD_TYPE=RelWithDebInfo
 
-cmake --build build
+cmake --build build --config RelWithDebInfo
 
 pause
