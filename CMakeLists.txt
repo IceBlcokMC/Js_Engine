@@ -40,9 +40,20 @@ file(MAKE_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
 endstone_add_plugin(${PROJECT_NAME} src/Entry.cc)
 target_link_libraries(${PROJECT_NAME} PRIVATE ScriptX)
 
-# 设置 PDB 生成选项
+# 全局设置 MSVC 运行时库
 if(MSVC)
-    target_compile_options(${PROJECT_NAME} PRIVATE /Zi)  # 生成完整的调试信息
+    # 为所有目标设置运行时库
+    set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
+    
+    # 添加编译选项
+    add_compile_options(
+        $<$<CONFIG:>:/MD>
+        $<$<CONFIG:Debug>:/MDd>
+        $<$<CONFIG:Release>:/MD>
+    )
+    
+    # 为当前项目设置特定选项
+    target_compile_options(${PROJECT_NAME} PRIVATE /Zi)
     set_target_properties(${PROJECT_NAME} PROPERTIES 
         RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin
         RUNTIME_OUTPUT_DIRECTORY_DEBUG ${CMAKE_SOURCE_DIR}/bin
