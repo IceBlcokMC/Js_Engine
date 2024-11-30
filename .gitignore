@@ -1,2 +1,4 @@
 build
 *.lnk
+bin
+.vs

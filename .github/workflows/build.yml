@@ -1,0 +1,27 @@
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Setup Visual Studio Environment
+        uses: microsoft/setup-msbuild@v1.3.1
+
+      - name: Configure CMake
+        run: |
+          cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=Release
+
+      - name: Build
+        run: cmake --build ${{github.workspace}}/build --config Release
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: js_engine-windows
+          path: |
+            bin/endstone_js_engine.dll
+            bin/endstone_js_engine.pdb
+          if-no-files-found: error # 如果文件不存在则报错

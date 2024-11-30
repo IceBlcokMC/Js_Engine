@@ -2,7 +2,7 @@
 
 # set(CMAKE_CXX_STANDARD 17)
 set(SCRIPTX_BACKEND QuickJs)
-set(CMAKE_BUILD_TYPE Release)
+# set(CMAKE_BUILD_TYPE Release)
 
 # 添加 QuickJS 库
 add_library(quickjs STATIC IMPORTED)
