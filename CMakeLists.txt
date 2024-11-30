@@ -5,6 +5,21 @@ project(js_engine CXX)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+# 定义补丁相关的变量
+set(LOGGER_ORIGINAL "${CMAKE_BINARY_DIR}/_deps/endstone-src/include/endstone/logger.h")
+set(LOGGER_BACKUP "${LOGGER_ORIGINAL}.bak")
+set(LOGGER_PATCH "${CMAKE_CURRENT_SOURCE_DIR}/patch/logger.h")
+
+# 创建补丁目标
+add_custom_target(patch_logger
+    COMMAND ${CMAKE_COMMAND} -E make_directory "${CMAKE_BINARY_DIR}/_deps/endstone-src/include/endstone"
+    COMMAND ${CMAKE_COMMAND} -E echo "Checking logger patch..."
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different "${LOGGER_ORIGINAL}" "${LOGGER_BACKUP}"
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different "${LOGGER_PATCH}" "${LOGGER_ORIGINAL}"
+    COMMENT "Patching logger.h"
+)
+
+# 获取 endstone
 include(FetchContent)
 FetchContent_Declare(
     endstone
@@ -13,12 +28,12 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(endstone)
 
-# 先包含 third-party
+# 包含 third-party
 include(third-party/CMakeLists.txt)
 
-# 然后添加插件并链接 ScriptX
+# 创建插件目标并设置依赖
 endstone_add_plugin(${PROJECT_NAME} src/Entry.cc)
 target_link_libraries(${PROJECT_NAME} PRIVATE ScriptX)
 
-# cmake -B build -S .
-# cmake --build ./build
+# 在插件目标创建后添加补丁依赖
+add_dependencies(${PROJECT_NAME} patch_logger)
