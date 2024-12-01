@@ -1,14 +1,8 @@
 #include "EngineManager.h"
-
-#include "API/LoggerAPI.h"
+#include "BindAPI.h"
 
 namespace jse
 {
-    void EngineManager::bindAPI(ScriptEngine *engine)
-    {
-        engine->registerNativeClass(LoggerAPIBuilder);
-    }
-
     EngineSelfDataPtr EngineManager::getEngineSelfData(ScriptEngine *engine)
     {
         return engine->getData<EngineSelfData>();
@@ -59,9 +53,15 @@ namespace jse
         this->mEngines[engineId] = engine;
 
         EngineScope scope(engine);                                   // 进入引擎作用域
-        this->bindAPI(engine);                                       // 绑定API
+        BindAPI(engine);                                             // 绑定API
         engine->setData(std::make_shared<EngineSelfData>(engineId)); // 设置引擎自身数据
 
+        return engine;
+    }
+    ScriptEngine *EngineManager::createEngine(string const &fileName)
+    {
+        auto engine = this->createEngine();
+        this->getEngineSelfData(engine).get()->mFileName = fileName; // 设置文件名
         return engine;
     }
 }

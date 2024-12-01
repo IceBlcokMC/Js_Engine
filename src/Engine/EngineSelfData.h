@@ -9,8 +9,11 @@ namespace jse
 
     struct EngineSelfData
     {
-        int mEngineId;
-        string mPluginName;
+        int mEngineId{-1};
+        string mPluginName{""};
+        string mPluginVersion{"0.0.0"};
+        string mPluginDescription{""};
+        string mFileName{""}; // 入口文件名
     };
     using EngineSelfDataPtr = std::shared_ptr<EngineSelfData>;
 

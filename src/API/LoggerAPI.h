@@ -16,6 +16,6 @@ namespace jse
         static Local<Value> format(Arguments const &args);
     };
 
-    extern ClassDefine<void> LoggerAPIBuilder;
+    extern ClassDefine<void> LoggerAPIClass;
 
 }

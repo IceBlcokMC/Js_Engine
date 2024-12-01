@@ -17,7 +17,6 @@ namespace jse
     public:
         static EngineManager &getInstance();                              // 单例模式
         static EngineSelfDataPtr getEngineSelfData(ScriptEngine *engine); // 获取引擎自身数据
-        static void bindAPI(ScriptEngine *engine);                        // 绑定API
 
         bool hasEngine(int engineId);
 
@@ -26,5 +25,6 @@ namespace jse
         ScriptEngine *getEngine(int engineId);
 
         ScriptEngine *createEngine();
+        ScriptEngine *createEngine(string const& fileName);
     };
 }

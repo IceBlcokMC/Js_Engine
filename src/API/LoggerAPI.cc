@@ -8,7 +8,7 @@
 
 namespace jse
 {
-    ClassDefine<void> LoggerAPIBuilder =
+    ClassDefine<void> LoggerAPIClass =
         defineClass("logger")
             .function("log", &LoggerAPI::log)
             .function("info", &LoggerAPI::info)
