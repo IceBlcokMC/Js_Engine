@@ -17,7 +17,7 @@ public:
 
     [[nodiscard]] const endstone::PluginDescription& getDescription() const override;
 
-private:
+public:
     // 存储插件相关的引擎ID
     int engineId_;
     // 存储插件描述信息

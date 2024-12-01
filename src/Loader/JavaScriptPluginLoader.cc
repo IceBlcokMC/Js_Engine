@@ -6,7 +6,6 @@
 #include "endstone/detail/server.h"
 #include "fmt/format.h"
 #include <filesystem>
-#include <iostream>
 
 namespace jse {
 namespace fs = std::filesystem;
@@ -30,7 +29,7 @@ std::vector<endstone::Plugin*> JavaScriptPluginLoader::loadPlugins(const std::st
                 }
             }
         }
-        
+
     } catch (const std::exception& e) {
         GetEntry()->getLogger().error(
             fmt::format("Error occurred while loading plugins from '{}': {}", directory, e.what())
@@ -44,21 +43,25 @@ endstone::Plugin* JavaScriptPluginLoader::loadPlugin(const fs::path& file) {
     try {
         // 创建新的JS引擎实例
         auto& engineManager = EngineManager::getInstance();
-        auto* engine        = engineManager.createEngine();
+        auto* engine        = engineManager.createEngine(file.filename().string());
         if (!engine) {
             GetEntry()->getLogger().error(fmt::format("Failed to create JS engine for plugin: {}", file.string()));
             return nullptr;
         }
         EngineScope scope(engine); // 进入引擎作用域
+
+        // 加载JS文件
         engine->loadFile(file.string());
-        auto data = EngineManager::getEngineSelfData(engine);
+
 
         // 创建插件实例
+        auto  data = EngineManager::getEngineSelfData(engine);
         auto* plugin =
             new JavaScriptPlugin(data->mEngineId, data->mPluginName, data->mPluginVersion, data->mPluginDescription);
 
-        // 执行JS文件
+        data->mPlugin = plugin; // 将插件实例保存到引擎数据中
 
+        plugin->onLoad(); // 调用插件的onLoad回调
 
         return plugin;
     } catch (const std::exception& e) {
@@ -69,12 +72,12 @@ endstone::Plugin* JavaScriptPluginLoader::loadPlugin(const fs::path& file) {
 
 void JavaScriptPluginLoader::enablePlugin(endstone::Plugin& plugin) const {
     PluginLoader::enablePlugin(plugin);
-    // TODO: 调用插件的enable回调
+    // plugin.onEnable();
 }
 
 void JavaScriptPluginLoader::disablePlugin(endstone::Plugin& plugin) const {
     PluginLoader::disablePlugin(plugin);
-    // TODO: 调用插件的disable回调
+    // plugin.onDisable();
 }
 
 } // namespace jse

@@ -2,6 +2,7 @@
 #include "API/APIHelper.h"
 #include "Engine/EngineManager.h"
 #include "Engine/Using.h"
+#include "Loader/JavaScriptPlugin.h"
 #include "Loader/JavaScriptPluginLoader.h"
 #include "endstone/detail/logger_factory.h"
 #include "endstone/detail/plugin/plugin_manager.h"
@@ -57,5 +58,19 @@ void Entry::onEnable() { getLogger().info("Js_Engine enabled"); }
 
 void Entry::onDisable() {
     __Entry = nullptr;
+
+    // auto& eng = jse::EngineManager::getInstance();
+    // for (auto& e : eng.mEngines) {
+    //     auto engine = e.second;
+    //     if (engine) {
+    //         auto data = jse::EngineManager::getEngineSelfData(engine);
+    //         if (data->mPlugin) {
+    //             if (auto jsPlugin = dynamic_cast<jse::JavaScriptPlugin*>(data->mPlugin)) {
+    //                 jsPlugin->onDisable();
+    //             }
+    //         }
+    //     }
+    // }
+
     getLogger().info("Js_Engine disabled");
 }

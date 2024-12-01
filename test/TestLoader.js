@@ -1,26 +1,25 @@
 /// <reference path="../types/index.d.ts" />
 
-logger.warn("TestLoader.js is deprecated, use TestLoader.ts instead");
+logger.warn("Test JavaScriptPluginLoader");
 
 endstone.registerPlugin({
   name: "TestLoader",
   version: "1.0.0",
-  description: "TestLoader",
+  description: "TestLoader description",
 });
+
 function onLoad() {
-  logger.info("TestLoader.js loaded");
+  logger.warn("TestLoader.js loaded");
 }
 
-// const MyPlugin = {
-//   name: "MyPlugin",
-//   version: "1.0.0",
-//   description: "MyPlugin",
-//   onLoad: () => {},
-//   onEnable: () => {},
-//   onDisable: () => {},
-//   commands: {
-//     test: {},
-//   },
-// };
+function onEnable() {
+  logger.warn("TestLoader.js enabled");
+}
 
-// endstone.registerPlugin(MyPlugin);
+function onDisable() {
+  logger.warn("TestLoader.js disabled");
+}
+
+const aaa = {
+  
+}

@@ -1,30 +1,29 @@
 #pragma once
-#include <unordered_map>
-#include "Using.h"
 #include "EngineSelfData.h"
+#include "Using.h"
+#include <unordered_map>
 
-namespace jse
-{
-    class EngineManager final
-    {
-    public:
-        EngineManager() = default;
-        EngineManager(const EngineManager &) = delete;
-        EngineManager &operator=(const EngineManager &) = delete;
 
-        std::unordered_map<int, ScriptEngine *> mEngines;
+namespace jse {
+class EngineManager final {
+public:
+    EngineManager()                                = default;
+    EngineManager(const EngineManager&)            = delete;
+    EngineManager& operator=(const EngineManager&) = delete;
 
-    public:
-        static EngineManager &getInstance();                              // 单例模式
-        static EngineSelfDataPtr getEngineSelfData(ScriptEngine *engine); // 获取引擎自身数据
+    std::unordered_map<int, ScriptEngine*> mEngines;
 
-        bool hasEngine(int engineId);
+public:
+    static EngineManager&    getInstance();                           // 单例模式
+    static EngineSelfDataPtr getEngineSelfData(ScriptEngine* engine); // 获取引擎自身数据
 
-        bool destroyEngine(int engineId);
+    bool hasEngine(int engineId);
 
-        ScriptEngine *getEngine(int engineId);
+    bool destroyEngine(int engineId);
 
-        ScriptEngine *createEngine();
-        ScriptEngine *createEngine(string const& fileName);
-    };
-}
+    ScriptEngine* getEngine(int engineId);
+
+    ScriptEngine* createEngine();
+    ScriptEngine* createEngine(string const& fileName);
+};
+} // namespace jse
