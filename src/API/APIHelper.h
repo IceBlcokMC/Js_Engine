@@ -11,6 +11,7 @@ namespace jse
     bool IsFloat(Local<Value> const &num);
 
     string ToString(ValueKind const &kind);
+    string ToString(Local<Value> const &value);
     void ToString(Local<Value> const &value, std::ostringstream &oss);
     void ToString(Local<Array> const &value, std::ostringstream &oss);
     void ToString(Local<Object> const &value, std::ostringstream &oss);
@@ -75,7 +76,7 @@ namespace jse
     {                                                              \
         if (GetEntry())                                            \
             GetEntry()->getLogger().error("Fail in {}", __func__); \
-        PrintScriptError();                                        \
+        PrintScriptError("");                                        \
     }
 
 }

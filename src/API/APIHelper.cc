@@ -53,6 +53,12 @@ namespace jse
             return "Unknown";
         }
     }
+    string ToString(Local<Value> const &value)
+    {
+        std::ostringstream oss;
+        ToString(value, oss);
+        return oss.str();
+    }
     void ToString(Local<Value> const &value, std::ostringstream &oss)
     {
         switch (value.getKind())

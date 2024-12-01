@@ -25,6 +25,7 @@ void Entry::onEnable()
 {
     auto eng = jse::EngineManager::getInstance().createEngine();
     EngineScope scope(eng);
+    jse::EngineManager::getEngineSelfData(eng).get()->mPluginName = "TestPlugin";
 
     try
     {
@@ -43,8 +44,9 @@ void Entry::onEnable()
                     i: 3
                 }
             }
-            logger.log(logger.log);
-            logger.log(a);
+            logger.log(2,logger.log);
+            logger.log(2,a);
+            logger.log(3,'Hello World');
         )");
     }
     catch (script::Exception &e)
