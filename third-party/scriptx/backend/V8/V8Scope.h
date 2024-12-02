@@ -17,25 +17,42 @@
 
 #pragma once
 
-#include "../../../src/foundation.h"
+#include "../../src/Reference.h"
 #include "../../src/types.h"
-#include "../JscScope.h"
+#include "V8Helper.h"
 
-namespace script {
+namespace script::v8_backend {
 
-template <>
-struct internal::ImplType<EngineScope> {
-  using type = jsc_backend::JscEngineScope;
+class V8EngineScope {
+  v8::Locker locker_;
+  v8::Isolate::Scope isolateScope_;
+  v8::HandleScope handleScope_;
+  v8::Context::Scope contextScope_;
+
+ public:
+  explicit V8EngineScope(V8Engine& engine, V8Engine* previous);
+
+  ~V8EngineScope() = default;
 };
 
-template <>
-struct internal::ImplType<ExitEngineScope> {
-  using type = jsc_backend::JscExitEngineScope;
+class V8ExitEngineScope {
+  v8::Unlocker unlocker_;
+
+ public:
+  explicit V8ExitEngineScope(V8Engine& engine);
+  ~V8ExitEngineScope() = default;
 };
 
-template <>
-struct internal::ImplType<StackFrameScope> {
-  using type = jsc_backend::JscStackFrameScope;
+class V8HandleScope {
+  v8::EscapableHandleScope handleScope_;
+
+ public:
+  explicit V8HandleScope(V8Engine& engine);
+
+  ~V8HandleScope() = default;
+
+  template <typename T>
+  Local<T> returnValue(const Local<T>& localRef);
 };
 
-}  // namespace script
+}  // namespace script::v8_backend

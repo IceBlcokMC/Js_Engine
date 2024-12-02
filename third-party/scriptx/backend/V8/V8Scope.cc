@@ -15,42 +15,21 @@
  * limitations under the License.
  */
 
-#pragma once
+#include "V8Scope.h"
+#include "V8Engine.h"
+#include "V8Helper.h"
+#include "V8Reference.hpp"
 
-#include <JavaScriptCore/JavaScript.h>
-#include "../../../src/foundation.h"
-#include "../../../src/types.h"
-#include "../JscWeakRef.h"
+namespace script::v8_backend {
 
-namespace script {
+V8EngineScope::V8EngineScope(V8Engine& engine, V8Engine*)
+    : locker_(engine.isolate_),
+      isolateScope_(engine.isolate_),
+      handleScope_(engine.isolate_),
+      contextScope_(engine.context_.Get(engine.isolate_)) {}
 
-namespace jsc_backend {
+V8ExitEngineScope::V8ExitEngineScope(V8Engine& engine) : unlocker_(engine.isolate_) {}
 
-class JscEngine;
+V8HandleScope::V8HandleScope(V8Engine& engine) : handleScope_(engine.isolate_) {}
 
-struct ArgumentsData {
-  JscEngine* engine;
-  JSValueRef thisObject;
-  const JSValueRef* arguments;
-  size_t size;
-};
-
-struct JscScriptClassState {
-  JscEngine* scriptEngine_ = nullptr;
-  const void* classDefine = nullptr;
-  JscWeakRef weakRef_;
-};
-
-}  // namespace jsc_backend
-
-template <>
-struct internal::ImplType<::script::Arguments> {
-  using type = jsc_backend::ArgumentsData;
-};
-
-template <>
-struct internal::ImplType<::script::ScriptClass> {
-  using type = jsc_backend::JscScriptClassState;
-};
-
-}  // namespace script
+}  // namespace script::v8_backend

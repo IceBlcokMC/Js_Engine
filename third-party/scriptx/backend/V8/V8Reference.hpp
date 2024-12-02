@@ -17,72 +17,73 @@
 
 #pragma once
 
+#include <cassert>
 #include <utility>
-#include "../../src/Exception.h"
 #include "../../src/NativeConverter.hpp"
 #include "../../src/Reference.h"
-#include "../../src/Scope.h"
+#include "../../src/Value.h"
+#include "../../src/types.h"
 #include "../../src/utils/GlobalWeakBookkeeping.hpp"
-#include "JscHelper.h"
+#include "V8Engine.h"
+#include "V8Helper.h"
 
 namespace script {
 
-namespace jsc_backend {
+namespace v8_backend {
 
-inline void retain(JSContextRef context, JSValueRef val) {
-  if (val) JSValueProtect(context, val);
-}
+template <typename T>
+GlobalRefState<T>::GlobalRefState(V8Engine* scriptEngine, const GlobalRefState::V8Global& v8Global)
+    : engine_(scriptEngine), ref_(v8Global) {}
 
-inline void release(JSContextRef context, JSValueRef val) {
-  if (val) JSValueUnprotect(context, val);
-}
+template <typename T>
+GlobalRefState<T>::GlobalRefState(V8Engine* scriptEngine, const Local<T>& localReference)
+    : engine_(scriptEngine),
+      ref_{engine_->isolate_, v8_backend::V8Engine::toV8(engine_->isolate_, localReference)} {}
 
-struct JscBookKeepFetcher {
+struct V8BookKeepFetcher {
   template <typename T>
   static ::script::internal::GlobalWeakBookkeeping* get(const T* ref) {
     if (!ref) return nullptr;
-    auto& val = JscEngine::refVal(const_cast<T*>(ref));
+    auto& val = V8Engine::refVal(const_cast<T*>(ref));
     if (!val.engine_) return nullptr;
     return &val.engine_->globalWeakBookkeeping_;
   }
 
   template <typename T>
   static ::script::internal::GlobalWeakBookkeeping::HandleType& handle(const T* ref) {
-    auto& val = JscEngine::refVal(const_cast<T*>(ref));
+    auto& val = V8Engine::refVal(const_cast<T*>(ref));
     return val.handle_;
   }
 };
 
-using BookKeep = ::script::internal::GlobalWeakBookkeeping::Helper<JscBookKeepFetcher>;
+using V8BookKeep = internal::GlobalWeakBookkeeping::Helper<V8BookKeepFetcher>;
 
-}  // namespace jsc_backend
+}  // namespace v8_backend
 
+// == Global ==
 template <typename T>
 Global<T>::Global() noexcept : val_() {}
 
 template <typename T>
 Global<T>::Global(const script::Local<T>& localReference)
-    : val_{localReference.val_, jsc_backend::currentEngine()} {
-  if (val_.ref_) jsc_backend::retain(val_.engine_->context_, val_.ref_);
-  jsc_backend::BookKeep::keep(this);
+    : val_(v8_backend::currentEngine(), localReference) {
+  v8_backend::V8BookKeep::keep(this);
 }
 
 template <typename T>
-Global<T>::Global(const script::Weak<T>& weak)
-    : val_{const_cast<typename jsc_backend::RefTypeMap<T>::jscType>(weak.val_.ref_.get()),
-           weak.val_.engine_} {
-  if (val_.ref_) jsc_backend::retain(val_.engine_->context_, val_.ref_);
-  jsc_backend::BookKeep::keep(this);
+Global<T>::Global(const script::Weak<T>& weakReference)
+    : val_(v8_backend::currentEngine(), weakReference.val_.ref_) {
+  v8_backend::V8BookKeep::keep(this);
 }
 
 template <typename T>
-Global<T>::Global(const script::Global<T>& copy) : val_() {
-  *this = copy;
+Global<T>::Global(const script::Global<T>& copy) : val_(copy.val_) {
+  v8_backend::V8BookKeep::afterCopy(true, this, &copy);
 }
 
 template <typename T>
-Global<T>::Global(script::Global<T>&& move) noexcept : val_() {
-  *this = std::move(move);
+Global<T>::Global(script::Global<T>&& move) noexcept : val_(std::move(move.val_)) {
+  v8_backend::V8BookKeep::afterMove(true, this, &move);
 }
 
 template <typename T>
@@ -95,40 +96,28 @@ Global<T>::~Global() {
 
 template <typename T>
 Global<T>& Global<T>::operator=(const script::Global<T>& assign) {
-  bool wasEmtpy = isEmpty();
-  if (!wasEmtpy) {
-    jsc_backend::release(val_.engine_->context_, val_.ref_);
-  }
-
-  val_.ref_ = assign.val_.ref_;
-  val_.engine_ = assign.val_.engine_;
-  if (val_.ref_) jsc_backend::retain(val_.engine_->context_, val_.ref_);
-
-  jsc_backend::BookKeep::afterCopy(wasEmtpy, this, &assign);
+  bool wasEmpty = isEmpty();
+  val_ = assign.val_;
+  v8_backend::V8BookKeep::afterCopy(wasEmpty, this, &assign);
   return *this;
 }
 
 template <typename T>
-Global<T>& Global<T>::operator=(script::Global<T>&& move) noexcept {
-  bool wasEmtpy = isEmpty();
-  if (!wasEmtpy) {
-    wasEmtpy = false;
-    jsc_backend::release(val_.engine_->context_, val_.ref_);
+Global<T>& Global<T>::operator=(Global&& move) noexcept {
+  if (&move != this) {
+    bool wasEmpty = isEmpty();
+    val_ = std::move(move.val_);
+    v8_backend::V8BookKeep::afterMove(wasEmpty, this, &move);
   }
-
-  val_.ref_ = move.val_.ref_;
-  val_.engine_ = move.val_.engine_;
-  move.val_.ref_ = nullptr;
-  move.val_.engine_ = nullptr;
-  jsc_backend::BookKeep::afterMove(wasEmtpy, this, &move);
   return *this;
 }
 
 template <typename T>
 void Global<T>::swap(Global& rhs) noexcept {
-  std::swap(val_.ref_, rhs.val_.ref_);
-  std::swap(val_.engine_, rhs.val_.engine_);
-  jsc_backend::BookKeep::afterSwap(this, &rhs);
+  if (&rhs != this) {
+    val_.swap(rhs.val_);
+    v8_backend::V8BookKeep::afterSwap(this, &rhs);
+  }
 }
 
 template <typename T>
@@ -140,26 +129,24 @@ Global<T>& Global<T>::operator=(const script::Local<T>& assign) {
 template <typename T>
 Local<T> Global<T>::get() const {
   if (isEmpty()) throw Exception("get on empty Global");
-  return Local<T>(val_.ref_);
+  return Local<T>(val_.ref_.Get(v8_backend::currentEngineIsolateChecked()));
 }
 
 template <typename T>
 Local<Value> Global<T>::getValue() const {
-  return Local<Value>(val_.ref_);
+  return Local<Value>(val_.ref_.Get(v8_backend::currentEngineIsolateChecked()));
 }
 
 template <typename T>
 bool Global<T>::isEmpty() const {
-  return val_.ref_ == nullptr;
+  return val_.ref_.IsEmpty();
 }
 
 template <typename T>
 void Global<T>::reset() {
   if (!isEmpty()) {
-    jsc_backend::release(val_.engine_->context_, val_.ref_);
-    jsc_backend::BookKeep::remove(this);
-    val_.ref_ = nullptr;
-    val_.engine_ = nullptr;
+    val_.ref_.Reset();
+    v8_backend::V8BookKeep::remove(this);
   }
 }
 
@@ -178,49 +165,60 @@ Weak<T>::~Weak() {
 
 template <typename T>
 Weak<T>::Weak(const script::Local<T>& localReference)
-    : val_(localReference.val_, jsc_backend::currentEngine()) {
-  jsc_backend::BookKeep::keep(this);
+    : val_(v8_backend::currentEngine(), localReference) {
+  val_.makeWeak();
+  v8_backend::V8BookKeep::keep(this);
 }
 
 template <typename T>
 Weak<T>::Weak(const script::Global<T>& globalReference)
-    : val_(globalReference.val_.ref_, jsc_backend::currentEngine()) {
-  jsc_backend::BookKeep::keep(this);
+    : val_(globalReference.val_.engine_, globalReference.val_.ref_) {
+  val_.makeWeak();
+  v8_backend::V8BookKeep::keep(this);
 }
 
 template <typename T>
-Weak<T>::Weak(const script::Weak<T>& copy) : val_() {
-  *this = copy;
+Weak<T>::Weak(const script::Weak<T>& copy) : val_(copy.val_) {
+  val_.makeWeak();
+  v8_backend::V8BookKeep::afterCopy(true, this, &copy);
 }
 
 template <typename T>
-Weak<T>::Weak(script::Weak<T>&& move) noexcept : val_() {
-  *this = std::move(move);
+Weak<T>::Weak(script::Weak<T>&& move) noexcept : val_(std::move(move.val_)) {
+  val_.makeWeak();
+  v8_backend::V8BookKeep::afterMove(true, this, &move);
 }
 
 template <typename T>
 Weak<T>& Weak<T>::operator=(const script::Weak<T>& assign) {
-  bool wasEmtpy = isEmpty();
-  val_.ref_ = assign.val_.ref_;
-  val_.engine_ = assign.val_.engine_;
-  jsc_backend::BookKeep::afterCopy(wasEmtpy, this, &assign);
+  if (&assign != this) {
+    bool wasEmpty = isEmpty();
+    val_ = assign.val_;
+    val_.makeWeak();
+    v8_backend::V8BookKeep::afterCopy(wasEmpty, this, &assign);
+  }
   return *this;
 }
 
 template <typename T>
 Weak<T>& Weak<T>::operator=(script::Weak<T>&& move) noexcept {
-  bool wasEmpty = isEmpty();
-  val_.ref_ = std::move(move.val_.ref_);
-  val_.engine_ = std::move(move.val_.engine_);
-  jsc_backend::BookKeep::afterMove(wasEmpty, this, &move);
+  if (&move != this) {
+    bool wasEmpty = isEmpty();
+    val_ = std::move(move.val_);
+    val_.makeWeak();
+    v8_backend::V8BookKeep::afterMove(wasEmpty, this, &move);
+  }
   return *this;
 }
 
 template <typename T>
 void Weak<T>::swap(Weak& rhs) noexcept {
-  std::swap(val_.ref_, rhs.val_.ref_);
-  std::swap(val_.engine_, rhs.val_.engine_);
-  jsc_backend::BookKeep::afterSwap(this, &rhs);
+  if (&rhs != this) {
+    val_.swap(rhs.val_);
+    val_.makeWeak();
+    rhs.val_.makeWeak();
+    v8_backend::V8BookKeep::afterSwap(this, &rhs);
+  }
 }
 
 template <typename T>
@@ -232,26 +230,28 @@ Weak<T>& Weak<T>::operator=(const script::Local<T>& assign) {
 template <typename T>
 Local<T> Weak<T>::get() const {
   auto value = getValue();
-  if (value.isNull()) throw Exception("get on empty Weak");
+  if (value.isNull()) throw Exception("get on null Weak");
   return converter::Converter<Local<T>>::toCpp(value);
 }
 
 template <typename T>
 Local<Value> Weak<T>::getValue() const {
-  using type = typename jsc_backend::RefTypeMap<Value>::jscType;
-  return Local<Value>(const_cast<type>(val_.ref_.get()));
+  if (isEmpty()) return {};
+  return Local<Value>(val_.ref_.Get(val_.engine_->isolate_));
 }
 
 template <typename T>
 bool Weak<T>::isEmpty() const {
-  return val_.ref_.isEmpty();
+  // V8 PersistentBase::IsEmpty will be true after gc
+  // differs with our semantics, so we use then engine_ field to check this.
+  return val_.engine_ == nullptr;
 }
 
 template <typename T>
 void Weak<T>::reset() noexcept {
   if (!isEmpty()) {
-    jsc_backend::BookKeep::remove(this);
-    val_.ref_.reset(val_.engine_);
+    val_.ref_.Reset();
+    v8_backend::V8BookKeep::remove(this);
     val_.engine_ = nullptr;
   }
 }

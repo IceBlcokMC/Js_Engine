@@ -16,12 +16,20 @@
  */
 
 #pragma once
+#include "../../../src/foundation.h"
+#include "../../../src/types.h"
+#include "../V8Helper.h"
 
-#include "../JscEngine.h"
-#include "../JscEngine.hpp"
-#include "../JscNative.hpp"
-#include "../JscReference.hpp"
+namespace script {
 
-// global marco
-#define SCRIPTX_BACKEND_JAVASCRIPTCORE
-#define SCRIPTX_LANG_JAVASCRIPT
+template <>
+struct internal::ImplType<StringHolder> {
+  using type = v8::String::Utf8Value;
+};
+
+template <>
+struct internal::ImplType<internal::interop> {
+  using type = v8_interop;
+};
+
+}  // namespace script

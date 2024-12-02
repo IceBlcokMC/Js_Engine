@@ -16,40 +16,29 @@
  */
 
 #pragma once
-#include <JavaScriptCore/JavaScript.h>
+
 #include "../../../src/foundation.h"
 #include "../../../src/types.h"
-#include "../JscHelper.h"
-#include "TraitReference.h"
+#include "../V8Helper.h"
 
 namespace script {
-struct jsc_interop;
 
-namespace jsc_backend {
+namespace v8_backend {
 
-struct StringHolderData {
-  StringLocalRef::SharedStringRef jscStringRefHolder;
-  mutable bool inited;
-  mutable size_t length;
-  mutable std::string stringContent;
+class ExceptionFields {
+ public:
+  mutable Global<Value> exception_{};
+  mutable std::string message_{};
+  mutable bool hasMessage_ = false;
 
-  explicit StringHolderData(StringLocalRef::SharedStringRef r)
-      : jscStringRefHolder(std::move(r)),
-        inited(false),
-        length(std::string::npos),
-        stringContent() {}
+  void fillMessage() const noexcept;
 };
 
-}  // namespace jsc_backend
+}  // namespace v8_backend
 
 template <>
-struct internal::ImplType<StringHolder> {
-  using type = jsc_backend::StringHolderData;
-};
-
-template <>
-struct internal::ImplType<internal::interop> {
-  using type = jsc_interop;
+struct internal::ImplType<Exception> {
+  using type = v8_backend::ExceptionFields;
 };
 
 }  // namespace script

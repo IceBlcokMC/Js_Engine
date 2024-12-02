@@ -17,18 +17,13 @@
 
 #pragma once
 
-#include "../../../src/foundation.h"
-#include "../../../src/types.h"
+#include "../V8Engine.h"
+#include "../V8Engine.hpp"
+#include "../V8Native.hpp"
+#include "../V8Reference.hpp"
+#include "../V8Scope.h"
+#include "../V8Scope.hpp"
 
-namespace script {
-
-namespace jsc_backend {
-class JscEngine;
-}
-
-template <>
-struct internal::ImplType<ScriptEngine> {
-  using type = ::script::jsc_backend::JscEngine;
-};
-
-}  // namespace script
+// global marco
+#define SCRIPTX_BACKEND_V8
+#define SCRIPTX_LANG_JAVASCRIPT

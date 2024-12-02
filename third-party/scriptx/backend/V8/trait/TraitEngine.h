@@ -15,20 +15,19 @@
  * limitations under the License.
  */
 
-#include "JscHelper.h"
-#include "../../src/Scope.h"
-#include "JscEngine.h"
+#pragma once
 
-namespace script::jsc_backend {
+#include "../../../src/foundation.h"
+#include "../../../src/types.h"
 
-JscEngine* currentEngine() { return EngineScope::currentEngineAs<JscEngine>(); }
-
-JscEngine& currentEngineChecked() { return EngineScope::currentEngineCheckedAs<JscEngine>(); }
-
-JSGlobalContextRef currentEngineContextChecked() { return currentEngineChecked().context_; }
-
-JSContextGroupRef currentEngineContextGroupChecked() {
-  return currentEngineChecked().virtualMachine_;
+namespace script {
+namespace v8_backend {
+class V8Engine;
 }
 
-}  // namespace script::jsc_backend
+template <>
+struct internal::ImplType<ScriptEngine> {
+  using type = v8_backend::V8Engine;
+};
+
+}  // namespace script

@@ -17,27 +17,26 @@
 
 #pragma once
 
-#include <JavaScriptCore/JavaScript.h>
-#include "../../src/types.h"
-
-namespace script::jsc_backend {
-
-// forward declare to solve recursive include issue
-class JscEngine;
-
-JscEngine* currentEngine();
-
-JscEngine& currentEngineChecked();
-
-JSGlobalContextRef currentEngineContextChecked();
-
-JSContextGroupRef currentEngineContextGroupChecked();
-
-template <typename R, typename Fn>
-R toJscValues(JSGlobalContextRef context, size_t length, const Local<Value>* args, Fn fn);
-
-}  // namespace script::jsc_backend
+#include "../../../src/foundation.h"
+#include "../../../src/types.h"
+#include "../V8Helper.h"
+#include "../V8Scope.h"
 
 namespace script {
-struct jsc_interop;
-}
+
+template <>
+struct internal::ImplType<EngineScope> {
+  using type = v8_backend::V8EngineScope;
+};
+
+template <>
+struct internal::ImplType<ExitEngineScope> {
+  using type = v8_backend::V8ExitEngineScope;
+};
+
+template <>
+struct internal::ImplType<StackFrameScope> {
+  using type = v8_backend::V8HandleScope;
+};
+
+}  // namespace script
