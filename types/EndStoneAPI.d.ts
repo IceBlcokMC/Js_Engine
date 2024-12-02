@@ -9,5 +9,5 @@ declare interface JSE_Plugin {
 }
 
 declare class JSE_EndStone {
-  static registerPlugin(information: JSE_Plugin): void;
+  static register_plugin(information: JSE_Plugin): void;
 }

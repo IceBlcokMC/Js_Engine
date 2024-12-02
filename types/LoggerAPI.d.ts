@@ -33,6 +33,6 @@ declare class JSE_Logger {
   static error(...message: any[]): boolean;
   static debug(...message: any[]): boolean;
 
-  static colorLog(color: Color, ...message: any[]): boolean;
+  static color_log(color: Color, ...message: any[]): boolean;
   static format(format_str: string, ...args: any[]): string;
 }

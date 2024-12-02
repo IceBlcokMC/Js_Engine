@@ -8,9 +8,9 @@
 
 namespace jse {
 ClassDefine<void> EndStoneAPIClass =
-    defineClass("JSE_EndStone").function("registerPlugin", &EndStoneAPI::registerPlugin).build();
+    defineClass("JSE_EndStone").function("register_plugin", &EndStoneAPI::register_plugin).build();
 
-Local<Value> EndStoneAPI::registerPlugin(Arguments const& args) {
+Local<Value> EndStoneAPI::register_plugin(Arguments const& args) {
     CheckArgsCount(args, 1);
     CheckArgType(args[0], ValueKind::kObject);
 

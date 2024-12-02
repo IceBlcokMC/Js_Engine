@@ -15,7 +15,7 @@ ClassDefine<void> LoggerAPIClass = defineClass("JSE_Logger")
                                        .function("warn", &LoggerAPI::warn)
                                        .function("error", &LoggerAPI::error)
                                        .function("debug", &LoggerAPI::debug)
-                                       .function("colorLog", &LoggerAPI::colorLog)
+                                       .function("color_log", &LoggerAPI::color_log)
                                        .function("format", &LoggerAPI::format)
                                        .build();
 
@@ -71,7 +71,7 @@ Local<Value> LoggerAPI::debug(Arguments const& args) {
     return LoggerAPIHelper(endstone::Logger::Level::Debug, args);
 }
 
-Local<Value> LoggerAPI::colorLog(Arguments const& args) {
+Local<Value> LoggerAPI::color_log(Arguments const& args) {
     CheckArgsCount(args, 2);
     CheckArgType(args[0], ValueKind::kString);
     // CheckArgType(args[1], ValueKind::kString); // any
