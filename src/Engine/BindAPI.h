@@ -10,8 +10,6 @@ namespace jse {
 inline void BindAPI(ScriptEngine* engine) {
     engine->registerNativeClass(EndStoneAPIClass);
     engine->registerNativeClass(LoggerAPIClass);
-
-    engine->eval(R"()");
 }
 
 } // namespace jse
