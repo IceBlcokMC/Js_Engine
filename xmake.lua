@@ -44,6 +44,7 @@ target("Js_Engine")
     set_languages("cxx20")
     add_linkdirs("EndStone-SDK/lib")
     set_symbols("debug")
+    set_exceptions("none") -- 不使用异常处理
 
     -- entt EndStone-SDK
     add_defines("ENTT_SPARSE_PAGE=2048")

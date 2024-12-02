@@ -1,25 +1,21 @@
+// "use strict";
 /// <reference path="../types/index.d.ts" />
 
-logger.warn("Test JavaScriptPluginLoader");
-
-endstone.registerPlugin({
+JSE_EndStone.registerPlugin({
   name: "TestLoader",
   version: "1.0.0",
   description: "TestLoader description",
 });
 
-function onLoad() {
-  logger.warn("TestLoader.js loaded");
-}
+JSE_Logger.warn("Test JavaScriptPluginLoader");
 
-function onEnable() {
-  logger.warn("TestLoader.js enabled");
-}
-
-function onDisable() {
-  logger.warn("TestLoader.js disabled");
-}
-
-const aaa = {
-  
-}
+const logger = JSE_Logger;
+globalThis.onLoad = function () {
+  logger.warn("TestLoader onLoad");
+};
+globalThis.onEnable = function () {
+  logger.warn("TestLoader onEnable");
+};
+globalThis.onDisable = function () {
+  logger.warn("TestLoader onDisable");
+};

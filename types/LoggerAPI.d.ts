@@ -26,7 +26,7 @@ declare type Color =
   | /**黄色*/ "yellow"
   | /**白色*/ "white";
 
-declare class logger {
+declare class JSE_Logger {
   static log(level: LoggerLevel, ...message: any[]): boolean;
   static info(...message: any[]): boolean;
   static warn(...message: any[]): boolean;

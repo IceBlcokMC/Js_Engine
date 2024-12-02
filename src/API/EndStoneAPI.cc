@@ -8,7 +8,7 @@
 
 namespace jse {
 ClassDefine<void> EndStoneAPIClass =
-    defineClass("endstone").function("registerPlugin", &EndStoneAPI::registerPlugin).build();
+    defineClass("JSE_EndStone").function("registerPlugin", &EndStoneAPI::registerPlugin).build();
 
 Local<Value> EndStoneAPI::registerPlugin(Arguments const& args) {
     /*

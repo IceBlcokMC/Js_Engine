@@ -64,8 +64,14 @@ endstone::Plugin* JavaScriptPluginLoader::loadPlugin(const fs::path& file) {
         plugin->onLoad(); // 调用插件的onLoad回调
 
         return plugin;
+    } catch (const script::Exception& e) {
+        GetEntry()->getLogger().error(fmt::format("Failed to load plugin '{}': {}", file.string(), e.stacktrace()));
+        return nullptr;
     } catch (const std::exception& e) {
         GetEntry()->getLogger().error(fmt::format("Failed to load plugin '{}': {}", file.string(), e.what()));
+        return nullptr;
+    } catch (...) {
+        GetEntry()->getLogger().error(fmt::format("Failed to load plugin '{}': Unknown error", file.string()));
         return nullptr;
     }
 }
