@@ -55,7 +55,6 @@ target("Js_Engine")
     add_defines("ENTT_PACKED_PAGE=128")
 
     add_defines(
-        "SCRIPTX_BACKEND=QuickJs",
         "SCRIPTX_BACKEND_QUICKJS",
         "SCRIPTX_BACKEND_TRAIT_PREFIX=../third-party/scriptx/backend/QuickJs/trait/Trait"
     )
