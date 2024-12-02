@@ -21,6 +21,7 @@ JSE_EndStone.register_plugin({
 });
 
 function test_plugin_api() {
+  logger.warn("==== Test Plugin API  ====");
   const pl = JSE_EndStone.get_plugin();
 
   logger.warn("api_version: ", pl.api_version);

@@ -20,13 +20,11 @@ void   ToString(Local<Object> const& value, std::ostringstream& oss);
 template <typename T>
 bool IsInstanceOf(Local<Value> const& value);
 
-void PrintException(string const& msg);
-void PrintException(script::Exception const& e);
+void PrintException(string const& msg, string const& func, string const& plugin, string const& api);
+void PrintException(script::Exception const& e, string const& func, string const& plugin, string const& api);
 
-// 工具宏
-#define PrintScriptError(...)                                                                                          \
-    PrintException(__VA_ARGS__);                                                                                       \
-    std::cout << "\x1b[91mIn function: " << __FUNCTION__ << "\x1b[0m" << std::endl;
+#define PrintScriptError(msg_or_exception)                                                                             \
+    PrintException(msg_or_exception, __func__, ENGINE_SELF_DATA()->mJSE_Plugin.getFileName(), __FUNCTION__);
 
 // 参数异常
 #define PrintWrongArgType()   PrintScriptError("Wrong argument type")
@@ -50,24 +48,19 @@ void PrintException(script::Exception const& e);
 // 异常捕获
 #define Catch                                                                                                          \
     catch (script::Exception const& e) {                                                                               \
-        if (GetEntry()) GetEntry()->getLogger().error(fmt::format("Fail in {}", __func__));                            \
-        PrintException(e);                                                                                             \
-        return Local<Value>();                                                                                         \
+        PrintScriptError(e) return Local<Value>();                                                                     \
     }                                                                                                                  \
     catch (...) {                                                                                                      \
-        if (GetEntry()) GetEntry()->getLogger().error(fmt::format("Fail in {}", __func__));                            \
-        PrintScriptError("");                                                                                          \
+        PrintScriptError("Unknown error");                                                                             \
         return Local<Value>();                                                                                         \
     }
 
 #define CatchNotReturn                                                                                                 \
     catch (script::Exception const& e) {                                                                               \
-        if (GetEntry()) GetEntry()->getLogger().error(fmt::format("Fail in {}", __func__));                            \
-        PrintException(e);                                                                                             \
+        PrintScriptError(e)                                                                                            \
     }                                                                                                                  \
     catch (...) {                                                                                                      \
-        if (GetEntry()) GetEntry()->getLogger().error(fmt::format("Fail in {}", __func__));                            \
-        PrintScriptError("");                                                                                          \
+        PrintScriptError("Unknown error");                                                                             \
     }
 
 } // namespace jse

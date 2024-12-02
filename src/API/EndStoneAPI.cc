@@ -11,8 +11,12 @@
 
 
 namespace jse {
-ClassDefine<void> EndStoneAPIClass =
-    defineClass("JSE_EndStone").function("register_plugin", &EndStoneAPI::register_plugin).build();
+
+ClassDefine<void> EndStoneAPIClass = defineClass("JSE_EndStone")
+                                         .function("register_plugin", &EndStoneAPI::register_plugin)
+                                         .function("get_plugin", &EndStoneAPI::get_plugin)
+                                         .build();
+
 
 Local<Value> EndStoneAPI::register_plugin(Arguments const& args) {
     CheckArgsCount(args, 1);
@@ -26,6 +30,11 @@ Local<Value> EndStoneAPI::register_plugin(Arguments const& args) {
     Catch;
 }
 
-Local<Value> EndStoneAPI::get_plugin(Arguments const&) { return PluginAPI::newPluginAPI(); }
+Local<Value> EndStoneAPI::get_plugin(Arguments const&) {
+    try {
+        return PluginAPI::newPluginAPI();
+    }
+    Catch;
+}
 
 } // namespace jse

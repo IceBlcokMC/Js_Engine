@@ -8,6 +8,7 @@
 namespace jse {
 
 ClassDefine<PluginAPI> PluginAPIClass = defineClass<PluginAPI>("JSE_Plugin")
+                                            .constructor(nullptr)
                                             .instanceProperty("api_version", &PluginAPI::api_version)
                                             .instanceProperty("authors", &PluginAPI::authors)
                                             .instanceProperty("commands", &PluginAPI::commands)
@@ -33,14 +34,17 @@ ClassDefine<PluginAPI> PluginAPIClass = defineClass<PluginAPI>("JSE_Plugin")
                                             .instanceFunction("save_resources", &PluginAPI::save_resources)
                                             .build();
 
-ClassDefine<PluginCommandAPI> PluginCommandAPIClass = defineClass<PluginCommandAPI>("JSE_PluginCommand").build();
+ClassDefine<PluginCommandAPI> PluginCommandAPIClass =
+    defineClass<PluginCommandAPI>("JSE_PluginCommand").constructor(nullptr).build();
 
 ClassDefine<PluginDescriptionAPI> PluginDescriptionAPIClass =
-    defineClass<PluginDescriptionAPI>("JSE_PluginDescription").build();
+    defineClass<PluginDescriptionAPI>("JSE_PluginDescription").constructor(nullptr).build();
 
-ClassDefine<PluginLoaderAPI> PluginLoaderAPIClass = defineClass<PluginLoaderAPI>("JSE_PluginLoader").build();
+ClassDefine<PluginLoaderAPI> PluginLoaderAPIClass =
+    defineClass<PluginLoaderAPI>("JSE_PluginLoader").constructor(nullptr).build();
 
-ClassDefine<PluginManagerAPI> PluginManagerAPIClass = defineClass<PluginManagerAPI>("JSE_PluginManager").build();
+ClassDefine<PluginManagerAPI> PluginManagerAPIClass =
+    defineClass<PluginManagerAPI>("JSE_PluginManager").constructor(nullptr).build();
 
 
 // PluginAPI

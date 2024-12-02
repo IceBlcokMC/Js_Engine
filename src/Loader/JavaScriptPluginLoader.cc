@@ -8,6 +8,7 @@
 #include "fmt/format.h"
 #include <filesystem>
 
+#include "API/APIHelper.h"
 
 namespace jse {
 namespace fs = std::filesystem;
@@ -81,7 +82,17 @@ endstone::Plugin* JavaScriptPluginLoader::loadPlugin(const fs::path& file) {
     }
 }
 
-void JavaScriptPluginLoader::enablePlugin(endstone::Plugin& plugin) const { PluginLoader::enablePlugin(plugin); }
-void JavaScriptPluginLoader::disablePlugin(endstone::Plugin& plugin) const { PluginLoader::disablePlugin(plugin); }
+void JavaScriptPluginLoader::enablePlugin(endstone::Plugin& plugin) const {
+    try {
+        PluginLoader::enablePlugin(plugin);
+    }
+    CatchNotReturn;
+}
+void JavaScriptPluginLoader::disablePlugin(endstone::Plugin& plugin) const {
+    try {
+        PluginLoader::disablePlugin(plugin);
+    }
+    CatchNotReturn;
+}
 
 } // namespace jse
