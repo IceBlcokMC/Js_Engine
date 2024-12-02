@@ -14,8 +14,7 @@ public:
     std::unordered_map<int, ScriptEngine*> mEngines;
 
 public:
-    static EngineManager&    getInstance();                           // 单例模式
-    static EngineSelfDataPtr getEngineSelfData(ScriptEngine* engine); // 获取引擎自身数据
+    static EngineManager& getInstance();
 
     bool hasEngine(int engineId);
 

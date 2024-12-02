@@ -12,8 +12,16 @@ JSE_EndStone.register_plugin({
   },
   onEnable: () => {
     logger.warn("TestLoader enabled");
+
+    test_plugin_api();
   },
   onDisable: () => {
     logger.warn("TestLoader disabled");
   },
 });
+
+function test_plugin_api() {
+  const pl = JSE_EndStone.get_plugin();
+
+  logger.warn("api_version: ", pl.api_version);
+}

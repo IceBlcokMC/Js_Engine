@@ -21,7 +21,7 @@ ClassDefine<void> LoggerAPIClass = defineClass("JSE_Logger")
 
 Local<Value> LoggerAPIHelper(endstone::Logger::Level level, string const& message) {
     try {
-        auto data = EngineManager::getEngineSelfData(EngineScope::currentEngine());
+        auto data = ENGINE_SELF_DATA();
         if (data->mPlugin) {
             // data->mPlugin->getLogger().log(level, message); // TODO: fix
             GetEntry()->getLogger().log(level, fmt::format("[{}] {}", data->mPlugin->getName(), message));

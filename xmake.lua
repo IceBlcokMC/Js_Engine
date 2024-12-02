@@ -13,17 +13,21 @@ add_requires(
     "concurrentqueue 1.0.4"
 )
 
+if not has_config("vs_runtime") then
+    set_runtimes("MD")
+end
+
 target("Js_Engine")
     add_cxflags(
-        "/EHs",
+        "/EHa",
         "/utf-8",
-        "/W4",
-        "/w44265",
-        "/w44289",
-        "/w44296",
-        "/w45263",
-        "/w44738",
-        "/w45204"
+        "/sdl",
+        "/W4"
+    )
+    add_defines(
+        "NOMINMAX",
+        "UNICODE",
+        "_AMD64_"
     )
     add_files("src/**.cc")
     add_includedirs(
@@ -51,6 +55,7 @@ target("Js_Engine")
     add_defines("ENTT_PACKED_PAGE=128")
 
     add_defines(
+        "SCRIPTX_BACKEND=QuickJs",
         "SCRIPTX_BACKEND_QUICKJS",
         "SCRIPTX_BACKEND_TRAIT_PREFIX=../third-party/scriptx/backend/QuickJs/trait/Trait"
     )
@@ -63,7 +68,7 @@ target("Js_Engine")
         "third-party/quickjs/include"
     )
     add_links("third-party/quickjs/lib/quickjs.lib")
-    add_links("ucrt", "vcruntime", "msvcrt", "legacy_stdio_definitions") -- QuickJs C运行时库
+    -- add_links("ucrt", "vcruntime", "msvcrt", "legacy_stdio_definitions") -- QuickJs C运行时库
 
     if is_mode("debug") then
         add_defines("DEBUG")

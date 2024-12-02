@@ -2,6 +2,7 @@
 
 #include "API/APIHelper.h"
 #include "Engine/EngineManager.h"
+#include "Engine/EngineSelfData.h"
 #include "Engine/Using.h"
 #include "Entry.h"
 #include "endstone/command/console_command_sender.h"
@@ -83,7 +84,7 @@ void JavaScriptPlugin::onLoad() {
         auto engine = EngineManager::getInstance().getEngine(this->engineId_);
         if (engine) {
             EngineScope scope(engine);
-            auto        data = EngineManager::getEngineSelfData(engine);
+            auto        data = ENGINE_SELF_DATA();
             if (!data->mJSE_Plugin.callOnLoad() && GetEntry()) {
                 GetEntry()->getLogger().warning(
                     fmt::format("Plugin '{}' does not have an onLoad function", this->getName())
@@ -98,7 +99,7 @@ void JavaScriptPlugin::onEnable() {
     auto engine = EngineManager::getInstance().getEngine(this->engineId_);
     if (engine) {
         EngineScope scope(engine);
-        auto        data = EngineManager::getEngineSelfData(engine);
+        auto        data = ENGINE_SELF_DATA();
         if (!data->mJSE_Plugin.callOnEnable() && GetEntry()) {
             GetEntry()->getLogger().warning(
                 fmt::format("Plugin '{}' does not have an onEnable function", this->getName())
@@ -112,7 +113,7 @@ void JavaScriptPlugin::onDisable() {
     auto engine = EngineManager::getInstance().getEngine(this->engineId_);
     if (engine) {
         EngineScope scope(engine);
-        auto        data = EngineManager::getEngineSelfData(engine);
+        auto        data = ENGINE_SELF_DATA();
         if (!data->mJSE_Plugin.callOnDisable() && GetEntry()) {
             GetEntry()->getLogger().warning(
                 fmt::format("Plugin '{}' does not have an onDisable function", this->getName())

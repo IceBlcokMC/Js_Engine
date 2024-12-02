@@ -80,4 +80,8 @@ struct EngineSelfData {
 };
 using EngineSelfDataPtr = std::shared_ptr<EngineSelfData>;
 
+
+#define GET_ENGINE_SELF_DATA(enginePtr) enginePtr->getData<EngineSelfData>()
+#define ENGINE_SELF_DATA()              EngineScope ::currentEngine()->getData<EngineSelfData>()
+
 } // namespace jse

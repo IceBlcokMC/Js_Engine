@@ -1,11 +1,13 @@
 #include "JavaScriptPluginLoader.h"
 #include "Engine/EngineManager.h"
+#include "Engine/EngineSelfData.h"
 #include "Engine/Using.h"
 #include "Entry.h"
 #include "JavaScriptPlugin.h"
 #include "endstone/detail/server.h"
 #include "fmt/format.h"
 #include <filesystem>
+
 
 namespace jse {
 namespace fs = std::filesystem;
@@ -49,7 +51,7 @@ endstone::Plugin* JavaScriptPluginLoader::loadPlugin(const fs::path& file) {
             return nullptr;
         }
         EngineScope scope(engine); // 进入引擎作用域
-        auto        data            = EngineManager::getEngineSelfData(engine);
+        auto        data            = ENGINE_SELF_DATA();
         data->mJSE_Plugin.mFileName = fs::path(file).filename().string(); // 设置插件文件名
 
         // 加载JS文件
