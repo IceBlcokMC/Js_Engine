@@ -84,14 +84,10 @@ void JavaScriptPlugin::onLoad() {
         if (engine) {
             EngineScope scope(engine);
             auto        data = EngineManager::getEngineSelfData(engine);
-            auto        func = engine->get("onLoad");
-            if (func.isFunction()) {
-                func.asFunction().call();
-            } else {
-                if (GetEntry())
-                    GetEntry()->getLogger().warning(
-                        fmt::format("Plugin '{}' does not have an onLoad function", data->mPluginName)
-                    );
+            if (!data->mJSE_Plugin.callOnLoad() && GetEntry()) {
+                GetEntry()->getLogger().warning(
+                    fmt::format("Plugin '{}' does not have an onLoad function", this->getName())
+                );
             }
         }
     }
@@ -102,38 +98,28 @@ void JavaScriptPlugin::onEnable() {
     auto engine = EngineManager::getInstance().getEngine(this->engineId_);
     if (engine) {
         EngineScope scope(engine);
-        auto        func = engine->get("onEnable");
-        if (func.isFunction()) {
-            func.asFunction().call();
-        } else {
-            if (GetEntry())
-                GetEntry()->getLogger().warning(
-                    fmt::format("Plugin '{}' does not have an onEnable function", this->getName())
-                );
+        auto        data = EngineManager::getEngineSelfData(engine);
+        if (!data->mJSE_Plugin.callOnEnable() && GetEntry()) {
+            GetEntry()->getLogger().warning(
+                fmt::format("Plugin '{}' does not have an onEnable function", this->getName())
+            );
         }
-    } else {
-        if (GetEntry())
-            GetEntry()->getLogger().error(fmt::format("Failed to get JS engine for plugin '{}'", this->getName()));
-    }
+    } else if (GetEntry())
+        GetEntry()->getLogger().error(fmt::format("Failed to get JS engine for plugin '{}'", this->getName()));
 }
 
 void JavaScriptPlugin::onDisable() {
     auto engine = EngineManager::getInstance().getEngine(this->engineId_);
     if (engine) {
         EngineScope scope(engine);
-        auto        func = engine->get("onDisable");
-        if (func.isFunction()) {
-            func.asFunction().call();
-        } else {
-            if (GetEntry())
-                GetEntry()->getLogger().warning(
-                    fmt::format("Plugin '{}' does not have an onDisable function", this->getName())
-                );
+        auto        data = EngineManager::getEngineSelfData(engine);
+        if (!data->mJSE_Plugin.callOnDisable() && GetEntry()) {
+            GetEntry()->getLogger().warning(
+                fmt::format("Plugin '{}' does not have an onDisable function", this->getName())
+            );
         }
-    } else {
-        if (GetEntry())
-            GetEntry()->getLogger().error(fmt::format("Failed to get JS engine for plugin '{}'", this->getName()));
-    }
+    } else if (GetEntry())
+        GetEntry()->getLogger().error(fmt::format("Failed to get JS engine for plugin '{}'", this->getName()));
 }
 
 endstone::PluginDescription const& JavaScriptPlugin::getDescription() const { return this->description_; }

@@ -43,22 +43,25 @@ endstone::Plugin* JavaScriptPluginLoader::loadPlugin(const fs::path& file) {
     try {
         // 创建新的JS引擎实例
         auto& engineManager = EngineManager::getInstance();
-        auto* engine        = engineManager.createEngine(file.filename().string());
+        auto* engine        = engineManager.createEngine();
         if (!engine) {
             GetEntry()->getLogger().error(fmt::format("Failed to create JS engine for plugin: {}", file.string()));
             return nullptr;
         }
         EngineScope scope(engine); // 进入引擎作用域
+        auto        data            = EngineManager::getEngineSelfData(engine);
+        data->mJSE_Plugin.mFileName = fs::path(file).filename().string(); // 设置插件文件名
 
         // 加载JS文件
         engine->loadFile(file.string());
 
-
         // 创建插件实例
-        auto  data = EngineManager::getEngineSelfData(engine);
-        auto* plugin =
-            new JavaScriptPlugin(data->mEngineId, data->mPluginName, data->mPluginVersion, data->mPluginDescription);
-
+        auto* plugin = new JavaScriptPlugin(
+            data->mEngineId,
+            data->mJSE_Plugin.getName(),
+            data->mJSE_Plugin.getVersion(),
+            data->mJSE_Plugin.getDescription()
+        );
         data->mPlugin = plugin; // 将插件实例保存到引擎数据中
 
         plugin->onLoad(); // 调用插件的onLoad回调
@@ -76,14 +79,7 @@ endstone::Plugin* JavaScriptPluginLoader::loadPlugin(const fs::path& file) {
     }
 }
 
-void JavaScriptPluginLoader::enablePlugin(endstone::Plugin& plugin) const {
-    PluginLoader::enablePlugin(plugin);
-    // plugin.onEnable();
-}
-
-void JavaScriptPluginLoader::disablePlugin(endstone::Plugin& plugin) const {
-    PluginLoader::disablePlugin(plugin);
-    // plugin.onDisable();
-}
+void JavaScriptPluginLoader::enablePlugin(endstone::Plugin& plugin) const { PluginLoader::enablePlugin(plugin); }
+void JavaScriptPluginLoader::disablePlugin(endstone::Plugin& plugin) const { PluginLoader::disablePlugin(plugin); }
 
 } // namespace jse

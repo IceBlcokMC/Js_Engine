@@ -58,10 +58,4 @@ namespace jse
 
         return engine;
     }
-    ScriptEngine *EngineManager::createEngine(string const &fileName)
-    {
-        auto engine = this->createEngine();
-        this->getEngineSelfData(engine).get()->mFileName = fileName; // 设置文件名
-        return engine;
-    }
 }

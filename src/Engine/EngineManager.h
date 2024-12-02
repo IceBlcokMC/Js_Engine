@@ -24,6 +24,5 @@ public:
     ScriptEngine* getEngine(int engineId);
 
     ScriptEngine* createEngine();
-    ScriptEngine* createEngine(string const& fileName);
 };
 } // namespace jse

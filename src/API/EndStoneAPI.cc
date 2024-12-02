@@ -11,35 +11,13 @@ ClassDefine<void> EndStoneAPIClass =
     defineClass("JSE_EndStone").function("registerPlugin", &EndStoneAPI::registerPlugin).build();
 
 Local<Value> EndStoneAPI::registerPlugin(Arguments const& args) {
-    /*
-        endstone.registerPlugin({
-            name: string,
-            version: `x.x.x`,
-            description: string,
-        });
-     */
     CheckArgsCount(args, 1);
     CheckArgType(args[0], ValueKind::kObject);
 
     try {
-        auto          data   = EngineManager::getEngineSelfData(EngineScope::currentEngine()).get();
-        Local<Object> plugin = args[0].asObject();
-        if (plugin.has("name")) {
-            data->mPluginName = plugin.get("name").asString().toString();
-        } else {
-            data->mFileName = data->mFileName;
-            GetEntry()->getLogger().warning(fmt::format(
-                "Plugin name is not specified, use file name as plugin name, file name: {}",
-                data->mFileName
-            ));
-        }
-
-        if (plugin.has("version")) {
-            data->mPluginVersion = plugin.get("version").asString().toString();
-        }
-        if (plugin.has("description")) {
-            data->mPluginDescription = plugin.get("description").asString().toString();
-        }
+        Local<Object> const& plugin = args[0].asObject();
+        auto                 data   = EngineManager::getEngineSelfData(EngineScope::currentEngine()).get();
+        data->mJSE_Plugin           = script::Global<Object>(plugin); // 保存到引擎强引用中（防止Gc）
         return Boolean::newBoolean(true);
     }
     Catch;
