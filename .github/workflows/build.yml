@@ -2,7 +2,6 @@ name: Build
 
 on:
   push:
-    branches: [dev]
     paths:
       - src/**
       - third-party/**
@@ -10,7 +9,6 @@ on:
       - xmake.lua
       - .github/workflows/build.yml
   pull_request:
-    branches: [dev]
     paths:
       - src/**
       - third-party/**
@@ -25,7 +23,13 @@ env:
 
 jobs:
   build:
-    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ ubuntu-22.04, windows-2022 ]
+
+    name: Build with ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -56,6 +60,22 @@ jobs:
       - uses: xmake-io/github-action-setup-xmake@v1
         # with:
         #   xmake-version: branch@master
+      
+      - name: Set up Cland(Linux)
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update -y -q
+          sudo apt-get install -y -q build-essential lsb-release wget software-properties-common
+          sudo wget https://apt.llvm.org/llvm.sh
+          sudo chmod +x llvm.sh
+          sudo ./llvm.sh 15
+          sudo apt-get install -y -q libc++-15-dev libc++abi-15-dev
+          sudo update-alternatives --install /usr/bin/clang clang /usr/bin/clang-15 100
+          sudo update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-15 100
+          sudo update-alternatives --install /usr/bin/llvm-cov llvm-cov /usr/bin/llvm-cov-15 100
+          sudo update-alternatives --install /usr/bin/ld ld /usr/bin/ld.lld-15 100
+          echo "CC=clang" >> $GITHUB_ENV
+          echo "CXX=clang++" >> $GITHUB_ENV
 
       - run: |
           xmake repo -u
