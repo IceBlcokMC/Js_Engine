@@ -14,17 +14,13 @@ add_requires(
 )
 add_requires("magic_enum 0.9.7")
 
-if not has_config("vs_runtime") then
-    set_runtimes("MD")
+if is_plat("windows") then
+    if not has_config("vs_runtime") then
+        set_runtimes("MD")
+    end
 end
 
 target("Js_Engine")
-    add_cxflags(
-        "/EHa",
-        "/utf-8",
-        -- "/W4", -- 开启警告
-        "/sdl"
-    )
     add_defines(
         "NOMINMAX",
         "UNICODE",
@@ -65,12 +61,31 @@ target("Js_Engine")
         "SCRIPTX_BACKEND_QUICKJS",
         "SCRIPTX_BACKEND_TRAIT_PREFIX=../third-party/scriptx/backend/QuickJs/trait/Trait"
     )
+
     -- QuickJs & Platform
     if is_plat("windows") then
         add_includedirs("./third-party/quickjs/win/include")
         add_links("./third-party/quickjs/win/lib/quickjs.lib")
+
+        add_cxflags(
+            "/EHa",
+            "/utf-8",
+            -- "/W4", -- 开启警告
+            "/sdl"
+        )
     elseif is_plat("linux") then
-        -- TODO: Build QuickJs for Linux
+        add_includedirs("./third-party/quickjs/linux/include")
+        add_links("./third-party/quickjs/linux/lib/quickjs.a")
+
+        add_cxflags(
+            "-fPIC",
+            "-stdlib=libc++",
+            "-std=c++20"
+        )
+        add_ldflags(
+            "-stdlib=libc++"
+        )
+        add_links("c++", "c++abi")
     else 
         printf("${bright red}Platform %s is not supported", os.host())
     end 

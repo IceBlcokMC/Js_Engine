@@ -26,7 +26,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ ubuntu-22.04, windows-2022 ]
+        os: [ubuntu-22.04, windows-2022]
 
     name: Build with ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
@@ -60,7 +60,7 @@ jobs:
       - uses: xmake-io/github-action-setup-xmake@v1
         # with:
         #   xmake-version: branch@master
-      
+
       - name: Set up Cland(Linux)
         if: runner.os == 'Linux'
         run: |
@@ -81,13 +81,13 @@ jobs:
           xmake repo -u
 
       - run: |
-          xmake f -a x64 -m release -p windows -v -y
+          xmake f -a x64 -m release -v -y
 
       - run: |
           xmake -v -y
 
       - uses: actions/upload-artifact@v4
         with:
-          name: ${{ github.event.repository.name }}-windows-x64-${{ github.sha }}
+          name: ${{ github.event.repository.name }}-${{ matrix.os }}-x64-${{ github.sha }}
           path: |
             bin/
