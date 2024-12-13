@@ -1,0 +1,10 @@
+build
+*.lnk
+bin
+.vs
+.xmake
+compile_commands.json
+EndStone-SDK
+
+.vscode
+!.vscode/settings.json

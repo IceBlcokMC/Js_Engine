@@ -1,0 +1,73 @@
+name: Build
+
+on:
+  push:
+    branches: [dev]
+    paths:
+      - src/**
+      - third-party/**
+      - patch/**
+      - xmake.lua
+      - .github/workflows/build.yml
+  pull_request:
+    branches: [dev]
+    paths:
+      - src/**
+      - third-party/**
+      - patch/**
+      - xmake.lua
+      - .github/workflows/build.yml
+  workflow_dispatch:
+
+env:
+  EndStoneVersion: "v0.5.6"
+  EndStoneSDKPath: "build/_deps/endstone-src"
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Checkout EndStone repo
+        uses: actions/checkout@v4
+        with:
+          repository: EndstoneMC/endstone
+          ref: ${{ env.EndStoneVersion }}
+          path: ${{ env.EndStoneSDKPath }}
+          fetch-depth: 0
+
+      - uses: actions/cache@v4
+        with:
+          path: |
+            ~/AppData/Local/.xmake
+          key: xmake-${{ hashFiles('xmake.lua') }}
+          restore-keys: |
+            xmake-
+
+      - name: Apply Patch
+        shell: pwsh
+        run: |
+          cd ${{ env.EndStoneSDKPath }}
+          git apply "${{ github.workspace }}/patch/cxx20.patch"
+
+      - uses: xmake-io/github-action-setup-xmake@v1
+        # with:
+        #   xmake-version: branch@master
+
+      - run: |
+          xmake repo -u
+
+      - run: |
+          xmake f -a x64 -m release -p windows -v -y
+
+      - run: |
+          xmake -v -y
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ github.event.repository.name }}-windows-x64-${{ github.sha }}
+          path: |
+            bin/
