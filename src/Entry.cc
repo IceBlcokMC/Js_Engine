@@ -6,11 +6,14 @@
 #include "endstone/detail/plugin/plugin_manager.h"
 #include "endstone/detail/server.h"
 #include "endstone/plugin/plugin_manager.h"
-#include <debugapi.h>
 #include <filesystem>
 #include <memory>
 #include <thread>
 #include <utility>
+
+#if defined(DEBUG) && defined(WIN32)
+#include <debugapi.h>
+#endif
 
 
 ENDSTONE_PLUGIN("js_engine", "0.1.0", Entry) {
@@ -30,7 +33,7 @@ void Entry::onLoad() {
     __Entry = this;
     getLogger().info("Js_Engine loading...");
 
-#ifdef DEBUG
+#if defined(WIN32) && defined(DEBUG)
     getLogger().setLevel(endstone::Logger::Debug);
     getLogger().info("Waiting for VC debugger attach...");
     while (!IsDebuggerPresent()) {

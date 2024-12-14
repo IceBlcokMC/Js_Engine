@@ -14,6 +14,34 @@ add_requires(
 )
 add_requires("magic_enum 0.9.7")
 
+if is_plat("linux") then
+    -- EndStone Linux Toolchain: LLVM5(Clang & libc++)
+    add_requires("libelf 0.8.13")
+    set_toolchains("clang")
+    
+    add_cxflags(
+        "-stdlib=libc++",
+        "-std=c++20",
+        "-fPIC",
+        "-fexceptions",
+        "-frtti",
+        {force = true}
+    )
+    
+    add_ldflags(
+        "-stdlib=libc++",
+        {force = true}
+    )
+
+    -- 显式链接必要的库
+    add_links("c++", "c++abi")
+
+    -- 设置环境变量确保使用正确的库
+    set_config("cc", "clang")
+    set_config("cxx", "clang++")
+    add_defines("_LIBCPP_VERSION")  -- 指示使用 libc++
+end
+
 if is_plat("windows") then
     if not has_config("vs_runtime") then
         set_runtimes("MD")
@@ -28,7 +56,7 @@ target("Js_Engine")
     )
     add_files("src/**.cc")
     add_includedirs(
-        "build/_deps/endstone-src/include", -- 使用 CMake 构建拉取的 EndStone
+        "build/_deps/endstone/include",
         "src"
     )
     add_packages(
@@ -80,14 +108,17 @@ target("Js_Engine")
         add_cxflags(
             "-fPIC",
             "-stdlib=libc++",
-            "-std=c++20"
+            "-std=c++20",
+            "-fexceptions",
+            "-frtti",
+            {force = true}
         )
         add_ldflags(
-            "-stdlib=libc++"
+            "-stdlib=libc++",
+            {force = true}
         )
-        add_links("c++", "c++abi")
-    else 
-        printf("${bright red}Platform %s is not supported", os.host())
+        add_syslinks("dl", "pthread")
+        add_packages("libelf")
     end 
 
 

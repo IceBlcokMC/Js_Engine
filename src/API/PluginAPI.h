@@ -2,8 +2,6 @@
 
 #include "Engine/EngineManager.h"
 #include "Engine/Using.h"
-#include "endstone/command/command.h"
-#include "endstone/command/plugin_command.h"
 #include "endstone/detail/server.h"
 #include "endstone/plugin/plugin.h"
 

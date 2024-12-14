@@ -19,7 +19,7 @@ on:
 
 env:
   EndStoneVersion: "v0.5.6"
-  EndStoneSDKPath: "build/_deps/endstone-src"
+  EndStoneSDKPath: "build/_deps/endstone"
 
 jobs:
   build:
