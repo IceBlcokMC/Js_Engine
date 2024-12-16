@@ -12,7 +12,6 @@ namespace jse {
 class JavaScriptPluginLoader : public endstone::PluginLoader {
 public:
     explicit JavaScriptPluginLoader(endstone::Server& server);
-    ~JavaScriptPluginLoader() override = default;
 
     [[nodiscard]] endstone::Plugin* loadPlugin(std::string file) override;
 

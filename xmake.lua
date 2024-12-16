@@ -71,8 +71,6 @@ target("Js_Engine")
         add_links("./third-party/quickjs/win/lib/quickjs.lib")
     elseif is_plat("linux") then
         -- TODO: Build QuickJs for Linux
-    else 
-        printf("${bright red}Platform %s is not supported", os.host())
     end 
 
 

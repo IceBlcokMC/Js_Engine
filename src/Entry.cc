@@ -37,14 +37,19 @@ void Entry::onLoad() {
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }
 #endif
-
-    getLogger().info("Load javascript plugin...");
-    auto& pluginManager = getServer().getPluginManager();
-    pluginManager.registerLoader(std::make_unique<jse::JavaScriptPluginLoader>(getServer()));
-    pluginManager.loadPlugins(std::move(jse::JavaScriptPluginLoader::filterPlugins(fs::current_path() / "plugins")));
+    // 不能在此注册加载器，否则会导致EndStone存放loader的vector重新分配内存，导致迭代器失效异常崩溃
 }
 
-void Entry::onEnable() { getLogger().info("Js_Engine enabled"); }
+void Entry::onEnable() {
+    getLogger().info("Load javascript plugin...");
+    auto& server        = getServer();
+    auto& pluginManager = server.getPluginManager();
+    pluginManager.registerLoader(std::make_unique<jse::JavaScriptPluginLoader>(server));
+    pluginManager.loadPlugins(std::move(jse::JavaScriptPluginLoader::filterPlugins(fs::current_path() / "plugins")));
+
+
+    getLogger().info("Js_Engine enabled");
+}
 
 void Entry::onDisable() {
     __Entry = nullptr;

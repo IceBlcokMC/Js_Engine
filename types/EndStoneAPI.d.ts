@@ -15,6 +15,9 @@ declare interface JSE_Plugin_Register {
   commands: any[]; // vector<Command> // TODO
   permissions: any[]; // vector<Permission> // TODO
 
+  /**
+   * @deprecated
+   */
   onLoad(): void;
   onEnable(): void;
   onDisable(): void;

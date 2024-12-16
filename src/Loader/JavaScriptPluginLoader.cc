@@ -25,39 +25,51 @@ std::vector<std::string> JavaScriptPluginLoader::getPluginFileFilters() const { 
 
 
 endstone::Plugin* JavaScriptPluginLoader::loadPlugin(std::string file) {
-    auto& manager = EngineManager::getInstance();
-    auto  path    = fs::path(file);
+    try {
+        auto& manager = EngineManager::getInstance();
+        auto  path    = fs::path(file);
 
-    // 创建引擎
-    auto        engine = manager.createEngine();
-    EngineScope scope(engine);
-    auto        data = ENGINE_DATA();
+        // 创建引擎
+        auto        engine = manager.createEngine();
+        EngineScope scope(engine);
+        auto        data = ENGINE_DATA();
 
-    data->mFileName = path.filename().string();
-    engine->loadFile(file);
+        data->mFileName = path.filename().string();
+        engine->loadFile(file);
 
-    // 解析注册数据创建 Plugin 实例
-    auto plugin = new JavaScriptPlugin(
-        data->mEngineId,
-        data->parseName(),
-        data->parseVersion(),
-        data->parseDescription(),
-        data->parseLoad(),
-        data->parseAuthors(),
-        data->parseContributors(),
-        data->parseWebsite(),
-        data->parsePrefix(),
-        data->parseProvides(),
-        data->parseDepend(),
-        data->parseSoftDepend(),
-        data->parseLoadBefore(),
-        data->parseDefaultPermission(),
-        data->parseCommands(),
-        data->parsePermissions()
-    );
-    data->mPlugin = plugin;
+        // 解析注册数据创建 Plugin 实例
+        auto plugin = new JavaScriptPlugin(
+            data->mEngineId,
+            data->parseName(),
+            data->parseVersion(),
+            data->parseDescription(),
+            data->parseLoad(),
+            data->parseAuthors(),
+            data->parseContributors(),
+            data->parseWebsite(),
+            data->parsePrefix(),
+            data->parseProvides(),
+            data->parseDepend(),
+            data->parseSoftDepend(),
+            data->parseLoadBefore(),
+            data->parseDefaultPermission(),
+            data->parseCommands(),
+            data->parsePermissions()
+        );
+        data->mPlugin = plugin;
 
-    return plugin;
+        return plugin;
+    } catch (script::Exception& e) {
+        GetEntry()->getLogger().error("Failed to load plugin: {}", file);
+        GetEntry()->getLogger().error("Error: {}", e.what());
+    } catch (std::exception& e) {
+        GetEntry()->getLogger().error("Failed to load plugin: {}", file);
+        GetEntry()->getLogger().error("Error: {}", e.what());
+    } catch (...) {
+        GetEntry()->getLogger().error("Failed to load plugin: {}", file);
+        GetEntry()->getLogger().error("Unknown error");
+    }
+    return nullptr;
 }
 
 
