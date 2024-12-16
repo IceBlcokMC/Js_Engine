@@ -58,7 +58,12 @@ JavaScriptPlugin::JavaScriptPlugin(
       commands.value_or(std::vector<endstone::Command>{}),
       permissions.value_or(std::vector<endstone::Permission>{})
   ) {}
-// JavaScriptPlugin::~JavaScriptPlugin() {}
+JavaScriptPlugin::~JavaScriptPlugin() {
+    EngineManager::getInstance().destroyEngine(this->engineId_);
+#ifdef DEBUG
+    std::cout << "JavaScriptPlugin::~JavaScriptPlugin()  Plugin: " << this->getName() << std::endl;
+#endif
+}
 
 void JavaScriptPlugin::onLoad() {
     auto        engine = EngineManager::getInstance().getEngine(this->engineId_);

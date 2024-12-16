@@ -2,7 +2,7 @@
 /// <reference path="../types/index.d.ts" />
 
 JSE_EndStone.register_plugin({
-  name: "test_engine",
+  name: "test_js_plugin",
   description: "测试",
   authors: ["engsr6982"],
   contributors: ["engsr6982"],
@@ -24,13 +24,13 @@ JSE_EndStone.register_plugin({
 });
 
 function test_logger() {
-  JSE_Logger.setLevel(6);
-  JSE_Logger.debug("==== Test Logger  ====");
-  JSE_Logger.info("==== Test Logger  ====");
   JSE_Logger.warning("==== Test Logger  ====");
-  JSE_Logger.error("==== Test Logger  ====");
-  JSE_Logger.trace("==== Test Logger  ====");
-  JSE_Logger.critical("==== Test Logger  ====");
+  JSE_Logger.info("logger info");
+  JSE_Logger.setLevel(0);
+  JSE_Logger.debug("logger debug");
+  JSE_Logger.error("logger error");
+  JSE_Logger.trace("logger trace");
+  JSE_Logger.critical("logger critical");
   JSE_Logger.info(
     `enable: ${JSE_Logger.isEnabledFor(6)}, name: ${JSE_Logger.getName()}`
   );

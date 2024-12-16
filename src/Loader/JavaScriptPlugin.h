@@ -25,7 +25,7 @@ public:
         const std::optional<std::vector<endstone::Command>>&    commands,
         const std::optional<std::vector<endstone::Permission>>& permissions
     );
-    // ~JavaScriptPlugin() override;
+    ~JavaScriptPlugin() override;
 
     void onLoad() override;
     void onEnable() override;
