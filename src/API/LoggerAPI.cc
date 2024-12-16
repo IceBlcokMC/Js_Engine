@@ -9,18 +9,19 @@
 
 namespace jse {
 
-ClassDefine<void> LoggerAPIClass = defineClass("JSE_Logger")
-                                       .function("log", &LoggerAPI::log)
-                                       .function("info", &LoggerAPI::info)
-                                       .function("warning", &LoggerAPI::warning)
-                                       .function("error", &LoggerAPI::error)
-                                       .function("debug", &LoggerAPI::debug)
-                                       .function("trace", &LoggerAPI::trace)
-                                       .function("critical", &LoggerAPI::critical)
-                                       .function("setLevel", &LoggerAPI::setLevel)
-                                       .function("isEnabledFor", &LoggerAPI::isEnabledFor)
-                                       .function("getName", &LoggerAPI::getName)
-                                       .build();
+ClassDefine<LoggerAPI> LoggerAPIClass = defineClass<LoggerAPI>("Logger")
+                                            .constructor(nullptr)
+                                            .instanceFunction("log", &LoggerAPI::log)
+                                            .instanceFunction("info", &LoggerAPI::info)
+                                            .instanceFunction("warning", &LoggerAPI::warning)
+                                            .instanceFunction("error", &LoggerAPI::error)
+                                            .instanceFunction("debug", &LoggerAPI::debug)
+                                            .instanceFunction("trace", &LoggerAPI::trace)
+                                            .instanceFunction("critical", &LoggerAPI::critical)
+                                            .instanceFunction("setLevel", &LoggerAPI::setLevel)
+                                            .instanceFunction("isEnabledFor", &LoggerAPI::isEnabledFor)
+                                            .instanceFunction("getName", &LoggerAPI::getName)
+                                            .build();
 
 Local<Value> LoggerAPIHelper(endstone::Logger::Level level, string const& message) {
     try {

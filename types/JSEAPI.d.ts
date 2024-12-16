@@ -1,3 +1,4 @@
+
 declare interface JSE_Plugin_Register {
   name: string;
   version: string;
@@ -23,8 +24,13 @@ declare interface JSE_Plugin_Register {
   onDisable(): void;
 }
 
-declare class JSE_EndStone {
-  static register_plugin(information: JSE_Plugin_Register): void;
+declare class JSE {
+  static registerPlugin(information: JSE_Plugin_Register): void;
 
-  static get_plugin(): any; // TODO: Define plugin type
+  /**
+   * 获取当前插件实例(自身)
+   */
+  static getPlugin(): Plugin;
+
+  static debug(...args: any[]): void;
 }

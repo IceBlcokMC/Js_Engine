@@ -11,16 +11,16 @@
  */
 type LoggerLevel = 0 | 1 | 2 | 3 | 4 | 5 | 6;
 
-declare class JSE_Logger {
-  static log(level: LoggerLevel, ...message: any[]): boolean;
-  static info(...message: any[]): boolean;
-  static warning(...message: any[]): boolean;
-  static error(...message: any[]): boolean;
-  static debug(...message: any[]): boolean;
-  static trace(...message: any[]): boolean;
-  static critical(...message: any[]): boolean;
+declare class Logger {
+  log(level: LoggerLevel, ...message: any[]): boolean;
+  info(...message: any[]): boolean;
+  warning(...message: any[]): boolean;
+  error(...message: any[]): boolean;
+  debug(...message: any[]): boolean;
+  trace(...message: any[]): boolean;
+  critical(...message: any[]): boolean;
 
-  static setLevel(level: LoggerLevel): void;
-  static isEnabledFor(level: LoggerLevel): boolean;
-  static getName(): string;
+  setLevel(level: LoggerLevel): void;
+  isEnabledFor(level: LoggerLevel): boolean;
+  getName(): string;
 }
