@@ -1,4 +1,3 @@
-
 declare interface JSE_Plugin_Register {
   name: string;
   version: string;
@@ -25,6 +24,10 @@ declare interface JSE_Plugin_Register {
 }
 
 declare class JSE {
+  /**
+   * 向引擎注册插件（由引擎向EndStone注册实例）
+   * @param information 插件信息
+   */
   static registerPlugin(information: JSE_Plugin_Register): void;
 
   /**

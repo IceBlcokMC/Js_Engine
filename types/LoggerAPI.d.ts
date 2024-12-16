@@ -1,5 +1,3 @@
-// endstone logger.h
-
 /**
  * 0: Trace
  * 1: Debug
@@ -8,6 +6,7 @@
  * 4: Error
  * 5: Critical
  * 6: Off
+ * https://endstone.readthedocs.io/en/latest/reference/cpp/logger_8h_source/
  */
 type LoggerLevel = 0 | 1 | 2 | 3 | 4 | 5 | 6;
 
