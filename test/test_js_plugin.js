@@ -15,6 +15,7 @@ JSE.registerPlugin({
     JSE.debug("onEnable called");
     test_plugin();
     test_logger();
+    checkTypeOf();
   },
 
   onDisable: function () {
@@ -41,4 +42,10 @@ function test_logger() {
   logger.trace("logger trace");
   logger.critical("logger critical");
   logger.info(`enable: ${logger.isEnabledFor(5)}, name: ${logger.getName()}`);
+}
+
+function checkTypeOf() {
+  JSE.debug("==== Check Type Of ====");
+  JSE.debug(`Logger: `, logger);
+  JSE.debug(`Plugin: `, plugin);
 }

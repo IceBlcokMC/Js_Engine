@@ -1,9 +1,12 @@
 #include "APIHelper.h"
+#include "API/LoggerAPI.h"
+#include "API/PluginAPI.h"
 #include "Entry.h"
 #include "Utils/Util.h"
 #include "fmt/core.h"
 #include "fmt/format.h"
 #include <iostream>
+
 
 namespace jse {
 
@@ -103,6 +106,8 @@ void ToString(Local<Array> const& value, std::ostringstream& oss) {
     }
 }
 void ToString(Local<Object> const& value, std::ostringstream& oss) {
+    if (InstanceToString(value, oss)) return; // Instance
+
     std::vector<string> keys = value.getKeyNames();
     if (keys.empty()) {
         oss << "{}";
@@ -124,6 +129,21 @@ void ToString(Local<Object> const& value, std::ostringstream& oss) {
         oss << "<Circular Object>"; // 循环引用
     }
 }
+
+bool InstanceToString(const Local<Value>& value, std::ostringstream& oss) {
+#define Of(Class, Str)                                                                                                 \
+    if (IsInstanceOf<Class>(value)) {                                                                                  \
+        oss << Str;                                                                                                    \
+        return true;                                                                                                   \
+    }
+
+    // TODO: Add more types
+    Of(PluginAPI, "<Plugin>");
+    Of(LoggerAPI, "<Logger>");
+
+    return false;
+}
+
 
 void PrintException(string const& msg, string const& func, string const& plugin, string const& api) {
     return PrintException(script::Exception(msg), func, plugin, api);
