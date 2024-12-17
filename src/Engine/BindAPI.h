@@ -2,6 +2,7 @@
 #include "API/JSEAPI.h"
 #include "API/LoggerAPI.h"
 #include "API/PluginAPI.h"
+#include "API/PluginDescription.h"
 #include "Using.h"
 
 
@@ -15,6 +16,7 @@ inline void BindAPI(ScriptEngine* engine) {
     // instance class
     engine->registerNativeClass<PluginAPI>(PluginAPIClass);
     engine->registerNativeClass<LoggerAPI>(LoggerAPIClass);
+    engine->registerNativeClass<PluginDescriptionAPI>(PluginDescriptionAPIClass);
 }
 
 

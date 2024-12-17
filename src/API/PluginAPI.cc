@@ -1,5 +1,6 @@
 #include "PluginAPI.h"
 #include "API/LoggerAPI.h"
+#include "API/PluginDescription.h"
 #include "APIHelper.h"
 #include "Engine/EngineData.h"
 #include "Engine/Using.h"
@@ -25,7 +26,12 @@ ClassDefine<PluginAPI> PluginAPIClass = defineClass<PluginAPI>("Plugin")
                                             .build();
 
 
-Local<Value> PluginAPI::getDescription(Arguments const& args) { return Local<Value>(); }
+Local<Value> PluginAPI::getDescription(Arguments const& args) {
+    try {
+        return PluginDescriptionAPI::newPluginDescriptionAPI();
+    }
+    Catch;
+}
 
 Local<Value> PluginAPI::onLoad(Arguments const& args) {
     try {

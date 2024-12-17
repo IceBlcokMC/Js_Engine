@@ -1,5 +1,5 @@
 declare class Plugin {
-  getDescription(): any; // TODO
+  getDescription(): PluginDescriptionAPI;
 
   onLoad(): void;
 
