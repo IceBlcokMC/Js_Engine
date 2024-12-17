@@ -9,6 +9,19 @@ JSE.registerPlugin({
   contributors: ["engsr6982"],
   website: "https://github.com/engsr6982",
   prefix: "JsPlugin",
+  permissions: {
+    "test.js_plugin.hello": {
+      description: "test permission",
+      default: "True",
+    },
+  },
+  commands: {
+    hello: {
+      description: "hello test command",
+      usages: ["/hello"],
+      permissions: ["test.js_plugin.hello"],
+    },
+  },
 
   // func
   onLoad: function () {

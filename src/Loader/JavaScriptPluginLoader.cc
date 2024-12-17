@@ -34,28 +34,29 @@ endstone::Plugin* JavaScriptPluginLoader::loadPlugin(std::string file) {
         EngineScope scope(engine);
         auto        data = ENGINE_DATA();
 
+        // 加载文件
         data->mFileName = path.filename().string();
         engine->loadFile(file);
 
-        // 解析注册数据创建 Plugin 实例
-        auto plugin = new JavaScriptPlugin(
-            data->mEngineId,
-            data->parseName(),
-            data->parseVersion(),
-            data->parseDescription(),
-            data->parseLoad(),
-            data->parseAuthors(),
-            data->parseContributors(),
-            data->parseWebsite(),
-            data->parsePrefix(),
-            data->parseProvides(),
-            data->parseDepend(),
-            data->parseSoftDepend(),
-            data->parseLoadBefore(),
-            data->parseDefaultPermission(),
-            data->parseCommands(),
-            data->parsePermissions()
-        );
+        // 解析注册数据
+        JsPluginDescriptionBuilder builder{};
+        builder.description        = data->tryParseDescription();
+        builder.load               = data->tryParseLoad();
+        builder.authors            = data->tryParseAuthors();
+        builder.contributors       = data->tryParseContributors();
+        builder.website            = data->tryParseWebsite();
+        builder.prefix             = data->tryParsePrefix();
+        builder.provides           = data->tryParseProvides();
+        builder.depend             = data->tryParseDepend();
+        builder.soft_depend        = data->tryParseSoftDepend();
+        builder.load_before        = data->tryParseLoadBefore();
+        builder.default_permission = data->tryParseDefaultPermission();
+        data->tryParseCommands(builder);
+        data->tryParsePermissions(builder);
+
+        // 创建插件实例
+        auto plugin =
+            new JavaScriptPlugin(data->mEngineId, builder.build(data->tryParseName(), data->tryParseVersion()));
         data->mPlugin = plugin;
 
         return plugin;

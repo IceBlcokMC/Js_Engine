@@ -8,7 +8,7 @@
  * 6: Off
  * https://endstone.readthedocs.io/en/latest/reference/cpp/logger_8h_source/
  */
-type LoggerLevel = 0 | 1 | 2 | 3 | 4 | 5 | 6;
+declare type LoggerLevel = 0 | 1 | 2 | 3 | 4 | 5 | 6;
 
 declare class Logger {
   log(level: LoggerLevel, ...message: any[]): boolean;

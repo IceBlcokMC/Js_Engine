@@ -32,26 +32,31 @@ void Entry::onLoad() {
 #ifdef DEBUG
     getLogger().setLevel(endstone::Logger::Debug);
     getLogger().info("Waiting for VC debugger attach...");
-    // while (!IsDebuggerPresent()) {
-    //     std::this_thread::sleep_for(std::chrono::milliseconds(100));
-    // }
+    while (!IsDebuggerPresent()) {
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    }
 #endif
-    // 不能在此注册加载器，否则会导致EndStone存放loader的vector重新分配内存，导致迭代器失效异常崩溃
-}
-
-void Entry::onEnable() {
     getLogger().info("Load javascript plugin...");
     auto& server        = getServer();
     auto& pluginManager = server.getPluginManager();
     pluginManager.registerLoader(std::make_unique<jse::JavaScriptPluginLoader>(server));
-    auto plugins =
-        pluginManager.loadPlugins(std::move(jse::JavaScriptPluginLoader::filterPlugins(fs::current_path() / "plugins"))
-        );
-    for (auto& plugin : plugins) {
-        if (!plugin->isEnabled()) {
-            pluginManager.enablePlugin(*plugin); // 由于 onEnable 流程结束，这里手动调用 enablePlugin
-        }
-    }
+    pluginManager.loadPlugins(std::move(jse::JavaScriptPluginLoader::filterPlugins(fs::current_path() / "plugins")));
+}
+
+void Entry::onEnable() {
+    // getLogger().info("Load javascript plugin...");
+    // auto& server        = getServer();
+    // auto& pluginManager = server.getPluginManager();
+    // pluginManager.registerLoader(std::make_unique<jse::JavaScriptPluginLoader>(server));
+    // auto plugins =
+    //     pluginManager.loadPlugins(std::move(jse::JavaScriptPluginLoader::filterPlugins(fs::current_path() /
+    //     "plugins"))
+    //     );
+    // for (auto& plugin : plugins) {
+    //     if (!plugin->isEnabled()) {
+    //         pluginManager.enablePlugin(*plugin); // 由于 onEnable 流程结束，这里手动调用 enablePlugin
+    //     }
+    // }
 }
 
 void Entry::onDisable() { __Entry = nullptr; }

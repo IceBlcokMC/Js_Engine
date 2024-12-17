@@ -22,42 +22,6 @@
 namespace jse {
 
 
-JavaScriptPlugin::JavaScriptPlugin(
-    uint64_t                                                engineId,
-    std::string                                             name,
-    std::string                                             version,
-    const std::optional<std::string>&                       description,
-    std::optional<endstone::PluginLoadOrder>                load,
-    const std::optional<std::vector<std::string>>&          authors,
-    const std::optional<std::vector<std::string>>&          contributors,
-    const std::optional<std::string>&                       website,
-    const std::optional<std::string>&                       prefix,
-    const std::optional<std::vector<std::string>>&          provides,
-    const std::optional<std::vector<std::string>>&          depend,
-    const std::optional<std::vector<std::string>>&          soft_depend,
-    const std::optional<std::vector<std::string>>&          load_before,
-    std::optional<endstone::PermissionDefault>              default_permission,
-    const std::optional<std::vector<endstone::Command>>&    commands,
-    const std::optional<std::vector<endstone::Permission>>& permissions
-)
-: engineId_(engineId),
-  description_(
-      std::move(name),
-      std::move(version),
-      description.value_or(""),
-      load.value_or(endstone::PluginLoadOrder::PostWorld),
-      authors.value_or(std::vector<std::string>{}),
-      contributors.value_or(std::vector<std::string>{}),
-      website.value_or(""),
-      prefix.value_or(""),
-      provides.value_or(std::vector<std::string>{}),
-      depend.value_or(std::vector<std::string>{}),
-      soft_depend.value_or(std::vector<std::string>{}),
-      load_before.value_or(std::vector<std::string>{}),
-      default_permission.value_or(endstone::PermissionDefault::Operator),
-      commands.value_or(std::vector<endstone::Command>{}),
-      permissions.value_or(std::vector<endstone::Permission>{})
-  ) {}
 JavaScriptPlugin::~JavaScriptPlugin() {
     EngineManager::getInstance().destroyEngine(this->engineId_);
 #ifdef DEBUG
