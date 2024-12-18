@@ -156,7 +156,7 @@ void PrintException(script::Exception const& e, string const& func, string const
     string in_api    = fmt::format("In API: {}", api);
     string stack     = fmt::format("scriptx::Exception: {}\n{}", e.what(), e.stacktrace());
 
-    auto ptr = GetEntry();
+    auto ptr = Entry::getInstance();
     if (ptr) {
         ptr->getLogger().error(fail_msg);
         ptr->getLogger().error(in_plugin);

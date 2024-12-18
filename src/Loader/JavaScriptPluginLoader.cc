@@ -61,14 +61,14 @@ endstone::Plugin* JavaScriptPluginLoader::loadPlugin(std::string file) {
 
         return plugin;
     } catch (script::Exception& e) {
-        GetEntry()->getLogger().error("Failed to load plugin: {}", file);
-        GetEntry()->getLogger().error("Error: {}", e.what());
+        Entry::getInstance()->getLogger().error("Failed to load plugin: {}", file);
+        Entry::getInstance()->getLogger().error("Error: {}", e.what());
     } catch (std::exception& e) {
-        GetEntry()->getLogger().error("Failed to load plugin: {}", file);
-        GetEntry()->getLogger().error("Error: {}", e.what());
+        Entry::getInstance()->getLogger().error("Failed to load plugin: {}", file);
+        Entry::getInstance()->getLogger().error("Error: {}", e.what());
     } catch (...) {
-        GetEntry()->getLogger().error("Failed to load plugin: {}", file);
-        GetEntry()->getLogger().error("Unknown error");
+        Entry::getInstance()->getLogger().error("Failed to load plugin: {}", file);
+        Entry::getInstance()->getLogger().error("Unknown error");
     }
     return nullptr;
 }
