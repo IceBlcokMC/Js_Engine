@@ -26,6 +26,10 @@ public:
 
     const endstone::PluginDescription& getDescription() const override;
 
+    bool
+    onCommand(endstone::CommandSender& sender, const endstone::Command& command, const std::vector<std::string>& args)
+        override;
+
 private:
     uint64_t                    engineId_;
     endstone::PluginDescription description_;

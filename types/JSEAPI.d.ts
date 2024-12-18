@@ -27,6 +27,7 @@ declare type PermissionBuilder = {
   };
 };
 
+// https://endstone.readthedocs.io/en/latest/tutorials/register-commands/#built-in-types
 declare type CommandBuilder<P extends PermissionBuilder> = {
   [key: string]: {
     description: string;
@@ -57,6 +58,7 @@ declare interface JsPluginBuilder<
   onLoad(): void;
   onEnable(): void;
   onDisable(): void;
+  onCommand(): boolean; // TODO
 }
 
 declare class JSE {
