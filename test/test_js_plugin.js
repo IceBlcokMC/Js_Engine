@@ -14,12 +14,16 @@ JSE.registerPlugin({
       description: "test permission",
       default: "True",
     },
+    "test.a1": {
+      description: "test permission",
+      default: "True",
+    },
   },
   commands: {
     hello: {
       description: "hello test command",
       usages: ["/hello"],
-      permissions: ["test.js_plugin.hello"],
+      permissions: ["test.js_plugin.hello", "test.a1"],
     },
   },
 

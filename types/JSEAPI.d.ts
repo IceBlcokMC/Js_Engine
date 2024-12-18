@@ -20,21 +20,24 @@ declare type PluginLoadOrder =
    */
   | "PostWorld";
 
-declare type CommandBuilder = {
-  [key: string]: {
-    description: string;
-    usages: string[];
-    permissions: string[];
-  };
-};
 declare type PermissionBuilder = {
-  [key: string]: {
+  [K: string]: {
     description: string;
     default: PermissionDefault;
   };
 };
 
-declare interface JsPluginBuilder {
+declare type CommandBuilder<P extends PermissionBuilder> = {
+  [key: string]: {
+    description: string;
+    usages: string[];
+    permissions: Array<keyof P>;
+  };
+};
+
+declare interface JsPluginBuilder<
+  P extends PermissionBuilder = PermissionBuilder
+> {
   name: string;
   version: string;
   description: string;
@@ -48,8 +51,8 @@ declare interface JsPluginBuilder {
   soft_depend: string[];
   load_before: string[];
   default_permission: PermissionDefault;
-  commands: CommandBuilder;
-  permissions: PermissionBuilder;
+  permissions: P;
+  commands: CommandBuilder<P>;
 
   onLoad(): void;
   onEnable(): void;
@@ -61,7 +64,9 @@ declare class JSE {
    * 向引擎注册插件（由引擎向EndStone注册实例）
    * @param information 插件信息
    */
-  static registerPlugin(information: JsPluginBuilder): void;
+  static registerPlugin<P extends PermissionBuilder>(
+    information: JsPluginBuilder<P>
+  ): void;
 
   /**
    * 获取当前插件实例(自身)
