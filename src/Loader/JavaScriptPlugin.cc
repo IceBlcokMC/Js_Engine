@@ -56,6 +56,29 @@ void JavaScriptPlugin::onDisable() {
     CatchNotReturn;
 }
 
+bool JavaScriptPlugin::onCommand(
+    endstone::CommandSender&        sender,
+    const endstone::Command&        command,
+    const std::vector<std::string>& args
+) {
+    auto        engine = EngineManager::getInstance().getEngine(this->engineId_);
+    EngineScope scope(engine);
+    try {
+        auto data = ENGINE_DATA();
+        auto obj  = data->mRegisterInfo.get();
+        if (obj.has("onCommand")) {
+            auto func = obj.get("onCommand");
+            if (func.isFunction()) {
+                // TODO: args
+                return func.asFunction().call().asBoolean().value();
+            }
+        }
+        GetEntry()->getLogger().error("Plugin '{}' does not register onCommand function", data->mFileName);
+    }
+    CatchNotReturn;
+    return true;
+}
+
 endstone::PluginDescription const& JavaScriptPlugin::getDescription() const { return this->description_; }
 
 

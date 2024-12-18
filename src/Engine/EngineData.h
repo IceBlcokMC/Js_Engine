@@ -32,7 +32,6 @@ public:
             auto func = obj.get("onLoad");
             if (func.isFunction()) {
                 func.asFunction().call();
-                Entry::getInstance()->getLogger().warning("onLoad function is deprecated, use onEnable instead");
                 return;
             }
         }
