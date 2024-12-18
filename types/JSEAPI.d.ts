@@ -51,9 +51,6 @@ declare interface JsPluginBuilder {
   commands: CommandBuilder;
   permissions: PermissionBuilder;
 
-  /**
-   * @deprecated
-   */
   onLoad(): void;
   onEnable(): void;
   onDisable(): void;
