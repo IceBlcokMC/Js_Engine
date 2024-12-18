@@ -73,7 +73,7 @@ bool JavaScriptPlugin::onCommand(
                 return func.asFunction().call().asBoolean().value();
             }
         }
-        GetEntry()->getLogger().error("Plugin '{}' does not register onCommand function", data->mFileName);
+        Entry::getInstance()->getLogger().error("Plugin '{}' does not register onCommand function", data->mFileName);
     }
     CatchNotReturn;
     return true;

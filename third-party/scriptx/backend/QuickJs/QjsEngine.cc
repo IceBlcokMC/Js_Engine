@@ -17,7 +17,8 @@
 
 #include "QjsEngine.h"
 #include <ScriptX/ScriptX.h>
-#include "../../src/utils/Helper.hpp"
+
+#include "quickjs-libc.h"
 
 namespace script::qjs_backend {
 
@@ -38,7 +39,7 @@ constexpr auto kGetByteBufferInfo = R"(
   const kUint32 = 0x604;
   const kInt64 = 0x708;
   const kUint64 = 0x808;
-  const KFloat32 = 0x904;
+  const kFloat32 = 0x904;
   const kFloat64 = 0xa08;
 
   let byteBuffer = val;
@@ -65,7 +66,7 @@ constexpr auto kGetByteBufferInfo = R"(
     } else if (val instanceof Uint32Array) {
       type = kUint32;
     } else if (val instanceof Float32Array) {
-      type = KFloat32;
+      type = kFloat32;
     } else if (val instanceof Float64Array) {
       type = kFloat64;
     } else if (val instanceof BigInt64Array) {
@@ -195,9 +196,10 @@ void QjsEngine::destroy() noexcept {
   delete this;
 }
 
-void QjsEngine::scheduleTick() {
+void QjsEngine::triggerTick() {
   bool no = false;
-  if (tickScheduled_.compare_exchange_strong(no, true)) {
+  if (!isDestroying() && JS_IsJobPending(runtime_) &&
+      tickScheduled_.compare_exchange_strong(no, true)) {
     utils::Message tick(
         [](auto& m) {
           auto eng = static_cast<QjsEngine*>(m.ptr0);
@@ -207,9 +209,7 @@ void QjsEngine::scheduleTick() {
           }
           eng->tickScheduled_ = false;
         },
-        [](auto& m) {
-
-        });
+        nullptr);
     tick.ptr0 = this;
     tick.tag = this;
     queue_->postMessage(tick);
@@ -267,7 +267,7 @@ Local<Value> QjsEngine::eval(const Local<String>& script, const Local<Value>& so
   }
   qjs_backend::checkException(ret);
 
-  scheduleTick();
+  triggerTick();
 
   return Local<Value>(ret);
 }
@@ -298,7 +298,7 @@ Local<Value> QjsEngine::loadFile(const Local<String>& scriptFile) {
       JS_EVAL_TYPE_MODULE);
     
   qjs_backend::checkException(ret);
-  scheduleTick();
+  triggerTick();
 
   return Local<Value>(ret);
 }
@@ -325,6 +325,162 @@ ScriptLanguage QjsEngine::getLanguageType() { return ScriptLanguage::kJavaScript
 std::string QjsEngine::getEngineVersion() { return "QuickJS"; }
 
 bool QjsEngine::isDestroying() const { return isDestroying_; }
+void QjsEngine::performRegisterNativeClass(
+    internal::TypeIndex typeIndex, const internal::ClassDefineState* classDefine,
+    script::ScriptClass* (*instanceTypeToScriptClass)(void*)) {
+  auto ns = internal::getNamespaceObject(this, classDefine->nameSpace, getGlobal()).asObject();
+
+  auto hasInstance = classDefine->instanceDefine.constructor;
+
+  // static only
+  auto module =
+      hasInstance ? newConstructor(classDefine, instanceTypeToScriptClass) : Object::newObject();
+  registerNativeStatic(module, classDefine->staticDefine);
+
+  if (hasInstance) {
+    auto proto = newPrototype(classDefine);
+    nativeInstanceRegistry_.emplace(
+        classDefine,
+        std::pair{qjs_interop::getLocal(proto, context_), qjs_interop::getLocal(module, context_)});
+    module.set("prototype", proto);
+  }
+  ns.set(classDefine->className, module);
+}
+
+Local<Object> QjsEngine::newConstructor(
+    const internal::ClassDefineState* classDefine,
+    ScriptClass* (*instanceTypeToScriptClass)(void* instancePointer)) {
+  auto ret = newRawFunction(
+      this, const_cast<internal::ClassDefineState*>(classDefine),
+      reinterpret_cast<void*>(instanceTypeToScriptClass),
+      [](const Arguments& args, void* data, void* caster, bool isConstructorCall) {
+        auto classDefine = static_cast<const internal::ClassDefineState*>(data);
+        auto instanceTypeToScriptClass = reinterpret_cast<ScriptClass* (*)(void*)>(caster);
+        auto engine = args.template engineAs<QjsEngine>();
+
+        Tracer trace(engine, classDefine->className);
+
+        // For Constructor the this_val is new.target, which must be the constructor.
+        // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/new.target
+        if (!JS_IsConstructor(engine->context_, args.callbackInfo_.thiz_)) {
+          throw Exception(u8"constructor can't be called as function");
+        }
+
+        auto registry = engine->nativeInstanceRegistry_.find(classDefine);
+        assert(registry != engine->nativeInstanceRegistry_.end());
+
+        auto obj = JS_NewObjectClass(engine->context_, kInstanceClassId);
+        auto ret = JS_SetPrototype(engine->context_, obj, registry->second.first);
+        checkException(ret);
+
+        void* instance = nullptr;
+        if (args.size() == 1) {
+          auto ptr = JS_GetOpaque(qjs_interop::peekLocal(args[0]), kPointerClassId);
+          if (ptr != nullptr) {
+            // this logic is for
+            // ScriptClass::ScriptClass(ConstructFromCpp<T>)
+            instance = ptr;
+          }
+        }
+
+        if (instance == nullptr) {
+          // this logic is for
+          // ScriptClass::ScriptClass(const Local<Object>& thiz)
+          auto callbackInfo = args.callbackInfo_;
+          callbackInfo.thiz_ = obj;
+
+          instance = classDefine->instanceDefine.constructor(Arguments(callbackInfo));
+          if (instance == nullptr) {
+            throw Exception("can't create class " + classDefine->className);
+          }
+        }
+
+        auto opaque = new InstanceClassOpaque();
+        opaque->scriptClassPolymorphicPointer = instance;
+        opaque->scriptClassPointer = instanceTypeToScriptClass(instance);
+        opaque->classDefine = classDefine;
+        JS_SetOpaque(obj, opaque);
+
+        return qjs_interop::makeLocal<Value>(obj);
+      });
+
+  auto obj = qjs_interop::getLocal(ret);
+  qjs_backend::checkException(JS_SetConstructorBit(context_, obj, true));
+  return qjs_interop::makeLocal<Object>(obj);
+}
+
+Local<Object> QjsEngine::newPrototype(const internal::ClassDefineState* define) {
+  auto proto = Object::newObject();
+  using IDT = internal::InstanceDefine;
+
+  auto definePtr = const_cast<internal::ClassDefineState*>(define);
+
+  auto& def = define->instanceDefine;
+  for (auto&& f : def.functions) {
+    using FuncDef = typename IDT::FunctionDefine;
+
+    auto fun = newRawFunction(this, const_cast<FuncDef*>(&f), definePtr,
+                              [](const Arguments& args, void* data1, void* data2, bool) {
+                                auto ptr = static_cast<InstanceClassOpaque*>(JS_GetOpaque(
+                                    qjs_interop::peekLocal(args.thiz()), kInstanceClassId));
+                                if (ptr == nullptr || ptr->classDefine != data2) {
+                                  throw Exception(u8"call function on wrong receiver");
+                                }
+                                auto f = static_cast<FuncDef*>(data1);
+                                Tracer tracer(args.engine(), f->traceName);
+                                return (f->callback)(ptr->scriptClassPolymorphicPointer, args);
+                              });
+    proto.set(f.name, fun);
+  }
+
+  for (auto&& prop : def.properties) {
+    using PropDef = typename IDT::PropertyDefine;
+
+    Local<Value> getterFun;
+    Local<Value> setterFun;
+
+    if (prop.getter) {
+      getterFun = newRawFunction(this, const_cast<PropDef*>(&prop), definePtr,
+                                 [](const Arguments& args, void* data1, void* data2, bool) {
+                                   auto ptr = static_cast<InstanceClassOpaque*>(JS_GetOpaque(
+                                       qjs_interop::peekLocal(args.thiz()), kInstanceClassId));
+                                   if (ptr == nullptr || ptr->classDefine != data2) {
+                                     throw Exception(u8"call function on wrong receiver");
+                                   }
+                                   auto p = static_cast<PropDef*>(data1);
+                                   Tracer tracer(args.engine(), p->traceName);
+                                   return (p->getter)(ptr->scriptClassPolymorphicPointer);
+                                 })
+                      .asValue();
+    }
+
+    if (prop.setter) {
+      setterFun = newRawFunction(this, const_cast<PropDef*>(&prop), definePtr,
+                                 [](const Arguments& args, void* data1, void* data2, bool) {
+                                   auto ptr = static_cast<InstanceClassOpaque*>(JS_GetOpaque(
+                                       qjs_interop::peekLocal(args.thiz()), kInstanceClassId));
+                                   if (ptr == nullptr || ptr->classDefine != data2) {
+                                     throw Exception(u8"call function on wrong receiver");
+                                   }
+                                   auto p = static_cast<PropDef*>(data1);
+                                   Tracer tracer(args.engine(), p->traceName);
+
+                                   (p->setter)(ptr->scriptClassPolymorphicPointer, args[0]);
+                                   return Local<Value>();
+                                 })
+                      .asValue();
+    }
+
+    auto atom = JS_NewAtomLen(context_, prop.name.c_str(), prop.name.length());
+
+    auto ret = JS_DefinePropertyGetSet(context_, qjs_interop::peekLocal(proto), atom,
+                                       qjs_interop::getLocal(getterFun),
+                                       qjs_interop::getLocal(setterFun), JS_PROP_C_W_E);
+    JS_FreeAtom(context_, atom);
+    qjs_backend::checkException(ret);
+  }
+  return proto;
+}
 
 void QjsEngine::registerNativeStatic(const Local<Object>& module,
                                      const internal::StaticDefine& def) {
@@ -373,6 +529,43 @@ void QjsEngine::registerNativeStatic(const Local<Object>& module,
     JS_FreeAtom(context_, atom);
     qjs_backend::checkException(ret);
   }
+}
+
+Local<Object> QjsEngine::performNewNativeClass(internal::TypeIndex typeIndex,
+                                               const internal::ClassDefineState* classDefine,
+                                               size_t size, const Local<script::Value>* args) {
+  auto it = nativeInstanceRegistry_.find(classDefine);
+  if (it != nativeInstanceRegistry_.end()) {
+    auto ctor = it->second.second;
+    auto constructor = qjs_interop::makeLocal<Object>(qjs_backend::dupValue(ctor, context_));
+    return Object::newObjectImpl(constructor, size, args);
+  }
+
+  throw Exception("class define[" + classDefine->className + "] is not registered");
+}
+
+bool QjsEngine::performIsInstanceOf(const Local<script::Value>& value,
+                                    const internal::ClassDefineState* classDefine) {
+  if (!value.isObject()) return false;
+
+  auto it = nativeInstanceRegistry_.find(classDefine);
+  if (it != nativeInstanceRegistry_.end()) {
+    return value.asObject().instanceOf(
+        qjs_interop::makeLocal<Value>(qjs_backend::dupValue(it->second.second, context_)));
+  }
+
+  return false;
+}
+
+void* QjsEngine::performGetNativeInstance(const Local<script::Value>& value,
+                                          const internal::ClassDefineState* classDefine) {
+  if (!performIsInstanceOf(value, classDefine)) {
+    return nullptr;
+  }
+
+  return static_cast<InstanceClassOpaque*>(
+             JS_GetOpaque(qjs_interop::peekLocal(value), kInstanceClassId))
+      ->scriptClassPolymorphicPointer;
 }
 
 }  // namespace script::qjs_backend
