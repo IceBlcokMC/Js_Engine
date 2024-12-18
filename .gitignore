@@ -8,3 +8,4 @@ EndStone-SDK
 
 .vscode
 !.vscode/settings.json
+/.cache
