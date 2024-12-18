@@ -35,7 +35,7 @@ public:
                 return;
             }
         }
-        GetEntry()->getLogger().error("Plugin '{}' does not register onLoad function", this->mFileName);
+        Entry::getInstance()->getLogger().error("Plugin '{}' does not register onLoad function", this->mFileName);
     }
 
     void callOnEnable() {
@@ -47,7 +47,7 @@ public:
                 return;
             }
         }
-        GetEntry()->getLogger().error("Plugin '{}' does not register onEnable function", this->mFileName);
+        Entry::getInstance()->getLogger().error("Plugin '{}' does not register onEnable function", this->mFileName);
     }
 
     void callOnDisable() {
@@ -59,7 +59,7 @@ public:
                 return;
             }
         }
-        GetEntry()->getLogger().error("Plugin '{}' does not register onDisable function", this->mFileName);
+        Entry::getInstance()->getLogger().error("Plugin '{}' does not register onDisable function", this->mFileName);
     }
 
 public:

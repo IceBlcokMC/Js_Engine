@@ -13,22 +13,16 @@
 #include <thread>
 #include <utility>
 
+using endstone::detail::EndstoneServer;
 
-ENDSTONE_PLUGIN("js_engine", "0.1.0", Entry) {
-    description  = "JavaScript Engine";
-    authors      = {"engsr6982"};
-    contributors = {"engsr6982"};
-    website      = "https://github.com/engsr6982/Js_Engine";
+namespace jse {
+
+Entry* Entry::getInstance() {
+    static Entry* instance = new Entry();
+    return instance;
 }
 
-
-Entry* __Entry = nullptr;
-Entry* GetEntry() { return __Entry; }
-
-
-using endstone::detail::EndstoneServer;
 void Entry::onLoad() {
-    __Entry = this;
 #ifdef DEBUG
     getLogger().setLevel(endstone::Logger::Debug);
     getLogger().info("Waiting for VC debugger attach...");
@@ -59,4 +53,10 @@ void Entry::onEnable() {
     // }
 }
 
-void Entry::onDisable() { __Entry = nullptr; }
+void Entry::onDisable() {}
+
+endstone::PluginDescription const& Entry::getDescription() const { return description_; }
+
+} // namespace jse
+
+extern "C" __declspec(dllexport) endstone::Plugin* init_endstone_plugin() { return jse::Entry::getInstance(); }
