@@ -86,10 +86,9 @@ public:
     }
     endstone::PluginLoadOrder tryParseLoad() {
         auto obj = mRegisterInfo.get();
-        if (obj.has("load")) {
-            return *magic_enum::enum_cast<endstone::PluginLoadOrder>(obj.get("load").asString().toString());
-        }
-        return endstone::PluginLoadOrder::PostWorld;
+        return obj.has("load") && obj.get("load").isNumber()
+                 ? endstone::PluginLoadOrder(obj.get("load").asNumber().toInt64())
+                 : endstone::PluginLoadOrder::PostWorld;
     }
     std::vector<string> tryParseAuthors() {
         auto obj = mRegisterInfo.get();
@@ -149,10 +148,9 @@ public:
     }
     endstone::PermissionDefault tryParseDefaultPermission() {
         auto obj = mRegisterInfo.get();
-        if (obj.has("default_permission")) {
-            return ConvertFromScriptX<endstone::PermissionDefault>(obj.get("default_permission").asString());
-        }
-        return endstone::PermissionDefault::Operator;
+        return obj.has("default_permission") && obj.get("default_permission").isNumber()
+                 ? endstone::PermissionDefault(obj.get("default_permission").asNumber().toInt64())
+                 : endstone::PermissionDefault::Operator;
     }
 
 public:

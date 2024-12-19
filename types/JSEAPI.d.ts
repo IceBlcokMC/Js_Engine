@@ -1,29 +1,21 @@
-/**
- * permission_default.h
- * @default Operator
- */
-declare type PermissionDefault = "True" | "False" | "Operator" | "NotOperator";
+declare namespace Enums {
+  enum PermissionDefault {
+    True,
+    False,
+    Operator,
+    NotOperator
+  }
 
-/**
- * plugin_load_order.h
- * Represents the order in which a plugin should be initialized and enabled.
- * @default PostWorld
- */
-declare type PluginLoadOrder =
-  /**
-   * Indicates that the plugin will be loaded at startup
-   */
-  | "Startup"
-  /**
-   * Indicates that the plugin will be loaded after the first/default world
-   * was created
-   */
-  | "PostWorld";
+  enum PluginLoadOrder {
+    Startup,
+    PostWorld
+  }
+}
 
 declare type PermissionBuilder = {
   [K: string]: {
     description: string;
-    default: PermissionDefault;
+    default: Enums.PermissionDefault;
   };
 };
 
@@ -42,7 +34,7 @@ declare interface JsPluginBuilder<
   name: string;
   version: string;
   description: string;
-  load: PluginLoadOrder;
+  load: Enums.PluginLoadOrder;
   authors: string[];
   contributors: string[];
   website: string;
@@ -51,7 +43,7 @@ declare interface JsPluginBuilder<
   depend: string[];
   soft_depend: string[];
   load_before: string[];
-  default_permission: PermissionDefault;
+  default_permission: Enums.PermissionDefault;
   permissions: P;
   commands: CommandBuilder<P>;
 

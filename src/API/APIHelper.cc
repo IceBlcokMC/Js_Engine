@@ -109,6 +109,14 @@ void ToString(Local<Array> const& value, std::ostringstream& oss) {
 void ToString(Local<Object> const& value, std::ostringstream& oss) {
     if (InstanceToString(value, oss)) return; // Instance
 
+    if (value.has("toString")){
+        Local<Value> result = value.get("toString").asFunction().call(value);
+        if (result.isString()) {
+            oss << result.asString().toString();
+            return;
+        }
+    }
+
     std::vector<string> keys = value.getKeyNames();
     if (keys.empty()) {
         oss << "{}";

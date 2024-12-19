@@ -4,7 +4,7 @@ JSE.registerPlugin({
   name: "test_js_plugin",
   version: "114514",
   description: "测试",
-  load: "PostWorld",
+  load: Enums.PluginLoadOrder.PostWorld,
   authors: ["engsr6982"],
   contributors: ["engsr6982"],
   website: "https://github.com/engsr6982",
@@ -12,11 +12,11 @@ JSE.registerPlugin({
   permissions: {
     "test.js_plugin.hello": {
       description: "test permission",
-      default: "True",
+      default: Enums.PermissionDefault.True,
     },
     "test.a1": {
       description: "test permission",
-      default: "True",
+      default: Enums.PermissionDefault.True,
     },
   },
   commands: {
@@ -57,6 +57,7 @@ const logger = plugin.getLogger();
 function test_logger() {
   JSE.debug("==== Test Logger ====");
   logger.setLevel(0);
+  logger.log(Enums.LoggerLevel.Info, "logger log");
   logger.debug("logger debug");
   logger.info("logger info");
   logger.warning("logger warning");
