@@ -17,7 +17,7 @@ add_requires("magic_enum 0.9.7")
 if is_plat("linux") then
     -- EndStone Linux Toolchain: LLVM5(Clang & libc++)
     add_requires("libelf 0.8.13")
-    set_toolchains("clang")
+    -- set_toolchains("clang")
     
     add_cxflags(
         "-stdlib=libc++",
@@ -39,7 +39,7 @@ if is_plat("linux") then
     -- 设置环境变量确保使用正确的库
     set_config("cc", "clang")
     set_config("cxx", "clang++")
-    add_defines("_LIBCPP_VERSION")  -- 指示使用 libc++
+    -- add_defines("_LIBCPP_VERSION")  -- 指示使用 libc++
 end
 
 if is_plat("windows") then

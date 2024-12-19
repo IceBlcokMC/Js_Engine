@@ -65,17 +65,13 @@ jobs:
         if: runner.os == 'Linux'
         run: |
           sudo apt-get update -y -q
-          sudo apt-get install -y -q build-essential lsb-release wget software-properties-common
+          sudo apt-get install -y -q lsb-release wget software-properties-common gnupg
           sudo wget https://apt.llvm.org/llvm.sh
           sudo chmod +x llvm.sh
-          sudo ./llvm.sh 15
-          sudo apt-get install -y -q libc++-15-dev libc++abi-15-dev
-          sudo update-alternatives --install /usr/bin/clang clang /usr/bin/clang-15 100
-          sudo update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-15 100
-          sudo update-alternatives --install /usr/bin/llvm-cov llvm-cov /usr/bin/llvm-cov-15 100
-          sudo update-alternatives --install /usr/bin/ld ld /usr/bin/ld.lld-15 100
-          echo "CC=clang" >> $GITHUB_ENV
-          echo "CXX=clang++" >> $GITHUB_ENV
+          sudo ./llvm.sh ${LLVM_VERSION}
+          sudo apt-get install -y -q libc++-${LLVM_VERSION}-dev libc++abi-${LLVM_VERSION}-dev
+          sudo update-alternatives --install /usr/bin/cc cc /usr/bin/clang-${LLVM_VERSION} 100
+          sudo update-alternatives --install /usr/bin/c++ c++ /usr/bin/clang++-${LLVM_VERSION} 100
 
       - run: |
           xmake repo -u
