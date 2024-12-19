@@ -1,5 +1,6 @@
 #pragma once
 #include "Engine/Using.h"
+#include "fmt/format.h"
 #include "magic_enum/magic_enum.hpp"
 #include <type_traits>
 #include <unordered_map>
@@ -54,9 +55,9 @@ struct ToScriptType<std::vector<T>> {
     using Type = Array;
 };
 
-// map转换 (key必须是string)
-template <typename V>
-struct ToScriptType<std::unordered_map<std::string, V>> {
+// map转换 (key必须是可转换成string的类型)
+template <typename K, typename V>
+struct ToScriptType<std::unordered_map<K, V>> {
     using Type = Object;
 };
 
@@ -86,9 +87,9 @@ Local<Value> ConvertToScriptImpl(const T& value) {
         }
         return arr;
     } else if constexpr (std::is_same_v<ScriptType, Object>) {
-        auto obj = Object::newObject(); // unordered_map<string, V> -> object
+        auto obj = Object::newObject(); // unordered_map<K, V> -> object
         for (const auto& [key, val] : value) {
-            obj.set(key, ConvertToScriptImpl(val));
+            obj.set(fmt::to_string(key), ConvertToScriptImpl(val));
         }
         return obj;
     }
