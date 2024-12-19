@@ -65,7 +65,7 @@ void ToString(Local<Value> const& value, std::ostringstream& oss) {
         oss << value.asString().toString();
         break;
     case ValueKind::kBoolean:
-        oss << value.asBoolean().value();
+        oss << (value.asBoolean().value() ? "true" : "false");
         break;
     case ValueKind::kNumber:
         if (IsFloat(value)) oss << value.asNumber().toDouble();
