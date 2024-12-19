@@ -1,0 +1,28 @@
+#include "EnumAPI.h"
+#include "APIHelper.h"
+#include "Engine/Using.h"
+#include <endstone/permissions/permission_default.h>
+#include <string>
+#include <unordered_map>
+
+#define REGISTER_ENUM_MACRO(ENUM, NAME)                                                                                \
+    if (enumMap.find(NAME) == enumMap.end()) {                                                                         \
+        for (auto [value, key] : magic_enum::enum_entries<ENUM>()) {                                                   \
+            enumMap[NAME][key] = (int)value;                                                                           \
+        }                                                                                                              \
+    }
+
+namespace jse::EnumAPI {
+
+void RegisterEnum(ScriptEngine* engine) {
+
+    static std::unordered_map<std::string, std::unordered_map<std::string_view, int>> enumMap;
+
+    REGISTER_ENUM_MACRO(endstone::PermissionDefault, "PermissionDefault");
+    REGISTER_ENUM_MACRO(endstone::PluginLoadOrder, "PluginLoadOrder");
+    REGISTER_ENUM_MACRO(endstone::Logger::Level, "LoggerLevel");
+
+    engine->set("Enums", ConvertToScriptX(enumMap));
+}
+
+} // namespace jse::EnumAPI

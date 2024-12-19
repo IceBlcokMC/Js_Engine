@@ -9,7 +9,7 @@ declare class PluginDescriptionAPI {
 
   getDescription(): string;
 
-  getLoad(): PluginLoadOrder;
+  getLoad(): Enums.PluginLoadOrder;
 
   getAuthors(): string[];
 
@@ -27,7 +27,7 @@ declare class PluginDescriptionAPI {
 
   getLoadBefore(): string[];
 
-  getDefaultPermission(): PermissionDefault;
+  getDefaultPermission(): Enums.PermissionDefault;
 
   getCommands(): any; // TODO:
 

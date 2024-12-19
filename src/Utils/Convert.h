@@ -14,7 +14,7 @@ namespace jse {
 // bool -> Boolean
 // std::vector<T> -> Array<T>
 // std::unordered_map<std::string, V> -> Object<string, V>
-// enum<T> -> String
+// enum<T> -> Number
 namespace ConvertCppToScriptX {
 
 // 基础模板
@@ -64,7 +64,7 @@ struct ToScriptType<std::unordered_map<K, V>> {
 // enum
 template <typename T>
 struct ToScriptType<T, std::enable_if_t<std::is_enum_v<T>>> {
-    using Type = String;
+    using Type = Number;
 };
 
 // 实现
@@ -73,7 +73,7 @@ Local<Value> ConvertToScriptImpl(const T& value) {
     using ScriptType = typename ToScriptType<T>::Type;
 
     if constexpr (std::is_enum_v<T>) {
-        return String::newString(magic_enum::enum_name(value)); // enum -> string
+        return Number::newNumber((int)value); // enum -> number
     } else if constexpr (std::is_same_v<ScriptType, String>) {
         return String::newString(value); // string -> string
     } else if constexpr (std::is_same_v<ScriptType, Number>) {
@@ -99,7 +99,7 @@ Local<Value> ConvertToScriptImpl(const T& value) {
 
 
 // ScriptX -> C++
-// String -> enum<T>
+// Number -> enum<T>
 // String -> std::string
 // Number -> int、double、float
 // Boolean -> bool
@@ -173,10 +173,9 @@ struct FromScriptType<std::unordered_map<std::string, V>> {
 template <typename T>
 struct FromScriptType<T, std::enable_if_t<std::is_enum_v<T>>> {
     static T Convert(const Local<Value>& value) {
-        auto enumStr   = value.asString().toString();
-        auto enumValue = magic_enum::enum_cast<T>(enumStr);
+        auto enumValue = magic_enum::enum_cast<T>(value.asNumber().toInt64());
         if (!enumValue.has_value()) {
-            throw std::runtime_error("Invalid enum value: " + enumStr);
+            throw std::runtime_error("Invalid enum value: " + std::to_string(value.asNumber().toInt64()));
         }
         return enumValue.value();
     }

@@ -47,7 +47,9 @@ Local<Value> LoggerAPI::log(Arguments const& args) {
     // CheckArgsCount(args, 2);
     // CheckArgType(args[0], ValueKind::kNumber);
     // CheckArgType(args[1], ValueKind::kString); // any
-    return LoggerAPIHelper(static_cast<endstone::Logger::Level>(args[0].asNumber().toInt64()), args, 1);
+    auto level = magic_enum::enum_cast<endstone::Logger::Level>(args[0].asNumber().toInt64());
+    if (!level.has_value()) return Boolean::newBoolean(false);
+    return LoggerAPIHelper(*level, args, 1);
 }
 
 Local<Value> LoggerAPI::info(Arguments const& args) {
