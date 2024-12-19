@@ -11,6 +11,8 @@ public:
     static Local<Object> newPluginDescriptionAPI() { return (new PluginDescriptionAPI())->getScriptObject(); }
 
 public:
+    Local<Value> toString(Arguments const& args);
+
     Local<Value> getName(Arguments const& args);
 
     Local<Value> getVersion(Arguments const& args);

@@ -11,6 +11,7 @@ namespace jse {
 
 ClassDefine<PluginAPI> PluginAPIClass = defineClass<PluginAPI>("Plugin")
                                             .constructor(nullptr)
+                                            .instanceFunction("toString", &PluginAPI::toString)
                                             .instanceFunction("getDescription", &PluginAPI::getDescription)
                                             .instanceFunction("onLoad", &PluginAPI::onLoad)
                                             .instanceFunction("onEnable", &PluginAPI::onEnable)
@@ -25,6 +26,10 @@ ClassDefine<PluginAPI> PluginAPIClass = defineClass<PluginAPI>("Plugin")
                                             .instanceFunction("registerEvent", &PluginAPI::registerEvent)
                                             .build();
 
+
+Local<Value> PluginAPI::toString(Arguments const& args) {
+    return String::newString("<Plugin>");
+}
 
 Local<Value> PluginAPI::getDescription(Arguments const& args) {
     try {

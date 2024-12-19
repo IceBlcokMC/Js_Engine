@@ -107,8 +107,6 @@ void ToString(Local<Array> const& value, std::ostringstream& oss) {
     }
 }
 void ToString(Local<Object> const& value, std::ostringstream& oss) {
-    if (InstanceToString(value, oss)) return; // Instance
-
     if (value.has("toString")){
         Local<Value> result = value.get("toString").asFunction().call(value);
         if (result.isString()) {
@@ -137,21 +135,6 @@ void ToString(Local<Object> const& value, std::ostringstream& oss) {
     } else {
         oss << "<Circular Object>"; // 循环引用
     }
-}
-
-bool InstanceToString(const Local<Value>& value, std::ostringstream& oss) {
-#define Of(Class, Str)                                                                                                 \
-    if (IsInstanceOf<Class>(value)) {                                                                                  \
-        oss << Str;                                                                                                    \
-        return true;                                                                                                   \
-    }
-
-    // TODO: Add more types
-    Of(PluginAPI, "<Plugin>");
-    Of(LoggerAPI, "<Logger>");
-    Of(PluginDescriptionAPI, "<PluginDescription>");
-
-    return false;
 }
 
 

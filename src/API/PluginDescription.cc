@@ -11,6 +11,7 @@ namespace jse {
 ClassDefine<PluginDescriptionAPI> PluginDescriptionAPIClass =
     defineClass<PluginDescriptionAPI>("PluginDescription")
         .constructor(nullptr)
+        .instanceFunction("toString", &PluginDescriptionAPI::toString)
         .instanceFunction("getName", &PluginDescriptionAPI::getName)
         .instanceFunction("getVersion", &PluginDescriptionAPI::getVersion)
         .instanceFunction("getFullName", &PluginDescriptionAPI::getFullName)
@@ -29,6 +30,11 @@ ClassDefine<PluginDescriptionAPI> PluginDescriptionAPIClass =
         .instanceFunction("getCommands", &PluginDescriptionAPI::getCommands)
         .instanceFunction("getPermissions", &PluginDescriptionAPI::getPermissions)
         .build();
+
+
+Local<Value> PluginDescriptionAPI::toString(Arguments const& args) {
+    return String::newString("<PluginDescription>");
+}
 
 
 Local<Value> PluginDescriptionAPI::getName(Arguments const& args) {

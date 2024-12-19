@@ -11,6 +11,8 @@ public:
     static Local<Object> newLoggerAPI() { return (new LoggerAPI())->getScriptObject(); }
 
 public:
+    Local<Value> toString(Arguments const& args);
+
     Local<Value> log(Arguments const& args);
     Local<Value> info(Arguments const& args);
     Local<Value> warning(Arguments const& args);

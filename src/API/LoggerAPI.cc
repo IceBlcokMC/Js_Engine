@@ -11,6 +11,7 @@ namespace jse {
 
 ClassDefine<LoggerAPI> LoggerAPIClass = defineClass<LoggerAPI>("Logger")
                                             .constructor(nullptr)
+                                            .instanceFunction("toString", &LoggerAPI::toString)
                                             .instanceFunction("log", &LoggerAPI::log)
                                             .instanceFunction("info", &LoggerAPI::info)
                                             .instanceFunction("warning", &LoggerAPI::warning)
@@ -41,6 +42,10 @@ Local<Value> LoggerAPIHelper(endstone::Logger::Level level, Arguments const& arg
         return LoggerAPIHelper(level, oss.str());
     }
     Catch;
+}
+
+Local<Value> LoggerAPI::toString(Arguments const& args) {
+    return String::newString("<Logger>");
 }
 
 Local<Value> LoggerAPI::log(Arguments const& args) {
