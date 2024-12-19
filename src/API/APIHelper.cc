@@ -1,9 +1,13 @@
 #include "APIHelper.h"
+#include "API/LoggerAPI.h"
+#include "API/PluginAPI.h"
+#include "API/PluginDescription.h"
 #include "Entry.h"
 #include "Utils/Util.h"
 #include "fmt/core.h"
 #include "fmt/format.h"
 #include <iostream>
+
 
 namespace jse {
 
@@ -103,6 +107,14 @@ void ToString(Local<Array> const& value, std::ostringstream& oss) {
     }
 }
 void ToString(Local<Object> const& value, std::ostringstream& oss) {
+    if (value.has("toString")){
+        Local<Value> result = value.get("toString").asFunction().call(value);
+        if (result.isString()) {
+            oss << result.asString().toString();
+            return;
+        }
+    }
+
     std::vector<string> keys = value.getKeyNames();
     if (keys.empty()) {
         oss << "{}";
@@ -125,6 +137,7 @@ void ToString(Local<Object> const& value, std::ostringstream& oss) {
     }
 }
 
+
 void PrintException(string const& msg, string const& func, string const& plugin, string const& api) {
     return PrintException(script::Exception(msg), func, plugin, api);
 }
@@ -134,7 +147,7 @@ void PrintException(script::Exception const& e, string const& func, string const
     string in_api    = fmt::format("In API: {}", api);
     string stack     = fmt::format("scriptx::Exception: {}\n{}", e.what(), e.stacktrace());
 
-    auto ptr = GetEntry();
+    auto ptr = Entry::getInstance();
     if (ptr) {
         ptr->getLogger().error(fail_msg);
         ptr->getLogger().error(in_plugin);

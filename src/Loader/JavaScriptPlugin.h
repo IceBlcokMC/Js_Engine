@@ -1,41 +1,39 @@
 #pragma once
+#include "endstone/detail/plugin/plugin_description_builder.h"
 #include "endstone/plugin/plugin.h"
+#include "endstone/plugin/plugin_description.h"
 #include <cstdint>
 
 
 namespace jse {
 
+class JsPluginDescriptionBuilder : public endstone::detail::PluginDescriptionBuilder {
+public:
+    JsPluginDescriptionBuilder() = default;
+};
+
 class JavaScriptPlugin : public endstone::Plugin {
 public:
-    explicit JavaScriptPlugin(
-        uint64_t                                                engineId,
-        std::string                                             name,
-        std::string                                             version,
-        const std::optional<std::string>&                       description,
-        std::optional<endstone::PluginLoadOrder>                load,
-        const std::optional<std::vector<std::string>>&          authors,
-        const std::optional<std::vector<std::string>>&          contributors,
-        const std::optional<std::string>&                       website,
-        const std::optional<std::string>&                       prefix,
-        const std::optional<std::vector<std::string>>&          provides,
-        const std::optional<std::vector<std::string>>&          depend,
-        const std::optional<std::vector<std::string>>&          soft_depend,
-        const std::optional<std::vector<std::string>>&          load_before,
-        std::optional<endstone::PermissionDefault>              default_permission,
-        const std::optional<std::vector<endstone::Command>>&    commands,
-        const std::optional<std::vector<endstone::Permission>>& permissions
-    );
-    // ~JavaScriptPlugin() override;
+    JavaScriptPlugin(uint64_t engineId, endstone::PluginDescription description)
+    : engineId_(engineId),
+      description_(description) {}
+    ~JavaScriptPlugin() override;
 
+public:
     void onLoad() override;
     void onEnable() override;
     void onDisable() override;
 
-    [[nodiscard]] const endstone::PluginDescription& getDescription() const override;
+    const endstone::PluginDescription& getDescription() const override;
 
-public:
-    endstone::PluginDescription description_;
+    bool
+    onCommand(endstone::CommandSender& sender, const endstone::Command& command, const std::vector<std::string>& args)
+        override;
+
+private:
     uint64_t                    engineId_;
+    endstone::PluginDescription description_;
 };
+
 
 } // namespace jse

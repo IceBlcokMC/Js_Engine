@@ -15,6 +15,7 @@ void   ToString(Local<Object> const& value, std::ostringstream& oss);
 
 template <typename T>
 bool IsInstanceOf(Local<Value> const& value);
+bool InstanceToString(Local<Value> const& value, std::ostringstream& oss);
 
 void PrintException(string const& msg, string const& func, string const& plugin, string const& api);
 void PrintException(script::Exception const& e, string const& func, string const& plugin, string const& api);

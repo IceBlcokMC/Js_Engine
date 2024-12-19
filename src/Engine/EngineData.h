@@ -2,6 +2,7 @@
 #include "Engine/Using.h"
 #include "Entry.h"
 #include "Loader/JavaScriptPlugin.h"
+#include "Utils/Convert.h"
 #include "endstone/command/command.h"
 #include "endstone/permissions/permission.h"
 #include "endstone/permissions/permission_default.h"
@@ -19,9 +20,10 @@ namespace jse {
 
 struct EngineData {
     uint64_t               mEngineId{uint64_t(-1)};
-    JavaScriptPlugin*      mPlugin{nullptr};
     string                 mFileName;
     script::Global<Object> mRegisterInfo;
+
+    JavaScriptPlugin* mPlugin{nullptr};
 
 public:
     void callOnLoad() {
@@ -33,7 +35,7 @@ public:
                 return;
             }
         }
-        GetEntry()->getLogger().error("Plugin '{}' does not register onLoad function", this->mFileName);
+        Entry::getInstance()->getLogger().error("Plugin '{}' does not register onLoad function", this->mFileName);
     }
 
     void callOnEnable() {
@@ -45,7 +47,7 @@ public:
                 return;
             }
         }
-        GetEntry()->getLogger().error("Plugin '{}' does not register onEnable function", this->mFileName);
+        Entry::getInstance()->getLogger().error("Plugin '{}' does not register onEnable function", this->mFileName);
     }
 
     void callOnDisable() {
@@ -57,144 +59,163 @@ public:
                 return;
             }
         }
-        GetEntry()->getLogger().error("Plugin '{}' does not register onDisable function", this->mFileName);
+        Entry::getInstance()->getLogger().error("Plugin '{}' does not register onDisable function", this->mFileName);
     }
 
 public:
-    string parseName() {
+    string tryParseName() {
         auto obj = mRegisterInfo.get();
         if (obj.has("name")) {
             return obj.get("name").asString().toString();
         }
         return this->mFileName;
     }
-    string parseVersion() {
+    string tryParseVersion() {
         auto obj = mRegisterInfo.get();
         if (obj.has("version")) {
             return obj.get("version").asString().toString();
         }
         return "0.0.0";
     }
-    std::optional<string> parseDescription() {
+    string tryParseDescription() {
         auto obj = mRegisterInfo.get();
         if (obj.has("description")) {
             return obj.get("description").asString().toString();
         }
-        return std::nullopt;
+        return "";
     }
-    std::optional<endstone::PluginLoadOrder> parseLoad() {
+    endstone::PluginLoadOrder tryParseLoad() {
         auto obj = mRegisterInfo.get();
-        if (obj.has("load")) {
-            return magic_enum::enum_cast<endstone::PluginLoadOrder>(obj.get("load").asString().toString());
-        }
-        return std::nullopt;
+        return obj.has("load") && obj.get("load").isNumber()
+                 ? endstone::PluginLoadOrder(obj.get("load").asNumber().toInt64())
+                 : endstone::PluginLoadOrder::PostWorld;
     }
-    std::optional<std::vector<string>> parseAuthors() {
+    std::vector<string> tryParseAuthors() {
         auto obj = mRegisterInfo.get();
         if (obj.has("authors")) {
-            auto                array = obj.get("authors").asArray();
-            std::vector<string> res;
-            res.reserve(array.size());
-            for (size_t i = 0; i < array.size(); i++) {
-                res.push_back(array.get(i).asString().toString());
-            }
-            return std::move(res);
+            return ConvertFromScriptX<std::vector<string>>(obj.get("authors").asArray());
         }
-        return std::nullopt;
+        return {};
     }
-    std::optional<std::vector<string>> parseContributors() {
+    std::vector<string> tryParseContributors() {
         auto obj = mRegisterInfo.get();
         if (obj.has("contributors")) {
-            auto                array = obj.get("contributors").asArray();
-            std::vector<string> res;
-            res.reserve(array.size());
-            for (size_t i = 0; i < array.size(); i++) {
-                res.push_back(array.get(i).asString().toString());
-            }
-            return std::move(res);
+            return ConvertFromScriptX<std::vector<string>>(obj.get("contributors").asArray());
         }
-        return std::nullopt;
+        return {};
     }
-    std::optional<string> parseWebsite() {
+    string tryParseWebsite() {
         auto obj = mRegisterInfo.get();
         if (obj.has("website")) {
             return obj.get("website").asString().toString();
         }
-        return std::nullopt;
+        return "";
     }
-    std::optional<string> parsePrefix() {
+    string tryParsePrefix() {
         auto obj = mRegisterInfo.get();
         if (obj.has("prefix")) {
             return obj.get("prefix").asString().toString();
         }
-        return std::nullopt;
+        return "";
     }
-    std::optional<std::vector<string>> parseProvides() {
+    std::vector<string> tryParseProvides() {
         auto obj = mRegisterInfo.get();
         if (obj.has("provides")) {
-            auto                array = obj.get("provides").asArray();
-            std::vector<string> res;
-            res.reserve(array.size());
-            for (size_t i = 0; i < array.size(); i++) {
-                res.push_back(array.get(i).asString().toString());
-            }
-            return std::move(res);
+            return ConvertFromScriptX<std::vector<string>>(obj.get("provides").asArray());
         }
-        return std::nullopt;
+        return {};
     }
-    std::optional<std::vector<string>> parseDepend() {
+    std::vector<string> tryParseDepend() {
         auto obj = mRegisterInfo.get();
         if (obj.has("depend")) {
-            auto                array = obj.get("depend").asArray();
-            std::vector<string> res;
-            res.reserve(array.size());
-            for (size_t i = 0; i < array.size(); i++) {
-                res.push_back(array.get(i).asString().toString());
-            }
-            return std::move(res);
+            return ConvertFromScriptX<std::vector<string>>(obj.get("depend").asArray());
         }
-        return std::nullopt;
+        return {};
     }
-    std::optional<std::vector<string>> parseSoftDepend() {
+    std::vector<string> tryParseSoftDepend() {
         auto obj = mRegisterInfo.get();
         if (obj.has("soft_depend")) {
-            auto                array = obj.get("soft_depend").asArray();
-            std::vector<string> res;
-            res.reserve(array.size());
-            for (size_t i = 0; i < array.size(); i++) {
-                res.push_back(array.get(i).asString().toString());
-            }
-            return std::move(res);
+            return ConvertFromScriptX<std::vector<string>>(obj.get("soft_depend").asArray());
         }
-        return std::nullopt;
+        return {};
     }
-    std::optional<std::vector<string>> parseLoadBefore() {
+    std::vector<string> tryParseLoadBefore() {
         auto obj = mRegisterInfo.get();
         if (obj.has("load_before")) {
-            auto                array = obj.get("load_before").asArray();
-            std::vector<string> res;
-            res.reserve(array.size());
-            for (size_t i = 0; i < array.size(); i++) {
-                res.push_back(array.get(i).asString().toString());
-            }
-            return std::move(res);
+            return ConvertFromScriptX<std::vector<string>>(obj.get("load_before").asArray());
         }
-        return std::nullopt;
+        return {};
     }
-    std::optional<endstone::PermissionDefault> parseDefaultPermission() {
+    endstone::PermissionDefault tryParseDefaultPermission() {
         auto obj = mRegisterInfo.get();
-        if (obj.has("default_permission")) {
-            return magic_enum::enum_cast<endstone::PermissionDefault>(
-                obj.get("default_permission").asString().toString()
-            );
+        return obj.has("default_permission") && obj.get("default_permission").isNumber()
+                 ? endstone::PermissionDefault(obj.get("default_permission").asNumber().toInt64())
+                 : endstone::PermissionDefault::Operator;
+    }
+
+public:
+    void tryParseCommands(JsPluginDescriptionBuilder& jbuilder) {
+        auto obj = mRegisterInfo.get();
+        if (!obj.has("commands")) {
+            return;
         }
-        return std::nullopt;
+
+        auto cmds = obj.get("commands").asObject();
+        auto keys = cmds.getKeyNames();
+        for (auto& key : keys) {
+            auto cmdObj  = cmds.get(key).asObject();
+            auto builder = endstone::detail::CommandBuilder(key);
+
+            // 描述
+            if (cmdObj.has("description")) {
+                builder.description(ConvertFromScriptX<string>(cmdObj.get("description")));
+            }
+
+            // 用法
+            if (cmdObj.has("usages")) {
+                auto usages = ConvertFromScriptX<std::vector<string>>(cmdObj.get("usages"));
+                for (const auto& usage : usages) {
+                    builder.usages(usage);
+                }
+            }
+
+            // 权限
+            if (cmdObj.has("permissions")) {
+                auto permissions = ConvertFromScriptX<std::vector<string>>(cmdObj.get("permissions"));
+                for (const auto& permission : permissions) {
+                    builder.permissions(permission);
+                }
+            }
+
+            jbuilder.commands.emplace(key, std::move(builder));
+        }
     }
-    std::optional<std::vector<endstone::Command>> parseCommands() {
-        return std::nullopt; // TODO: implement
-    }
-    std::optional<std::vector<endstone::Permission>> parsePermissions() {
-        return std::nullopt; // TODO: implement
+
+
+    void tryParsePermissions(JsPluginDescriptionBuilder& jbuilder) {
+        auto obj = mRegisterInfo.get();
+        if (!obj.has("permissions")) {
+            return;
+        }
+
+        auto perms = obj.get("permissions").asObject();
+        auto keys  = perms.getKeyNames();
+        for (auto& key : keys) {
+            auto permObj = perms.get(key).asObject();
+            auto builder = endstone::detail::PermissionBuilder(key);
+
+            // 设置描述
+            if (permObj.has("description")) {
+                builder.description(ConvertFromScriptX<string>(permObj.get("description")));
+            }
+
+            // 设置默认权限
+            if (permObj.has("default")) {
+                builder.default_(ConvertFromScriptX<endstone::PermissionDefault>(permObj.get("default")));
+            }
+
+            jbuilder.permissions.emplace(key, std::move(builder));
+        }
     }
 };
 

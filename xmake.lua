@@ -132,6 +132,8 @@ target("Js_Engine")
 
         os.cp(target:targetfile(), path.join(output_dir, target:name() .. ".dll"))
 
+        os.cp(path.join(os.projectdir(), "types"), path.join(os.projectdir(), "bin", "js_engine", "dts"))
+
         local pdb_path = path.join(output_dir, target:name() .. ".pdb")
         if os.isfile(target:symbolfile()) then 
             os.cp(target:symbolfile(), pdb_path) 

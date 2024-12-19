@@ -1,4 +1,6 @@
 #include "PluginAPI.h"
+#include "API/LoggerAPI.h"
+#include "API/PluginDescription.h"
 #include "APIHelper.h"
 #include "Engine/EngineData.h"
 #include "Engine/Using.h"
@@ -7,113 +9,94 @@
 
 namespace jse {
 
-ClassDefine<PluginAPI> PluginAPIClass = defineClass<PluginAPI>("JSE_Plugin")
+ClassDefine<PluginAPI> PluginAPIClass = defineClass<PluginAPI>("Plugin")
                                             .constructor(nullptr)
-                                            .instanceProperty("api_version", &PluginAPI::api_version)
-                                            .instanceProperty("authors", &PluginAPI::authors)
-                                            .instanceProperty("commands", &PluginAPI::commands)
-                                            .instanceProperty("config", &PluginAPI::config)
-                                            .instanceProperty("contributors", &PluginAPI::contributors)
-                                            .instanceProperty("default_permission", &PluginAPI::default_permission)
-                                            .instanceProperty("depend", &PluginAPI::depend)
-                                            .instanceProperty("description", &PluginAPI::description)
-                                            .instanceProperty("load", &PluginAPI::load)
-                                            .instanceProperty("load_before", &PluginAPI::load_before)
-                                            .instanceProperty("name", &PluginAPI::name)
-                                            .instanceProperty("permissions", &PluginAPI::permissions)
-                                            .instanceProperty("prefix", &PluginAPI::prefix)
-                                            .instanceProperty("provides", &PluginAPI::provides)
-                                            .instanceProperty("soft_depend", &PluginAPI::soft_depend)
-                                            .instanceProperty("version", &PluginAPI::version)
-                                            .instanceProperty("website", &PluginAPI::website)
-
-                                            .instanceFunction("register_events", &PluginAPI::register_events)
-                                            .instanceFunction("reload_config", &PluginAPI::reload_config)
-                                            .instanceFunction("save_config", &PluginAPI::save_config)
-                                            .instanceFunction("save_default_config", &PluginAPI::save_default_config)
-                                            .instanceFunction("save_resources", &PluginAPI::save_resources)
+                                            .instanceFunction("toString", &PluginAPI::toString)
+                                            .instanceFunction("getDescription", &PluginAPI::getDescription)
+                                            .instanceFunction("onLoad", &PluginAPI::onLoad)
+                                            .instanceFunction("onEnable", &PluginAPI::onEnable)
+                                            .instanceFunction("onDisable", &PluginAPI::onDisable)
+                                            .instanceFunction("getLogger", &PluginAPI::getLogger)
+                                            .instanceFunction("isEnabled", &PluginAPI::isEnabled)
+                                            .instanceFunction("getPluginLoader", &PluginAPI::getPluginLoader)
+                                            .instanceFunction("getServer", &PluginAPI::getServer)
+                                            .instanceFunction("getName", &PluginAPI::getName)
+                                            .instanceFunction("getCommand", &PluginAPI::getCommand)
+                                            .instanceFunction("getDataFolder", &PluginAPI::getDataFolder)
+                                            .instanceFunction("registerEvent", &PluginAPI::registerEvent)
                                             .build();
 
-ClassDefine<PluginCommandAPI> PluginCommandAPIClass =
-    defineClass<PluginCommandAPI>("JSE_PluginCommand").constructor(nullptr).build();
 
-ClassDefine<PluginDescriptionAPI> PluginDescriptionAPIClass =
-    defineClass<PluginDescriptionAPI>("JSE_PluginDescription").constructor(nullptr).build();
+Local<Value> PluginAPI::toString(Arguments const& args) {
+    return String::newString("<Plugin>");
+}
 
-ClassDefine<PluginLoaderAPI> PluginLoaderAPIClass =
-    defineClass<PluginLoaderAPI>("JSE_PluginLoader").constructor(nullptr).build();
-
-ClassDefine<PluginManagerAPI> PluginManagerAPIClass =
-    defineClass<PluginManagerAPI>("JSE_PluginManager").constructor(nullptr).build();
-
-
-// PluginAPI
-Local<Value> PluginAPI::api_version() {
+Local<Value> PluginAPI::getDescription(Arguments const& args) {
     try {
-        auto plugin = ENGINE_DATA()->mPlugin;
-        if (plugin) {
-            return String::newString(plugin->getDescription().getAPIVersion());
-        }
+        return PluginDescriptionAPI::newPluginDescriptionAPI();
+    }
+    Catch;
+}
+
+Local<Value> PluginAPI::onLoad(Arguments const& args) {
+    try {
+        ENGINE_DATA()->callOnLoad();
         return Local<Value>();
     }
     Catch;
 }
 
-Local<Value> PluginAPI::authors() {
+Local<Value> PluginAPI::onEnable(Arguments const& args) {
     try {
-        auto plugin = ENGINE_DATA()->mPlugin;
-        if (plugin) {
-            auto authors = plugin->getDescription().getAuthors();
-            auto arr     = Array::newArray(authors.size());
-            for (size_t i = 0; i < authors.size(); i++) {
-                arr.add(String::newString(authors[i]));
-            }
-            return arr;
-        }
+        ENGINE_DATA()->callOnEnable();
         return Local<Value>();
     }
     Catch;
 }
 
-Local<Value> PluginAPI::commands() { return Local<Value>(); }
+Local<Value> PluginAPI::onDisable(Arguments const& args) {
+    try {
+        ENGINE_DATA()->callOnDisable();
+        return Local<Value>();
+    }
+    Catch;
+}
 
-Local<Value> PluginAPI::config() { return Local<Value>(); }
+Local<Value> PluginAPI::getLogger(Arguments const& args) {
+    try {
+        return LoggerAPI::newLoggerAPI();
+    }
+    Catch;
+}
 
-Local<Value> PluginAPI::contributors() { return Local<Value>(); }
+Local<Value> PluginAPI::isEnabled(Arguments const& args) {
+    try {
+        return Boolean::newBoolean(ENGINE_DATA()->mPlugin->isEnabled());
+    }
+    Catch;
+}
 
-Local<Value> PluginAPI::default_permission() { return Local<Value>(); }
+Local<Value> PluginAPI::getPluginLoader(Arguments const& args) { return Local<Value>(); }
 
-Local<Value> PluginAPI::depend() { return Local<Value>(); }
+Local<Value> PluginAPI::getServer(Arguments const& args) { return Local<Value>(); }
 
-Local<Value> PluginAPI::description() { return Local<Value>(); }
+Local<Value> PluginAPI::getName(Arguments const& args) {
+    try {
+        return String::newString(ENGINE_DATA()->mPlugin->getName());
+    }
+    Catch;
+}
 
-Local<Value> PluginAPI::load() { return Local<Value>(); }
+Local<Value> PluginAPI::getCommand(Arguments const& args) { return Local<Value>(); }
 
-Local<Value> PluginAPI::load_before() { return Local<Value>(); }
+Local<Value> PluginAPI::getDataFolder(Arguments const& args) {
+    try {
+        return String::newString(ENGINE_DATA()->mPlugin->getDataFolder().string());
+    }
+    Catch;
+}
 
-Local<Value> PluginAPI::name() { return Local<Value>(); }
-
-Local<Value> PluginAPI::permissions() { return Local<Value>(); }
-
-Local<Value> PluginAPI::prefix() { return Local<Value>(); }
-
-Local<Value> PluginAPI::provides() { return Local<Value>(); }
-
-Local<Value> PluginAPI::soft_depend() { return Local<Value>(); }
-
-Local<Value> PluginAPI::version() { return Local<Value>(); }
-
-Local<Value> PluginAPI::website() { return Local<Value>(); }
-
-Local<Value> PluginAPI::register_events(Arguments const& args) { return Local<Value>(); }
-
-Local<Value> PluginAPI::reload_config(Arguments const& args) { return Local<Value>(); }
-
-Local<Value> PluginAPI::save_config(Arguments const& args) { return Local<Value>(); }
-
-Local<Value> PluginAPI::save_default_config(Arguments const& args) { return Local<Value>(); }
-
-Local<Value> PluginAPI::save_resources(Arguments const& args) { return Local<Value>(); }
+Local<Value> PluginAPI::registerEvent(Arguments const& args) { return Local<Value>(); }
 
 
 } // namespace jse

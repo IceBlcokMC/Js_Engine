@@ -204,6 +204,9 @@ static_assert(sizeof(InplaceMessage) == sizeof(Message));
 class MessageQueue {
  public:
   class Supervisor {
+   public:
+    virtual ~Supervisor() = default;
+
    protected:
     virtual void beforeMessage(Message& message) = 0;
 
@@ -226,7 +229,7 @@ class MessageQueue {
   std::condition_variable queueNotFullCondition_;
   std::deque<Message*> queue_;
   std::atomic_int32_t messageIdCounter_;
-  std::atomic_uint32_t workerCount_;
+  std::uint32_t workerCount_;  // guard by queueMutex_
   std::condition_variable workerQuitCondition_;
 
   std::shared_ptr<Supervisor> supervisor_;
@@ -321,7 +324,7 @@ class MessageQueue {
   /**
    * @return if the MessageQueue is shut down or shutting down.
    */
-  bool isShutdown();
+  bool isShutdown() const;
 
   /**
    * causing current loopQueue() call return immediately.
@@ -350,7 +353,7 @@ class MessageQueue {
    * \endcode
    *
    */
-  template <class Rep = int, class Period = std::milli>
+  template <class Rep = int64_t, class Period = std::milli>
   int32_t postMessage(const Message& message,
                       std::chrono::duration<Rep, Period> delay = std::chrono::milliseconds(0)) {
     using std::chrono::duration_cast;

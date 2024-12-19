@@ -21,43 +21,12 @@
 namespace jse {
 
 
-JavaScriptPlugin::JavaScriptPlugin(
-    uint64_t                                                engineId,
-    std::string                                             name,
-    std::string                                             version,
-    const std::optional<std::string>&                       description,
-    std::optional<endstone::PluginLoadOrder>                load,
-    const std::optional<std::vector<std::string>>&          authors,
-    const std::optional<std::vector<std::string>>&          contributors,
-    const std::optional<std::string>&                       website,
-    const std::optional<std::string>&                       prefix,
-    const std::optional<std::vector<std::string>>&          provides,
-    const std::optional<std::vector<std::string>>&          depend,
-    const std::optional<std::vector<std::string>>&          soft_depend,
-    const std::optional<std::vector<std::string>>&          load_before,
-    std::optional<endstone::PermissionDefault>              default_permission,
-    const std::optional<std::vector<endstone::Command>>&    commands,
-    const std::optional<std::vector<endstone::Permission>>& permissions
-)
-: engineId_(engineId),
-  description_(
-      std::move(name),
-      std::move(version),
-      description.value_or(""),
-      load.value_or(endstone::PluginLoadOrder::PostWorld),
-      authors.value_or(std::vector<std::string>{}),
-      contributors.value_or(std::vector<std::string>{}),
-      website.value_or(""),
-      prefix.value_or(""),
-      provides.value_or(std::vector<std::string>{}),
-      depend.value_or(std::vector<std::string>{}),
-      soft_depend.value_or(std::vector<std::string>{}),
-      load_before.value_or(std::vector<std::string>{}),
-      default_permission.value_or(endstone::PermissionDefault::Operator),
-      commands.value_or(std::vector<endstone::Command>{}),
-      permissions.value_or(std::vector<endstone::Permission>{})
-  ) {}
-// JavaScriptPlugin::~JavaScriptPlugin() {}
+JavaScriptPlugin::~JavaScriptPlugin() {
+    EngineManager::getInstance().destroyEngine(this->engineId_);
+#ifdef DEBUG
+    std::cout << "JavaScriptPlugin::~JavaScriptPlugin()  Plugin: " << this->getName() << std::endl;
+#endif
+}
 
 void JavaScriptPlugin::onLoad() {
     auto        engine = EngineManager::getInstance().getEngine(this->engineId_);
@@ -84,6 +53,29 @@ void JavaScriptPlugin::onDisable() {
         ENGINE_DATA()->callOnDisable();
     }
     CatchNotReturn;
+}
+
+bool JavaScriptPlugin::onCommand(
+    endstone::CommandSender&        sender,
+    const endstone::Command&        command,
+    const std::vector<std::string>& args
+) {
+    auto        engine = EngineManager::getInstance().getEngine(this->engineId_);
+    EngineScope scope(engine);
+    try {
+        auto data = ENGINE_DATA();
+        auto obj  = data->mRegisterInfo.get();
+        if (obj.has("onCommand")) {
+            auto func = obj.get("onCommand");
+            if (func.isFunction()) {
+                // TODO: args
+                return func.asFunction().call().asBoolean().value();
+            }
+        }
+        Entry::getInstance()->getLogger().error("Plugin '{}' does not register onCommand function", data->mFileName);
+    }
+    CatchNotReturn;
+    return true;
 }
 
 endstone::PluginDescription const& JavaScriptPlugin::getDescription() const { return this->description_; }

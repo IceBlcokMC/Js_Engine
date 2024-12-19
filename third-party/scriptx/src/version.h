@@ -1,6 +1,6 @@
 /*
  * Tencent is pleased to support the open source community by making ScriptX available.
- * Copyright (C) 2021 THL A29 Limited, a Tencent company.  All rights reserved.
+ * Copyright (C) 2024 THL A29 Limited, a Tencent company.  All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,10 +19,10 @@
 
 // ScriptX version config files
 // auto generated from the file VERSION
-#define SCRIPTX_VERSION_STRING "3.2.0"
+#define SCRIPTX_VERSION_STRING "3.6.1"
 #define SCRIPTX_VERSION_MAJOR 3
-#define SCRIPTX_VERSION_MINOR 2
-#define SCRIPTX_VERSION_PATCH 0
+#define SCRIPTX_VERSION_MINOR 6
+#define SCRIPTX_VERSION_PATCH 1
 
 namespace script {
 

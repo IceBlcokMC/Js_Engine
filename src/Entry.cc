@@ -29,6 +29,14 @@ Entry* GetEntry() { return __Entry; }
 
 
 using endstone::detail::EndstoneServer;
+
+namespace jse {
+
+Entry* Entry::getInstance() {
+    static Entry* instance = new Entry();
+    return instance;
+}
+
 void Entry::onLoad() {
     __Entry = this;
     getLogger().info("Js_Engine loading...");
@@ -40,18 +48,33 @@ void Entry::onLoad() {
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }
 #endif
-
     getLogger().info("Load javascript plugin...");
-    auto& pluginManager = getServer().getPluginManager();
-    pluginManager.registerLoader(std::make_unique<jse::JavaScriptPluginLoader>(getServer()));
+    auto& server        = getServer();
+    auto& pluginManager = server.getPluginManager();
+    pluginManager.registerLoader(std::make_unique<jse::JavaScriptPluginLoader>(server));
     pluginManager.loadPlugins(std::move(jse::JavaScriptPluginLoader::filterPlugins(fs::current_path() / "plugins")));
 }
 
-void Entry::onEnable() { getLogger().info("Js_Engine enabled"); }
-
-void Entry::onDisable() {
-    __Entry = nullptr;
-
-
-    getLogger().info("Js_Engine disabled");
+void Entry::onEnable() {
+    // getLogger().info("Load javascript plugin...");
+    // auto& server        = getServer();
+    // auto& pluginManager = server.getPluginManager();
+    // pluginManager.registerLoader(std::make_unique<jse::JavaScriptPluginLoader>(server));
+    // auto plugins =
+    //     pluginManager.loadPlugins(std::move(jse::JavaScriptPluginLoader::filterPlugins(fs::current_path() /
+    //     "plugins"))
+    //     );
+    // for (auto& plugin : plugins) {
+    //     if (!plugin->isEnabled()) {
+    //         pluginManager.enablePlugin(*plugin); // 由于 onEnable 流程结束，这里手动调用 enablePlugin
+    //     }
+    // }
 }
+
+void Entry::onDisable() {}
+
+endstone::PluginDescription const& Entry::getDescription() const { return description_; }
+
+} // namespace jse
+
+extern "C" __declspec(dllexport) endstone::Plugin* init_endstone_plugin() { return jse::Entry::getInstance(); }

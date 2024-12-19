@@ -56,18 +56,11 @@ struct ImplType {
 #define SCRIPTX_BACKEND(FILE) \
   SCRIPTX_MARCO_TO_STRING(SCRIPTX_MARCO_JOIN(SCRIPTX_BACKEND_TRAIT_PREFIX, FILE))
 
-// Re-write offsetof because the original one will cause warning of non-standard-layout in GCC
-#define SCRIPTX_OFFSET_OF(TYPE,MEMBER)   ((size_t) &((TYPE *)0)->MEMBER)
-
 #ifdef _MSC_VER
 
 // MSVC only support the standart _Pragma on recent version, use the extension key word here
 #define SCRIPTX_BEGIN_INCLUDE_LIBRARY __pragma(warning(push, 0))
 #define SCRIPTX_END_INCLUDE_LIBRARY __pragma(pop)
-
-// MSCV will not fail at deprecated warning
-#define SCRIPTX_BEGIN_IGNORE_DEPRECARED
-#define SCRIPTX_END_IGNORE_DEPRECARED
 
 #elif defined(__clang__)
 
@@ -75,13 +68,6 @@ struct ImplType {
   _Pragma("clang diagnostic push") _Pragma("clang diagnostic ignored \"-Wall\"")
 
 #define SCRIPTX_END_INCLUDE_LIBRARY _Pragma("clang diagnostic pop")
-
-// ignore -Wdeprecated-declarations for Python
-#define SCRIPTX_BEGIN_IGNORE_DEPRECARED   \
-  _Pragma("clang diagnostic push")          \
-  _Pragma("clang diagnostic ignored \"-Wdeprecated-declarations\"")
-
-#define SCRIPTX_END_IGNORE_DEPRECARED _Pragma("clang diagnostic pop")
 
 #elif defined(__GNUC__)
 // GCC can't suppress all warnings by -Wall
@@ -93,13 +79,6 @@ struct ImplType {
       _Pragma("GCC diagnostic ignored \"-Wcast-function-type\"")
 
 #define SCRIPTX_END_INCLUDE_LIBRARY _Pragma("GCC diagnostic pop")
-
-// 2. ignore -Wdeprecated-declarations for Python
-#define SCRIPTX_BEGIN_IGNORE_DEPRECARED   \
-  _Pragma("GCC diagnostic push")          \
-  _Pragma("GCC diagnostic ignored \"-Wdeprecated-declarations\"")
-
-#define SCRIPTX_END_IGNORE_DEPRECARED _Pragma("GCC diagnostic pop")
 
 #else
 

@@ -25,39 +25,52 @@ std::vector<std::string> JavaScriptPluginLoader::getPluginFileFilters() const { 
 
 
 endstone::Plugin* JavaScriptPluginLoader::loadPlugin(std::string file) {
-    auto& manager = EngineManager::getInstance();
-    auto  path    = fs::path(file);
+    try {
+        auto& manager = EngineManager::getInstance();
+        auto  path    = fs::path(file);
 
-    // 创建引擎
-    auto        engine = manager.createEngine();
-    EngineScope scope(engine);
-    auto        data = ENGINE_DATA();
+        // 创建引擎
+        auto        engine = manager.createEngine();
+        EngineScope scope(engine);
+        auto        data = ENGINE_DATA();
 
-    data->mFileName = path.filename().string();
-    engine->loadFile(file);
+        // 加载文件
+        data->mFileName = path.filename().string();
+        engine->loadFile(file);
 
-    // 解析注册数据创建 Plugin 实例
-    auto plugin = new JavaScriptPlugin(
-        data->mEngineId,
-        data->parseName(),
-        data->parseVersion(),
-        data->parseDescription(),
-        data->parseLoad(),
-        data->parseAuthors(),
-        data->parseContributors(),
-        data->parseWebsite(),
-        data->parsePrefix(),
-        data->parseProvides(),
-        data->parseDepend(),
-        data->parseSoftDepend(),
-        data->parseLoadBefore(),
-        data->parseDefaultPermission(),
-        data->parseCommands(),
-        data->parsePermissions()
-    );
-    data->mPlugin = plugin;
+        // 解析注册数据
+        JsPluginDescriptionBuilder builder{};
+        builder.description        = data->tryParseDescription();
+        builder.load               = data->tryParseLoad();
+        builder.authors            = data->tryParseAuthors();
+        builder.contributors       = data->tryParseContributors();
+        builder.website            = data->tryParseWebsite();
+        builder.prefix             = data->tryParsePrefix();
+        builder.provides           = data->tryParseProvides();
+        builder.depend             = data->tryParseDepend();
+        builder.soft_depend        = data->tryParseSoftDepend();
+        builder.load_before        = data->tryParseLoadBefore();
+        builder.default_permission = data->tryParseDefaultPermission();
+        data->tryParseCommands(builder);
+        data->tryParsePermissions(builder);
 
-    return plugin;
+        // 创建插件实例
+        auto plugin =
+            new JavaScriptPlugin(data->mEngineId, builder.build(data->tryParseName(), data->tryParseVersion()));
+        data->mPlugin = plugin;
+
+        return plugin;
+    } catch (script::Exception& e) {
+        Entry::getInstance()->getLogger().error("Failed to load plugin: {}", file);
+        Entry::getInstance()->getLogger().error("Error: {}", e.what());
+    } catch (std::exception& e) {
+        Entry::getInstance()->getLogger().error("Failed to load plugin: {}", file);
+        Entry::getInstance()->getLogger().error("Error: {}", e.what());
+    } catch (...) {
+        Entry::getInstance()->getLogger().error("Failed to load plugin: {}", file);
+        Entry::getInstance()->getLogger().error("Unknown error");
+    }
+    return nullptr;
 }
 
 
