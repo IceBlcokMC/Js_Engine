@@ -8,7 +8,7 @@ public:
     PluginDescriptionBuilderImpl() {
         description  = "JavaScript Engine";
         authors      = {"engsr6982"};
-        contributors = {"engsr6982"};
+        contributors = {"engsr6982", "zimuya4153"}; // Github Username
         website      = "https://github.com/engsr6982/Js_Engine";
     }
 };
