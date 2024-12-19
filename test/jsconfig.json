@@ -1,7 +1,7 @@
 {
     "include": [
         "./test_js_plugin.js",
-        "../types/*.d.ts"
+        "../types/**.d.ts"
     ],
     "compilerOptions": {
         "module": "ES6",
