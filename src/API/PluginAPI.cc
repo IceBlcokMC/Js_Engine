@@ -27,76 +27,40 @@ ClassDefine<PluginAPI> PluginAPIClass = defineClass<PluginAPI>("Plugin")
                                             .build();
 
 
-Local<Value> PluginAPI::toString(Arguments const& args) {
-    return String::newString("<Plugin>");
-}
-
-Local<Value> PluginAPI::getDescription(Arguments const& args) {
-    try {
-        return PluginDescriptionAPI::newPluginDescriptionAPI();
+#define PLUGINAPI_MACRO(FUNC_NAME, ...)                                                                                \
+    Local<Value> PluginAPI::FUNC_NAME(Arguments const& args) {                                                         \
+        try {                                                                                                          \
+            __VA_ARGS__;                                                                                               \
+        }                                                                                                              \
+        Catch;                                                                                                         \
     }
-    Catch;
-}
 
-Local<Value> PluginAPI::onLoad(Arguments const& args) {
-    try {
-        ENGINE_DATA()->callOnLoad();
-        return Local<Value>();
-    }
-    Catch;
-}
+PLUGINAPI_MACRO(toString, return String::newString("<Plugin>"));
 
-Local<Value> PluginAPI::onEnable(Arguments const& args) {
-    try {
-        ENGINE_DATA()->callOnEnable();
-        return Local<Value>();
-    }
-    Catch;
-}
+PLUGINAPI_MACRO(getDescription, return PluginDescriptionAPI::newPluginDescriptionAPI());
 
-Local<Value> PluginAPI::onDisable(Arguments const& args) {
-    try {
-        ENGINE_DATA()->callOnDisable();
-        return Local<Value>();
-    }
-    Catch;
-}
+PLUGINAPI_MACRO(onLoad, ENGINE_DATA()->callOnLoad(); return Local<Value>());
 
-Local<Value> PluginAPI::getLogger(Arguments const& args) {
-    try {
-        return LoggerAPI::newLoggerAPI();
-    }
-    Catch;
-}
+PLUGINAPI_MACRO(onEnable, ENGINE_DATA()->callOnEnable(); return Local<Value>());
 
-Local<Value> PluginAPI::isEnabled(Arguments const& args) {
-    try {
-        return Boolean::newBoolean(ENGINE_DATA()->mPlugin->isEnabled());
-    }
-    Catch;
-}
+PLUGINAPI_MACRO(onDisable, ENGINE_DATA()->callOnDisable(); return Local<Value>());
 
-Local<Value> PluginAPI::getPluginLoader(Arguments const& args) { return Local<Value>(); }
+PLUGINAPI_MACRO(getLogger, return LoggerAPI::newLoggerAPI());
 
-Local<Value> PluginAPI::getServer(Arguments const& args) { return Local<Value>(); }
+PLUGINAPI_MACRO(isEnabled, return Boolean::newBoolean(ENGINE_DATA()->mPlugin->isEnabled()));
 
-Local<Value> PluginAPI::getName(Arguments const& args) {
-    try {
-        return String::newString(ENGINE_DATA()->mPlugin->getName());
-    }
-    Catch;
-}
+PLUGINAPI_MACRO(getPluginLoader, return Local<Value>()); // todo
 
-Local<Value> PluginAPI::getCommand(Arguments const& args) { return Local<Value>(); }
+PLUGINAPI_MACRO(getServer, return Local<Value>()); // todo
 
-Local<Value> PluginAPI::getDataFolder(Arguments const& args) {
-    try {
-        return String::newString(ENGINE_DATA()->mPlugin->getDataFolder().string());
-    }
-    Catch;
-}
+PLUGINAPI_MACRO(getName, return String::newString(ENGINE_DATA()->mPlugin->getName()));
 
-Local<Value> PluginAPI::registerEvent(Arguments const& args) { return Local<Value>(); }
+PLUGINAPI_MACRO(getCommand, return Local<Value>()); // todo
 
+PLUGINAPI_MACRO(getDataFolder, return String::newString(ENGINE_DATA()->mPlugin->getDataFolder().string()));
+
+PLUGINAPI_MACRO(registerEvent, return Local<Value>()); // todo
+
+#undef PLUGINAPI_MACRO
 
 } // namespace jse

@@ -25,4 +25,6 @@ void RegisterEnum(ScriptEngine* engine) {
     engine->set("Enums", ConvertToScriptX(enumMap));
 }
 
+#undef REGISTER_ENUM_MACRO
+
 } // namespace jse::EnumAPI

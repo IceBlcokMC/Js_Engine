@@ -5,7 +5,6 @@
 #include "Utils/Convert.h"
 
 
-
 namespace jse {
 
 ClassDefine<PluginDescriptionAPI> PluginDescriptionAPIClass =
@@ -31,120 +30,53 @@ ClassDefine<PluginDescriptionAPI> PluginDescriptionAPIClass =
         .instanceFunction("getPermissions", &PluginDescriptionAPI::getPermissions)
         .build();
 
-
-Local<Value> PluginDescriptionAPI::toString(Arguments const& args) {
-    return String::newString("<PluginDescription>");
-}
-
-
-Local<Value> PluginDescriptionAPI::getName(Arguments const& args) {
-    try {
-        return ConvertToScriptX(ENGINE_DATA()->mPlugin->getDescription().getName());
+#define PLUGINDESCRIPTIONAPI_MACRO(FUNC_NAME, ...)                                                                     \
+    Local<Value> PluginDescriptionAPI::FUNC_NAME(Arguments const& args) {                                              \
+        try {                                                                                                          \
+            __VA_ARGS__;                                                                                               \
+        }                                                                                                              \
+        Catch;                                                                                                         \
     }
-    Catch;
-}
 
-Local<Value> PluginDescriptionAPI::getVersion(Arguments const& args) {
-    try {
-        return ConvertToScriptX(ENGINE_DATA()->mPlugin->getDescription().getVersion());
-    }
-    Catch;
-}
+#define GETDESCRIPTION_MACRO(FUNC_NAME) return ConvertToScriptX(ENGINE_DATA()->mPlugin->getDescription().FUNC_NAME());
 
-Local<Value> PluginDescriptionAPI::getFullName(Arguments const& args) {
-    try {
-        return ConvertToScriptX(ENGINE_DATA()->mPlugin->getDescription().getFullName());
-    }
-    Catch;
-}
+PLUGINDESCRIPTIONAPI_MACRO(toString, return String::newString("<PluginDescription>"));
 
-Local<Value> PluginDescriptionAPI::getAPIVersion(Arguments const& args) {
-    try {
-        return ConvertToScriptX(ENGINE_DATA()->mPlugin->getDescription().getAPIVersion());
-    }
-    Catch;
-}
+PLUGINDESCRIPTIONAPI_MACRO(getName, GETDESCRIPTION_MACRO(getName));
 
-Local<Value> PluginDescriptionAPI::getDescription(Arguments const& args) {
-    try {
-        return ConvertToScriptX(ENGINE_DATA()->mPlugin->getDescription().getDescription());
-    }
-    Catch;
-}
+PLUGINDESCRIPTIONAPI_MACRO(getVersion, GETDESCRIPTION_MACRO(getVersion));
 
-Local<Value> PluginDescriptionAPI::getLoad(Arguments const& args) {
-    try {
-        return ConvertToScriptX(ENGINE_DATA()->mPlugin->getDescription().getLoad());
-    }
-    Catch;
-}
+PLUGINDESCRIPTIONAPI_MACRO(getFullName, GETDESCRIPTION_MACRO(getFullName));
 
-Local<Value> PluginDescriptionAPI::getAuthors(Arguments const& args) {
-    try {
-        return ConvertToScriptX(ENGINE_DATA()->mPlugin->getDescription().getAuthors());
-    }
-    Catch;
-}
+PLUGINDESCRIPTIONAPI_MACRO(getAPIVersion, GETDESCRIPTION_MACRO(getAPIVersion));
 
-Local<Value> PluginDescriptionAPI::getContributors(Arguments const& args) {
-    try {
-        return ConvertToScriptX(ENGINE_DATA()->mPlugin->getDescription().getContributors());
-    }
-    Catch;
-}
+PLUGINDESCRIPTIONAPI_MACRO(getDescription, GETDESCRIPTION_MACRO(getDescription));
 
-Local<Value> PluginDescriptionAPI::getWebsite(Arguments const& args) {
-    try {
-        return ConvertToScriptX(ENGINE_DATA()->mPlugin->getDescription().getWebsite());
-    }
-    Catch;
-}
+PLUGINDESCRIPTIONAPI_MACRO(getLoad, GETDESCRIPTION_MACRO(getLoad));
 
-Local<Value> PluginDescriptionAPI::getPrefix(Arguments const& args) {
-    try {
-        return ConvertToScriptX(ENGINE_DATA()->mPlugin->getDescription().getPrefix());
-    }
-    Catch;
-}
+PLUGINDESCRIPTIONAPI_MACRO(getAuthors, GETDESCRIPTION_MACRO(getAuthors));
 
-Local<Value> PluginDescriptionAPI::getProvides(Arguments const& args) {
-    try {
-        return ConvertToScriptX(ENGINE_DATA()->mPlugin->getDescription().getProvides());
-    }
-    Catch;
-}
+PLUGINDESCRIPTIONAPI_MACRO(getContributors, GETDESCRIPTION_MACRO(getContributors));
 
-Local<Value> PluginDescriptionAPI::getDepend(Arguments const& args) {
-    try {
-        return ConvertToScriptX(ENGINE_DATA()->mPlugin->getDescription().getDepend());
-    }
-    Catch;
-}
+PLUGINDESCRIPTIONAPI_MACRO(getWebsite, GETDESCRIPTION_MACRO(getWebsite));
 
-Local<Value> PluginDescriptionAPI::getSoftDepend(Arguments const& args) {
-    try {
-        return ConvertToScriptX(ENGINE_DATA()->mPlugin->getDescription().getSoftDepend());
-    }
-    Catch;
-}
+PLUGINDESCRIPTIONAPI_MACRO(getPrefix, GETDESCRIPTION_MACRO(getPrefix));
 
-Local<Value> PluginDescriptionAPI::getLoadBefore(Arguments const& args) {
-    try {
-        return ConvertToScriptX(ENGINE_DATA()->mPlugin->getDescription().getLoadBefore());
-    }
-    Catch;
-}
+PLUGINDESCRIPTIONAPI_MACRO(getProvides, GETDESCRIPTION_MACRO(getProvides));
 
-Local<Value> PluginDescriptionAPI::getDefaultPermission(Arguments const& args) {
-    try {
-        return ConvertToScriptX(ENGINE_DATA()->mPlugin->getDescription().getDefaultPermission());
-    }
-    Catch;
-}
+PLUGINDESCRIPTIONAPI_MACRO(getDepend, GETDESCRIPTION_MACRO(getDepend));
 
-Local<Value> PluginDescriptionAPI::getCommands(Arguments const& args) { return Local<Value>(); }
+PLUGINDESCRIPTIONAPI_MACRO(getSoftDepend, GETDESCRIPTION_MACRO(getSoftDepend));
 
-Local<Value> PluginDescriptionAPI::getPermissions(Arguments const& args) { return Local<Value>(); }
+PLUGINDESCRIPTIONAPI_MACRO(getLoadBefore, GETDESCRIPTION_MACRO(getLoadBefore));
 
+PLUGINDESCRIPTIONAPI_MACRO(getDefaultPermission, GETDESCRIPTION_MACRO(getDefaultPermission));
+
+PLUGINDESCRIPTIONAPI_MACRO(getCommands, return Local<Value>()); // todo
+
+PLUGINDESCRIPTIONAPI_MACRO(getPermissions, return Local<Value>()); // todo
+
+#undef PLUGINDESCRIPTIONAPI_MACRO
+#undef GETDESCRIPTION_MACRO
 
 } // namespace jse

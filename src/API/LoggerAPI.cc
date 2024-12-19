@@ -44,59 +44,29 @@ Local<Value> LoggerAPIHelper(endstone::Logger::Level level, Arguments const& arg
     Catch;
 }
 
-Local<Value> LoggerAPI::toString(Arguments const& args) {
-    return String::newString("<Logger>");
-}
+Local<Value> LoggerAPI::toString(Arguments const& args) { return String::newString("<Logger>"); }
 
 Local<Value> LoggerAPI::log(Arguments const& args) {
-    // CheckArgsCount(args, 2);
-    // CheckArgType(args[0], ValueKind::kNumber);
-    // CheckArgType(args[1], ValueKind::kString); // any
     auto level = magic_enum::enum_cast<endstone::Logger::Level>(args[0].asNumber().toInt64());
     if (!level.has_value()) return Boolean::newBoolean(false);
     return LoggerAPIHelper(*level, args, 1);
 }
 
-Local<Value> LoggerAPI::info(Arguments const& args) {
-    // CheckArgsCount(args, 1);
-    // CheckArgType(args[0], ValueKind::kString); // any
-    return LoggerAPIHelper(endstone::Logger::Level::Info, args);
-}
+#define LOGGERAPI_MACRO(FUNC_NAME, LEVEL)                                                                              \
+    Local<Value> LoggerAPI::FUNC_NAME(Arguments const& args) {                                                         \
+        return LoggerAPIHelper(endstone::Logger::Level::LEVEL, args);                                                  \
+    }
 
-Local<Value> LoggerAPI::warning(Arguments const& args) {
-    // CheckArgsCount(args, 1);
-    // CheckArgType(args[0], ValueKind::kString); // any
-    return LoggerAPIHelper(endstone::Logger::Level::Warning, args);
-}
+LOGGERAPI_MACRO(info, Info);
+LOGGERAPI_MACRO(warning, Warning);
+LOGGERAPI_MACRO(error, Error);
+LOGGERAPI_MACRO(debug, Debug);
+LOGGERAPI_MACRO(trace, Trace);
+LOGGERAPI_MACRO(critical, Critical);
 
-Local<Value> LoggerAPI::error(Arguments const& args) {
-    // CheckArgsCount(args, 1);
-    // CheckArgType(args[0], ValueKind::kString); // any
-    return LoggerAPIHelper(endstone::Logger::Level::Error, args);
-}
-
-Local<Value> LoggerAPI::debug(Arguments const& args) {
-    // CheckArgsCount(args, 1);
-    // CheckArgType(args[0], ValueKind::kString); // any
-    return LoggerAPIHelper(endstone::Logger::Level::Debug, args);
-}
-
-Local<Value> LoggerAPI::trace(Arguments const& args) {
-    // CheckArgsCount(args, 1);
-    // CheckArgType(args[0], ValueKind::kString); // any
-    return LoggerAPIHelper(endstone::Logger::Level::Trace, args);
-}
-
-Local<Value> LoggerAPI::critical(Arguments const& args) {
-    // CheckArgsCount(args, 1);
-    // CheckArgType(args[0], ValueKind::kString); // any
-    return LoggerAPIHelper(endstone::Logger::Level::Critical, args);
-}
-
+#undef LOGGERAPI_MACRO
 
 Local<Value> LoggerAPI::setLevel(Arguments const& args) {
-    // CheckArgsCount(args, 1);
-    // CheckArgType(args[0], ValueKind::kNumber);
     try {
         auto data = ENGINE_DATA();
         if (data->mPlugin) {
@@ -109,8 +79,6 @@ Local<Value> LoggerAPI::setLevel(Arguments const& args) {
 }
 
 Local<Value> LoggerAPI::isEnabledFor(Arguments const& args) {
-    // CheckArgsCount(args, 1);
-    // CheckArgType(args[0], ValueKind::kNumber);
     try {
         auto data = ENGINE_DATA();
         if (data->mPlugin) {
@@ -133,6 +101,5 @@ Local<Value> LoggerAPI::getName(Arguments const& args) {
     }
     Catch;
 }
-
 
 } // namespace jse
