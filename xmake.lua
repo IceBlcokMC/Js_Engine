@@ -9,7 +9,7 @@ add_requires(
     "microsoft-gsl 4.0.0",
     "nlohmann_json 3.11.3",
     "boost 1.85.0",
-    "glm 1.0.1",
+    -- "glm 1.0.1",
     "concurrentqueue 1.0.4"
 )
 add_requires("magic_enum 0.9.7")
@@ -17,28 +17,28 @@ add_requires("magic_enum 0.9.7")
 if is_plat("linux") then
     -- EndStone Linux Toolchain: LLVM5(Clang & libc++)
     add_requires("libelf 0.8.13")
-    -- set_toolchains("clang")
+    set_toolchains("clang")
     
-    add_cxflags(
-        "-stdlib=libc++",
-        "-std=c++20",
-        "-fPIC",
-        "-fexceptions",
-        "-frtti",
-        {force = true}
-    )
+    -- add_cxflags(
+    --     "-stdlib=libc++",
+    --     "-std=c++20",
+    --     "-fPIC",
+    --     "-fexceptions",
+    --     "-frtti",
+    --     {force = true}
+    -- )
     
-    add_ldflags(
-        "-stdlib=libc++",
-        {force = true}
-    )
+    -- add_ldflags(
+    --     "-stdlib=libc++",
+    --     {force = true}
+    -- )
 
     -- 显式链接必要的库
-    add_links("c++", "c++abi")
+    -- add_links("c++", "c++abi")
 
     -- 设置环境变量确保使用正确的库
-    set_config("cc", "clang")
-    set_config("cxx", "clang++")
+    -- set_config("cc", "clang")
+    -- set_config("cxx", "clang++")
     -- add_defines("_LIBCPP_VERSION")  -- 指示使用 libc++
 end
 
@@ -66,7 +66,7 @@ target("Js_Engine")
         "microsoft-gsl",
         "nlohmann_json",
         "boost",
-        "glm",
+        -- "glm",
         "concurrentqueue"
     )
     add_packages("magic_enum")
@@ -105,19 +105,19 @@ target("Js_Engine")
         add_includedirs("./third-party/quickjs/linux/include")
         add_links("./third-party/quickjs/linux/lib/quickjs.a")
 
-        add_cxflags(
-            "-fPIC",
-            "-stdlib=libc++",
-            "-std=c++20",
-            "-fexceptions",
-            "-frtti",
-            {force = true}
-        )
-        add_ldflags(
-            "-stdlib=libc++",
-            {force = true}
-        )
-        add_syslinks("dl", "pthread")
+        -- add_cxflags(
+        --     -- "-fPIC",
+        --     -- "-stdlib=libc++",
+        --     -- "-std=c++20",
+        --     -- "-fexceptions",
+        --     -- "-frtti",
+        --     {force = true}
+        -- )
+        -- add_ldflags(
+        --     "-stdlib=libc++",
+        --     {force = true}
+        -- )
+        -- add_syslinks("dl", "pthread")
         add_packages("libelf")
     end 
 
