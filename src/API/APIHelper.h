@@ -1,6 +1,6 @@
 #pragma once
 #include "Engine/EngineData.h"
-#include "Engine/Using.h"
+#include "Utils/Using.h"
 
 
 namespace jse {
@@ -14,8 +14,9 @@ void   ToString(Local<Array> const& value, std::ostringstream& oss);
 void   ToString(Local<Object> const& value, std::ostringstream& oss);
 
 template <typename T>
-bool IsInstanceOf(Local<Value> const& value);
-bool InstanceToString(Local<Value> const& value, std::ostringstream& oss);
+inline bool IsInstanceOf(Local<Value> const& value) {
+    return EngineScope::currentEngine()->isInstanceOf<T>(value);
+}
 
 void PrintException(string const& msg, string const& func, string const& plugin, string const& api);
 void PrintException(script::Exception const& e, string const& func, string const& plugin, string const& api);

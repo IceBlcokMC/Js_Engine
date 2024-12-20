@@ -53,6 +53,8 @@ xmake -y
 
 暂不支持，具体情况见 build-linux 分支
 
+> 由于一些玄学问题，目前无法编译 Linux 平台，请等待后续更新（欢迎提交 PR）
+
 ## 贡献
 
 欢迎提交 Issue 和 Pull Request。

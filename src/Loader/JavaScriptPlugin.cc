@@ -1,21 +1,12 @@
 #include "JavaScriptPlugin.h"
 #include "API/APIHelper.h"
+#include "API/CommandSenderAPI.h"
 #include "Engine/EngineData.h"
 #include "Engine/EngineManager.h"
-#include "Engine/Using.h"
 #include "Entry.h"
-#include "endstone/command/plugin_command.h"
-#include "endstone/detail/server.h"
-#include "endstone/event/server/server_load_event.h"
+#include "Utils/Using.h"
 #include "endstone/logger.h"
-#include "endstone/player.h"
-#include "endstone/plugin/plugin_loader.h"
-#include "endstone/plugin/plugin_manager.h"
-#include "endstone/server.h"
-#include "fmt/format.h"
-#include <filesystem>
 #include <iostream>
-#include <utility>
 
 
 namespace jse {
@@ -69,7 +60,7 @@ bool JavaScriptPlugin::onCommand(
             auto func = obj.get("onCommand");
             if (func.isFunction()) {
                 // TODO: args
-                return func.asFunction().call().asBoolean().value();
+                return func.asFunction().call({}, CommandSenderAPI::newCommandSenderAPI(&sender)).asBoolean().value();
             }
         }
         Entry::getInstance()->getLogger().error("Plugin '{}' does not register onCommand function", data->mFileName);

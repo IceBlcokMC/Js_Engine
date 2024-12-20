@@ -1,4 +1,4 @@
-/// <reference path="./js_engine/dts/index.d.ts"/>
+// / <reference path="./js_engine/dts/index.d.ts"/>
 
 "use strict";
 
@@ -56,8 +56,15 @@ JSE.registerPlugin({
             logger.error("logger error");
             logger.trace("logger trace");
             logger.critical("logger critical");
-            logger.info(`enable: ${logger.isEnabledFor(5)}, name: ${logger.getName()}`);
-            logger.info(new Array(3).fill().map((_, i) => `Test Line: ${i}`).join("\n"));
+            logger.info(
+                `enable: ${logger.isEnabledFor(5)}, name: ${logger.getName()}`
+            );
+            logger.info(
+                new Array(3)
+                    .fill()
+                    .map((_, i) => `Test Line: ${i}`)
+                    .join("\n")
+            );
         })();
 
         (() => {
@@ -84,16 +91,26 @@ JSE.registerPlugin({
             JSE.debug(`Logger: `, logger);
             JSE.debug(`Plugin: `, plugin);
             JSE.debug(`PluginDescription: `, description);
-            JSE.debug(`Test Class1: `, new (class Test1 { }));
-            JSE.debug(`Test Class2: `, new (class Test2 {
-                toString() {
-                    return "<Test Class2>";
-                }
-            }));
+            JSE.debug(`Test Class1: `, new (class Test1 { })());
+            JSE.debug(
+                `Test Class2: `,
+                new (class Test2 {
+                    toString() {
+                        return "<Test Class2>";
+                    }
+                })()
+            );
         })();
     },
 
     onDisable: () => {
         JSE.debug("onDisable called");
     },
+
+    onCommand: function (sender) {
+        JSE.debug("onCommand called");
+        JSE.debug("sender: ", sender);
+        JSE.debug("sender.sendMessage: ", sender.sendMessage);
+        sender?.sendMessage("Hello: ", sender?.getName());
+    }
 });

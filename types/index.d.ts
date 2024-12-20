@@ -6,3 +6,5 @@
 /// <reference path="./API/Plugin.d.ts"/>
 /// <reference path="./API/JSE.d.ts"/>
 /// <reference path="./API/PluginDescription.d.ts"/>
+/// <reference path="./API/CommandSender.d.ts"/>
+/// <reference path="./API/Permissible.d.ts"/>

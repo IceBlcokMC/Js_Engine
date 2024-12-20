@@ -1,5 +1,6 @@
 #pragma once
-#include "Engine/Using.h"
+#include "Utils/Defines.h"
+#include "Utils/Using.h"
 
 namespace jse {
 
@@ -11,22 +12,23 @@ public:
     static Local<Object> newLoggerAPI() { return (new LoggerAPI())->getScriptObject(); }
 
 public:
-    Local<Value> toString(Arguments const& args);
+    METHODS(toString);
 
-    Local<Value> log(Arguments const& args);
-    Local<Value> info(Arguments const& args);
-    Local<Value> warning(Arguments const& args);
-    Local<Value> error(Arguments const& args);
-    Local<Value> debug(Arguments const& args);
-    Local<Value> critical(Arguments const& args);
-    Local<Value> trace(Arguments const& args);
+    METHODS(log);
+    METHODS(info);
+    METHODS(warning);
+    METHODS(error);
+    METHODS(debug);
+    METHODS(critical);
+    METHODS(trace);
 
-    Local<Value> setLevel(Arguments const& args);
-    Local<Value> isEnabledFor(Arguments const& args);
-    Local<Value> getName(Arguments const& args);
+    METHODS(setLevel);
+    METHODS(isEnabledFor);
+    METHODS(getName);
+
+
+    static ClassDefine<LoggerAPI> builder;
 };
-
-extern ClassDefine<LoggerAPI> LoggerAPIClass;
 
 
 } // namespace jse
