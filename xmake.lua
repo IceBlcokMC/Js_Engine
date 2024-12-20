@@ -18,28 +18,6 @@ if is_plat("linux") then
     -- EndStone Linux Toolchain: LLVM5(Clang & libc++)
     add_requires("libelf 0.8.13")
     set_toolchains("clang")
-    
-    -- add_cxflags(
-    --     "-stdlib=libc++",
-    --     "-std=c++20",
-    --     "-fPIC",
-    --     "-fexceptions",
-    --     "-frtti",
-    --     {force = true}
-    -- )
-    
-    -- add_ldflags(
-    --     "-stdlib=libc++",
-    --     {force = true}
-    -- )
-
-    -- 显式链接必要的库
-    -- add_links("c++", "c++abi")
-
-    -- 设置环境变量确保使用正确的库
-    -- set_config("cc", "clang")
-    -- set_config("cxx", "clang++")
-    -- add_defines("_LIBCPP_VERSION")  -- 指示使用 libc++
 end
 
 if is_plat("windows") then
@@ -105,19 +83,24 @@ target("Js_Engine")
         add_includedirs("./third-party/quickjs/linux/include")
         add_links("./third-party/quickjs/linux/lib/quickjs.a")
 
-        -- add_cxflags(
-        --     -- "-fPIC",
-        --     -- "-stdlib=libc++",
-        --     -- "-std=c++20",
-        --     -- "-fexceptions",
-        --     -- "-frtti",
-        --     {force = true}
-        -- )
+        add_cxflags(
+            "-fPIC",
+            "-stdlib=libc++",
+            -- "-std=c++20",
+            -- "-fexceptions",
+            -- "-frtti",
+            {force = true}
+        )
         -- add_ldflags(
         --     "-stdlib=libc++",
         --     {force = true}
         -- )
         -- add_syslinks("dl", "pthread")
+        -- add_links("c++", "c++abi")
+        -- set_config("cc", "clang")
+        -- set_config("cxx", "clang++")
+        -- add_defines("_LIBCPP_VERSION")  -- 指示使用 libc++
+        add_syslinks("dl", "stdc++fs")
         add_packages("libelf")
     end 
 
