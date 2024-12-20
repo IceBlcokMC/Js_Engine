@@ -17,12 +17,12 @@ inline void BindAPI(ScriptEngine* engine) {
     EnumAPI::RegisterEnum(engine);
 
     // static class
-    engine->registerNativeClass(JSEAPIClass);
+    engine->registerNativeClass(JSEAPI::builder);
 
     // instance class
-    engine->registerNativeClass<PluginAPI>(PluginAPIClass);
-    engine->registerNativeClass<LoggerAPI>(LoggerAPIClass);
-    engine->registerNativeClass<PluginDescriptionAPI>(PluginDescriptionAPIClass);
+    engine->registerNativeClass<PluginAPI>(PluginAPI::builder);
+    engine->registerNativeClass<LoggerAPI>(LoggerAPI::builder);
+    engine->registerNativeClass<PluginDescriptionAPI>(PluginDescriptionAPI::builder);
     engine->registerNativeClass<PermissibleAPI>(PermissibleAPI::builder);
     engine->registerNativeClass<CommandSenderAPI>(CommandSenderAPI::builder);
 }

@@ -9,22 +9,22 @@
 
 namespace jse {
 
-ClassDefine<PluginAPI> PluginAPIClass = defineClass<PluginAPI>("Plugin")
-                                            .constructor(nullptr)
-                                            .instanceFunction("toString", &PluginAPI::toString)
-                                            .instanceFunction("getDescription", &PluginAPI::getDescription)
-                                            .instanceFunction("onLoad", &PluginAPI::onLoad)
-                                            .instanceFunction("onEnable", &PluginAPI::onEnable)
-                                            .instanceFunction("onDisable", &PluginAPI::onDisable)
-                                            .instanceFunction("getLogger", &PluginAPI::getLogger)
-                                            .instanceFunction("isEnabled", &PluginAPI::isEnabled)
-                                            .instanceFunction("getPluginLoader", &PluginAPI::getPluginLoader)
-                                            .instanceFunction("getServer", &PluginAPI::getServer)
-                                            .instanceFunction("getName", &PluginAPI::getName)
-                                            .instanceFunction("getCommand", &PluginAPI::getCommand)
-                                            .instanceFunction("getDataFolder", &PluginAPI::getDataFolder)
-                                            .instanceFunction("registerEvent", &PluginAPI::registerEvent)
-                                            .build();
+ClassDefine<PluginAPI> PluginAPI::builder = defineClass<PluginAPI>("Plugin")
+                                                .constructor(nullptr)
+                                                .instanceFunction("toString", &PluginAPI::toString)
+                                                .instanceFunction("getDescription", &PluginAPI::getDescription)
+                                                .instanceFunction("onLoad", &PluginAPI::onLoad)
+                                                .instanceFunction("onEnable", &PluginAPI::onEnable)
+                                                .instanceFunction("onDisable", &PluginAPI::onDisable)
+                                                .instanceFunction("getLogger", &PluginAPI::getLogger)
+                                                .instanceFunction("isEnabled", &PluginAPI::isEnabled)
+                                                .instanceFunction("getPluginLoader", &PluginAPI::getPluginLoader)
+                                                .instanceFunction("getServer", &PluginAPI::getServer)
+                                                .instanceFunction("getName", &PluginAPI::getName)
+                                                .instanceFunction("getCommand", &PluginAPI::getCommand)
+                                                .instanceFunction("getDataFolder", &PluginAPI::getDataFolder)
+                                                .instanceFunction("registerEvent", &PluginAPI::registerEvent)
+                                                .build();
 
 
 #define PLUGINAPI_MACRO(FUNC_NAME, ...)                                                                                \

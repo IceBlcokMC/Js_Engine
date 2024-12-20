@@ -25,9 +25,10 @@ public:
     METHODS(setLevel);
     METHODS(isEnabledFor);
     METHODS(getName);
-};
 
-extern ClassDefine<LoggerAPI> LoggerAPIClass;
+
+    static ClassDefine<LoggerAPI> builder;
+};
 
 
 } // namespace jse

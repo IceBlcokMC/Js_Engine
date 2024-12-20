@@ -11,8 +11,9 @@ public:
     static Local<Value> getPlugin(Arguments const& args);
 
     static Local<Value> debug(Arguments const& args);
-};
 
-extern ClassDefine<void> JSEAPIClass;
+
+    static ClassDefine<void> builder;
+};
 
 } // namespace jse
