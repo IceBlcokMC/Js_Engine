@@ -1,12 +1,12 @@
 #include "JavaScriptPlugin.h"
 #include "API/APIHelper.h"
+#include "API/CommandSenderAPI.h"
 #include "Engine/EngineData.h"
 #include "Engine/EngineManager.h"
 #include "Entry.h"
 #include "Utils/Using.h"
 #include "endstone/logger.h"
 #include <iostream>
-
 
 
 namespace jse {
@@ -60,6 +60,7 @@ bool JavaScriptPlugin::onCommand(
             auto func = obj.get("onCommand");
             if (func.isFunction()) {
                 // TODO: args
+                // return func.asFunction().call({}, CommandSenderAPI::newCommandSenderAPI(&sender)).asBoolean().value();
                 return func.asFunction().call().asBoolean().value();
             }
         }

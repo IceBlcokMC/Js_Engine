@@ -1,5 +1,7 @@
 #pragma once
+#include "Utils/Defines.h"
 #include "Utils/Using.h"
+
 
 namespace jse {
 
@@ -11,31 +13,31 @@ public:
     static Local<Object> newPluginAPI() { return (new PluginAPI())->getScriptObject(); }
 
 public:
-    Local<Value> toString(Arguments const& args);
+    METHODS(toString);
 
-    Local<Value> getDescription(Arguments const& args);
+    METHODS(getDescription);
 
-    Local<Value> onLoad(Arguments const& args);
+    METHODS(onLoad);
 
-    Local<Value> onEnable(Arguments const& args);
+    METHODS(onEnable);
 
-    Local<Value> onDisable(Arguments const& args);
+    METHODS(onDisable);
 
-    Local<Value> getLogger(Arguments const& args);
+    METHODS(getLogger);
 
-    Local<Value> isEnabled(Arguments const& args);
+    METHODS(isEnabled);
 
-    Local<Value> getPluginLoader(Arguments const& args);
+    METHODS(getPluginLoader);
 
-    Local<Value> getServer(Arguments const& args);
+    METHODS(getServer);
 
-    Local<Value> getName(Arguments const& args);
+    METHODS(getName);
 
-    Local<Value> getCommand(Arguments const& args);
+    METHODS(getCommand);
 
-    Local<Value> getDataFolder(Arguments const& args);
+    METHODS(getDataFolder);
 
-    Local<Value> registerEvent(Arguments const& args);
+    METHODS(registerEvent);
 };
 
 extern ClassDefine<PluginAPI> PluginAPIClass;

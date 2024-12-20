@@ -2,6 +2,7 @@
 #include "Utils/Using.h"
 #include "fmt/format.h"
 #include "magic_enum/magic_enum.hpp"
+#include <cstddef>
 #include <type_traits>
 #include <unordered_map>
 
@@ -31,6 +32,10 @@ struct ToScriptType<std::string> {
 
 template <>
 struct ToScriptType<const char*> {
+    using Type = String;
+};
+template <size_t N>
+struct ToScriptType<char[N]> {
     using Type = String;
 };
 
@@ -76,6 +81,8 @@ Local<Value> ConvertToScriptImpl(const T& value) {
         return Number::newNumber((int)value); // enum -> number
     } else if constexpr (std::is_same_v<ScriptType, String>) {
         return String::newString(value); // string -> string
+    } else if constexpr (std::is_array_v<T> && std::is_same_v<std::remove_extent_t<T>, char>) {
+        return String::newString(value); // char array -> string
     } else if constexpr (std::is_same_v<ScriptType, Number>) {
         return Number::newNumber(value); // int、double、float -> number
     } else if constexpr (std::is_same_v<ScriptType, Boolean>) {

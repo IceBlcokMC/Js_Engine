@@ -1,5 +1,7 @@
 #pragma once
+#include "Utils/Defines.h"
 #include "Utils/Using.h"
+
 
 namespace jse {
 
@@ -11,41 +13,41 @@ public:
     static Local<Object> newPluginDescriptionAPI() { return (new PluginDescriptionAPI())->getScriptObject(); }
 
 public:
-    Local<Value> toString(Arguments const& args);
+    METHODS(toString);
 
-    Local<Value> getName(Arguments const& args);
+    METHODS(getName);
 
-    Local<Value> getVersion(Arguments const& args);
+    METHODS(getVersion);
 
-    Local<Value> getFullName(Arguments const& args);
+    METHODS(getFullName);
 
-    Local<Value> getAPIVersion(Arguments const& args);
+    METHODS(getAPIVersion);
 
-    Local<Value> getDescription(Arguments const& args);
+    METHODS(getDescription);
 
-    Local<Value> getLoad(Arguments const& args);
+    METHODS(getLoad);
 
-    Local<Value> getAuthors(Arguments const& args);
+    METHODS(getAuthors);
 
-    Local<Value> getContributors(Arguments const& args);
+    METHODS(getContributors);
 
-    Local<Value> getWebsite(Arguments const& args);
+    METHODS(getWebsite);
 
-    Local<Value> getPrefix(Arguments const& args);
+    METHODS(getPrefix);
 
-    Local<Value> getProvides(Arguments const& args);
+    METHODS(getProvides);
 
-    Local<Value> getDepend(Arguments const& args);
+    METHODS(getDepend);
 
-    Local<Value> getSoftDepend(Arguments const& args);
+    METHODS(getSoftDepend);
 
-    Local<Value> getLoadBefore(Arguments const& args);
+    METHODS(getLoadBefore);
 
-    Local<Value> getDefaultPermission(Arguments const& args);
+    METHODS(getDefaultPermission);
 
-    Local<Value> getCommands(Arguments const& args);
+    METHODS(getCommands);
 
-    Local<Value> getPermissions(Arguments const& args);
+    METHODS(getPermissions);
 };
 
 extern ClassDefine<PluginDescriptionAPI> PluginDescriptionAPIClass;

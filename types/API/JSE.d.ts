@@ -66,7 +66,8 @@ declare class JSE {
             onEnable(): void;
             /** 插件禁用时回调 */
             onDisable(): void;
-            // onCommand(): boolean;
+            /** 插件命令执行时回调 */
+            onCommand(sender: CommandSender): boolean;
         }
     ): void;
 

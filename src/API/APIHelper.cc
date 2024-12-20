@@ -17,10 +17,6 @@ bool IsFloat(Local<Value> const& num) {
     }
 }
 
-template <typename T>
-bool IsInstanceOf(Local<Value> const& obj) {
-    return EngineScope::currentEngine()->isInstanceOf<T>(obj);
-}
 
 string ToString(ValueKind const& kind) {
     switch (kind) {
@@ -104,7 +100,7 @@ void ToString(Local<Array> const& value, std::ostringstream& oss) {
     }
 }
 void ToString(Local<Object> const& value, std::ostringstream& oss) {
-    if (value.has("toString")){
+    if (value.has("toString")) {
         Local<Value> result = value.get("toString").asFunction().call(value);
         if (result.isString()) {
             oss << result.asString().toString();

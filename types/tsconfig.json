@@ -1,6 +1,6 @@
 {
     "include": [
-        "./**.d.ts"
+        "./**/*.d.ts"
     ],
     "compilerOptions": {
         "module": "ES6",
