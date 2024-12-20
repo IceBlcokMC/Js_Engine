@@ -109,8 +109,12 @@ target("Js_Engine")
     set_basename("js_engine")
     after_build(function(target)
         local output_dir = path.join(os.projectdir(), "bin")
+        local ext = ".dll";
+        if (is_plat("linux")) then
+            ext = ".so";
+        end
 
-        os.cp(target:targetfile(), path.join(output_dir, target:name() .. ".dll"))
+        os.cp(target:targetfile(), path.join(output_dir, target:basename() .. ext))
 
         os.cp(path.join(os.projectdir(), "types"), path.join(os.projectdir(), "bin", "js_engine", "dts"))
 
