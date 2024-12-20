@@ -19,7 +19,7 @@ on:
 
 env:
   EndStoneVersion: "v0.5.6"
-  EndStoneSDKPath: "build/_deps/endstone"
+  EndStoneSDKPath: "build/_deps/endstone-src"
   LLVM_VERSION: 15
 
 jobs:
@@ -56,6 +56,11 @@ jobs:
         run: |
           cd ${{ env.EndStoneSDKPath }}
           git apply "${{ github.workspace }}/patch/cxx20.patch"
+
+      - name: Apply Patch(Linux)
+        run: |
+          cd ${{ env.EndStoneSDKPath }}
+          git apply "${{ github.workspace }}/patch/linux.patch"
 
       - uses: xmake-io/github-action-setup-xmake@v1
         # with:

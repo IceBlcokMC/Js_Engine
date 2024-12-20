@@ -15,7 +15,6 @@
 #include <vector>
 
 
-
 namespace jse {
 
 
@@ -25,6 +24,9 @@ struct EngineData {
     script::Global<Object> mRegisterInfo;
 
     JavaScriptPlugin* mPlugin{nullptr};
+
+public:
+    explicit EngineData(uint64_t engineID) : mEngineId(engineID) {}
 
 public:
     void callOnLoad() {

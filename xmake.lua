@@ -34,7 +34,7 @@ target("Js_Engine")
     )
     add_files("src/**.cc")
     add_includedirs(
-        "build/_deps/endstone/include",
+        "build/_deps/endstone-src/include",
         "src"
     )
     add_packages(
@@ -86,7 +86,7 @@ target("Js_Engine")
         add_cxflags(
             "-fPIC",
             "-stdlib=libc++",
-            -- "-std=c++20",
+            "-fdeclspec",
             -- "-fexceptions",
             -- "-frtti",
             {force = true}
@@ -95,12 +95,9 @@ target("Js_Engine")
         --     "-stdlib=libc++",
         --     {force = true}
         -- )
-        -- add_syslinks("dl", "pthread")
-        -- add_links("c++", "c++abi")
-        -- set_config("cc", "clang")
-        -- set_config("cxx", "clang++")
+        -- add_syslinks("dl", "pthread", "c++", "c++abi")
         -- add_defines("_LIBCPP_VERSION")  -- 指示使用 libc++
-        add_syslinks("dl", "stdc++fs")
+        -- add_syslinks("dl", "stdc++fs")
         add_packages("libelf")
     end 
 
