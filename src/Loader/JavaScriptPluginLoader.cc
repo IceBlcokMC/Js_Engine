@@ -1,21 +1,14 @@
 #include "JavaScriptPluginLoader.h"
 #include "Engine/EngineData.h"
 #include "Engine/EngineManager.h"
-#include "Engine/Using.h"
 #include "Entry.h"
 #include "JavaScriptPlugin.h"
-#include "Utils/Util.h"
-#include "endstone/detail/server.h"
-#include "endstone/permissions/permission_default.h"
-#include "endstone/plugin/plugin_load_order.h"
-#include "magic_enum/magic_enum.hpp"
-#include "nlohmann/json.hpp"
-#include "nlohmann/json_fwd.hpp"
+#include "Utils/Using.h"
 #include <filesystem>
 #include <memory>
-#include <optional>
 #include <string>
 #include <vector>
+
 
 
 namespace jse {
@@ -34,11 +27,9 @@ endstone::Plugin* JavaScriptPluginLoader::loadPlugin(std::string file) {
     auto&       manager = EngineManager::getInstance();
     auto        engine  = manager.createEngine();
     EngineScope scope(engine);
+    auto        data = ENGINE_DATA();
     try {
         auto path = fs::path(file);
-
-        // 创建引擎
-        auto data = ENGINE_DATA();
 
         // 加载文件
         data->mFileName = path.filename().string();
@@ -72,6 +63,7 @@ endstone::Plugin* JavaScriptPluginLoader::loadPlugin(std::string file) {
         Entry::getInstance()->getLogger().error("Failed to load plugin: {}", file);
         Entry::getInstance()->getLogger().error("Unknown error");
     }
+    manager.destroyEngine(data->mEngineId);
     return nullptr;
 }
 

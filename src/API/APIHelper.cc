@@ -1,7 +1,4 @@
 #include "APIHelper.h"
-#include "API/LoggerAPI.h"
-#include "API/PluginAPI.h"
-#include "API/PluginDescription.h"
 #include "Entry.h"
 #include "Utils/Util.h"
 #include "fmt/core.h"

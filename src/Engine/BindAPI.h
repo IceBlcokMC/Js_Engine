@@ -1,10 +1,10 @@
 #pragma once
-#include "API/JSEAPI.h"
 #include "API/EnumAPI.h"
+#include "API/JSEAPI.h"
 #include "API/LoggerAPI.h"
 #include "API/PluginAPI.h"
-#include "API/PluginDescription.h"
-#include "Using.h"
+#include "API/PluginDescriptionAPI.h"
+#include "Utils/Using.h"
 
 
 namespace jse {

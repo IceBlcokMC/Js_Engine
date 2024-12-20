@@ -1,19 +1,13 @@
 #include "Entry.h"
-#include "Engine/EngineManager.h"
-#include "Loader/JavaScriptPlugin.h"
 #include "Loader/JavaScriptPluginLoader.h"
-#include "endstone/detail/logger_factory.h"
-#include "endstone/detail/plugin/plugin_manager.h"
-#include "endstone/detail/server.h"
+#include "Utils/Using.h"
 #include "endstone/plugin/plugin_manager.h"
-#include <algorithm>
 #include <debugapi.h>
 #include <filesystem>
 #include <memory>
 #include <thread>
 #include <utility>
 
-using endstone::detail::EndstoneServer;
 
 namespace jse {
 

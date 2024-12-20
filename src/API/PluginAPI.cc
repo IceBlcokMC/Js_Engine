@@ -1,9 +1,9 @@
 #include "PluginAPI.h"
 #include "API/LoggerAPI.h"
-#include "API/PluginDescription.h"
+#include "API/PluginDescriptionAPI.h"
 #include "APIHelper.h"
 #include "Engine/EngineData.h"
-#include "Engine/Using.h"
+#include "Utils/Using.h"
 #include <cstddef>
 
 
