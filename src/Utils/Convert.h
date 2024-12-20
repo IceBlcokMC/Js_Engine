@@ -14,7 +14,7 @@ namespace jse {
 // int、double、float -> Number
 // bool -> Boolean
 // std::vector<T> -> Array<T>
-// std::unordered_map<std::string, V> -> Object<string, V>
+// std::unordered_map<K, V> -> Object<string, V>
 // enum<T> -> Number
 namespace ConvertCppToScriptX {
 

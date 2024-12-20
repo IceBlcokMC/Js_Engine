@@ -2,6 +2,7 @@
 #include "Entry.h"
 #include "Loader/JavaScriptPlugin.h"
 #include "Utils/Convert.h"
+#include "Utils/StringUtils.h"
 #include "Utils/Using.h"
 #include "endstone/command/command.h"
 #include "endstone/permissions/permission.h"
@@ -13,7 +14,28 @@
 #include <optional>
 #include <utility>
 #include <vector>
+#define TRY_PARSE_MACRO(NAME, KEY, TYPE, SCRIPT_TYPE, DEFAULT)                                                         \
+    TYPE tryParse##NAME() {                                                                                            \
+        try {                                                                                                          \
+            if (mRegisterInfo.isEmpty()) return DEFAULT;                                                               \
+            auto obj = mRegisterInfo.get();                                                                            \
+            if (obj.has(KEY) && !obj.get(KEY).isNull()) {                                                              \
+                return ConvertFromScriptX<TYPE>(obj.get(KEY).as##SCRIPT_TYPE());                                       \
+            }                                                                                                          \
+        } catch (...) {                                                                                                \
+            Entry::getInstance()->getLogger().error("Failed to parse " #KEY " from " + mFileName);                     \
+        }                                                                                                              \
+        return DEFAULT;                                                                                                \
+    }
 
+#define CALL_PLUGIN_MACRO(NAME, KEY)                                                                                   \
+    void call##NAME() {                                                                                                \
+        if (mRegisterInfo.isEmpty()) return;                                                                           \
+        auto obj = mRegisterInfo.get();                                                                                \
+        if (obj.has(KEY) && obj.get(KEY).isFunction()) {                                                               \
+            obj.get(KEY).asFunction().call();                                                                          \
+        }                                                                                                              \
+    }
 
 namespace jse {
 
@@ -29,135 +51,42 @@ public:
     explicit EngineData(uint64_t engineID) : mEngineId(engineID) {}
 
 public:
-    void callOnLoad() {
-        auto obj = mRegisterInfo.get();
-        if (obj.has("onLoad")) {
-            auto func = obj.get("onLoad");
-            if (func.isFunction()) {
-                func.asFunction().call();
-                return;
-            }
-        }
-        Entry::getInstance()->getLogger().error("Plugin '{}' does not register onLoad function", this->mFileName);
-    }
+    CALL_PLUGIN_MACRO(OnLoad, "onLoad");
 
-    void callOnEnable() {
-        auto obj = mRegisterInfo.get();
-        if (obj.has("onEnable")) {
-            auto func = obj.get("onEnable");
-            if (func.isFunction()) {
-                func.asFunction().call();
-                return;
-            }
-        }
-        Entry::getInstance()->getLogger().error("Plugin '{}' does not register onEnable function", this->mFileName);
-    }
+    CALL_PLUGIN_MACRO(OnEnable, "onEnable");
 
-    void callOnDisable() {
-        auto obj = mRegisterInfo.get();
-        if (obj.has("onDisable")) {
-            auto func = obj.get("onDisable");
-            if (func.isFunction()) {
-                func.asFunction().call();
-                return;
-            }
-        }
-        Entry::getInstance()->getLogger().error("Plugin '{}' does not register onDisable function", this->mFileName);
-    }
+    CALL_PLUGIN_MACRO(OnDisable, "onDisable");
 
 public:
-    string tryParseName() {
-        auto obj = mRegisterInfo.get();
-        if (obj.has("name")) {
-            return obj.get("name").asString().toString();
-        }
-        return this->mFileName;
-    }
-    string tryParseVersion() {
-        auto obj = mRegisterInfo.get();
-        if (obj.has("version")) {
-            return obj.get("version").asString().toString();
-        }
-        return "0.0.0";
-    }
-    string tryParseDescription() {
-        auto obj = mRegisterInfo.get();
-        if (obj.has("description")) {
-            return obj.get("description").asString().toString();
-        }
-        return "";
-    }
-    endstone::PluginLoadOrder tryParseLoad() {
-        auto obj = mRegisterInfo.get();
-        return obj.has("load") && obj.get("load").isNumber()
-                 ? endstone::PluginLoadOrder(obj.get("load").asNumber().toInt64())
-                 : endstone::PluginLoadOrder::PostWorld;
-    }
-    std::vector<string> tryParseAuthors() {
-        auto obj = mRegisterInfo.get();
-        if (obj.has("authors")) {
-            return ConvertFromScriptX<std::vector<string>>(obj.get("authors").asArray());
-        }
-        return {};
-    }
-    std::vector<string> tryParseContributors() {
-        auto obj = mRegisterInfo.get();
-        if (obj.has("contributors")) {
-            return ConvertFromScriptX<std::vector<string>>(obj.get("contributors").asArray());
-        }
-        return {};
-    }
-    string tryParseWebsite() {
-        auto obj = mRegisterInfo.get();
-        if (obj.has("website")) {
-            return obj.get("website").asString().toString();
-        }
-        return "";
-    }
-    string tryParsePrefix() {
-        auto obj = mRegisterInfo.get();
-        if (obj.has("prefix")) {
-            return obj.get("prefix").asString().toString();
-        }
-        return "";
-    }
-    std::vector<string> tryParseProvides() {
-        auto obj = mRegisterInfo.get();
-        if (obj.has("provides")) {
-            return ConvertFromScriptX<std::vector<string>>(obj.get("provides").asArray());
-        }
-        return {};
-    }
-    std::vector<string> tryParseDepend() {
-        auto obj = mRegisterInfo.get();
-        if (obj.has("depend")) {
-            return ConvertFromScriptX<std::vector<string>>(obj.get("depend").asArray());
-        }
-        return {};
-    }
-    std::vector<string> tryParseSoftDepend() {
-        auto obj = mRegisterInfo.get();
-        if (obj.has("soft_depend")) {
-            return ConvertFromScriptX<std::vector<string>>(obj.get("soft_depend").asArray());
-        }
-        return {};
-    }
-    std::vector<string> tryParseLoadBefore() {
-        auto obj = mRegisterInfo.get();
-        if (obj.has("load_before")) {
-            return ConvertFromScriptX<std::vector<string>>(obj.get("load_before").asArray());
-        }
-        return {};
-    }
-    endstone::PermissionDefault tryParseDefaultPermission() {
-        auto obj = mRegisterInfo.get();
-        return obj.has("default_permission") && obj.get("default_permission").isNumber()
-                 ? endstone::PermissionDefault(obj.get("default_permission").asNumber().toInt64())
-                 : endstone::PermissionDefault::Operator;
-    }
+    TRY_PARSE_MACRO(
+        Name,
+        "name",
+        string,
+        String,
+        ll::string_utils::toSnakeCase(this->mFileName.substr(0, this->mFileName.find_last_of(".")))
+    );
+    TRY_PARSE_MACRO(Version, "version", string, String, "0.0.0");
+    TRY_PARSE_MACRO(Description, "description", string, String, "");
+    TRY_PARSE_MACRO(Load, "load", endstone::PluginLoadOrder, Number, endstone::PluginLoadOrder::PostWorld);
+    TRY_PARSE_MACRO(Authors, "authors", std::vector<string>, Array, {});
+    TRY_PARSE_MACRO(Contributors, "contributors", std::vector<string>, Array, {});
+    TRY_PARSE_MACRO(Website, "website", string, String, "");
+    TRY_PARSE_MACRO(Prefix, "prefix", string, String, "");
+    TRY_PARSE_MACRO(Provides, "provides", std::vector<string>, Array, {});
+    TRY_PARSE_MACRO(Depend, "depend", std::vector<string>, Array, {});
+    TRY_PARSE_MACRO(SoftDepend, "soft_depend", std::vector<string>, Array, {});
+    TRY_PARSE_MACRO(LoadBefore, "load_before", std::vector<string>, Array, {});
+    TRY_PARSE_MACRO(
+        DefaultPermission,
+        "default_permission",
+        endstone::PermissionDefault,
+        Number,
+        endstone::PermissionDefault::Operator
+    );
 
 public:
     void tryParseCommands(JsPluginDescriptionBuilder& jbuilder) {
+        if (mRegisterInfo.isEmpty()) return;
         auto obj = mRegisterInfo.get();
         if (!obj.has("commands")) {
             return;
@@ -196,6 +125,7 @@ public:
 
 
     void tryParsePermissions(JsPluginDescriptionBuilder& jbuilder) {
+        if (mRegisterInfo.isEmpty()) return;
         auto obj = mRegisterInfo.get();
         if (!obj.has("permissions")) {
             return;
@@ -227,5 +157,8 @@ public:
 
 #define GET_ENGINE_DATA(engine) engine->getData<EngineData>()
 
+#undef TRY_PARSE_MACRO
+
+#undef CALL_PLUGIN_MACRO
 
 } // namespace jse

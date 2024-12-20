@@ -4,6 +4,8 @@
 declare class Logger {
     private constructor();
 
+    toString(): "<Logger>";
+
     /** 输出日志 */
     log(level: Enums.LoggerLevel, ...message: any[]): boolean;
     /** 输出信息日志 */

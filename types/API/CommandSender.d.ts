@@ -1,7 +1,7 @@
 /// <reference path="../index.d.ts"/>
 
-declare class CommandSender extends Permissible {
-    toString(): string
+declare class CommandSender {
+    toString(): "<CommandSender>";
 
     // asCommandSender():any // depreciated
 
@@ -11,11 +11,13 @@ declare class CommandSender extends Permissible {
 
     // asPlayer(): any // TODO: PlayerAPI
 
-    sendMessage(...args: any[]): void
+    /** 返回正常消息 */
+    sendMessage(...args: any[]): void;
 
-    sendErrorMessage(...args: any[]): void
+    /** 返回错误消息 */
+    sendErrorMessage(...args: any[]): void;
 
     // getServer(): any // TODO: ServerAPI
 
-    getName(): string
+    getName(): string;
 }

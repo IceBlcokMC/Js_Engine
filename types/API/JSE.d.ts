@@ -30,44 +30,44 @@ declare class JSE {
         /** 插件信息 */
         information: {
             /** 插件名称 */
-            name: string;
+            name?: string;
             /** 插件版本 */
-            version: string;
+            version?: string;
             /** 插件描述 */
-            description: string;
+            description?: string;
             /** 插件加载顺序 */
-            load: Enums.PluginLoadOrder;
+            load?: Enums.PluginLoadOrder;
             /** 插件作者列表 */
-            authors: string[];
+            authors?: string[];
             /** 插件贡献者列表 */
-            contributors: string[];
+            contributors?: string[];
             /** 插件网站 */
-            website: string;
+            website?: string;
             /** 插件日志标题 */
-            prefix: string;
+            prefix?: string;
             /** 插件向外提供的API */
-            provides: string[];
+            provides?: string[];
             /** 插件依赖 */
-            depend: string[];
+            depend?: string[];
             /** 插件可选依赖 */
-            soft_depend: string[];
+            soft_depend?: string[];
             /** 获取将此插件视为可选依赖的插件 */
-            load_before: string[];
+            load_before?: string[];
             /** 插件默认命令权限 */
-            default_permission: Enums.PermissionDefault;
+            default_permission?: Enums.PermissionDefault;
             /** 权限定义 */
-            permissions: P;
+            permissions?: P;
             /** 命令列表 */
-            commands: CommandBuilder<P>;
+            commands?: CommandBuilder<P>;
 
             /** 插件加载时回调 */
-            onLoad(): void;
+            onLoad?: () => void;
             /** 插件启用时回调 */
-            onEnable(): void;
+            onEnable?: () => void;
             /** 插件禁用时回调 */
-            onDisable(): void;
+            onDisable?: () => void;
             /** 插件命令执行时回调 */
-            onCommand(sender: CommandSender): boolean;
+            onCommand?: (sender: CommandSender) => boolean;
         }
     ): void;
 

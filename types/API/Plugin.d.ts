@@ -4,6 +4,8 @@
 declare class Plugin {
     private constructor();
 
+    toString(): "<Plugin>";
+
     /** 获取插件相关信息 */
     getDescription(): PluginDescriptionAPI;
 

@@ -67,6 +67,7 @@ endstone::Plugin* JavaScriptPluginLoader::loadPlugin(std::string file) {
     return nullptr;
 }
 
+#undef LOAD_CATCH
 
 std::vector<std::string> JavaScriptPluginLoader::filterPlugins(const fs::path& directory) {
     std::vector<std::string> plugins;
