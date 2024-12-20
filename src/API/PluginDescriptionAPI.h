@@ -48,9 +48,10 @@ public:
     METHODS(getCommands);
 
     METHODS(getPermissions);
-};
 
-extern ClassDefine<PluginDescriptionAPI> PluginDescriptionAPIClass;
+
+    static ClassDefine<PluginDescriptionAPI> builder;
+};
 
 
 } // namespace jse

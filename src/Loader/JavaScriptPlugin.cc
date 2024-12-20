@@ -60,8 +60,7 @@ bool JavaScriptPlugin::onCommand(
             auto func = obj.get("onCommand");
             if (func.isFunction()) {
                 // TODO: args
-                // return func.asFunction().call({}, CommandSenderAPI::newCommandSenderAPI(&sender)).asBoolean().value();
-                return func.asFunction().call().asBoolean().value();
+                return func.asFunction().call({}, CommandSenderAPI::newCommandSenderAPI(&sender)).asBoolean().value();
             }
         }
         Entry::getInstance()->getLogger().error("Plugin '{}' does not register onCommand function", data->mFileName);

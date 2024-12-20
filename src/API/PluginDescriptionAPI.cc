@@ -5,10 +5,9 @@
 #include "Utils/Using.h"
 
 
-
 namespace jse {
 
-ClassDefine<PluginDescriptionAPI> PluginDescriptionAPIClass =
+ClassDefine<PluginDescriptionAPI> PluginDescriptionAPI::builder =
     defineClass<PluginDescriptionAPI>("PluginDescription")
         .constructor(nullptr)
         .instanceFunction("toString", &PluginDescriptionAPI::toString)

@@ -38,9 +38,10 @@ public:
     METHODS(getDataFolder);
 
     METHODS(registerEvent);
-};
 
-extern ClassDefine<PluginAPI> PluginAPIClass;
+
+    static ClassDefine<PluginAPI> builder;
+};
 
 
 } // namespace jse
