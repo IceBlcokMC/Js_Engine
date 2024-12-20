@@ -1,4 +1,4 @@
-// / <reference path="./js_engine/dts/index.d.ts"/>
+/// <reference path="./js_engine/dts/index.d.ts"/>
 
 "use strict";
 
@@ -107,7 +107,7 @@ JSE.registerPlugin({
         JSE.debug("onDisable called");
     },
 
-    onCommand: function (sender) {
+    onCommand: (sender) => {
         JSE.debug("onCommand called");
         JSE.debug("sender: ", sender);
         JSE.debug("sender.sendMessage: ", sender.sendMessage);

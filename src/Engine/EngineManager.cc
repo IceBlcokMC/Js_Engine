@@ -1,6 +1,8 @@
 #include "EngineManager.h"
 #include "BindAPI.h"
 #include "EngineData.h"
+#include "Utils/Convert.h"
+#include <unordered_map>
 
 namespace jse {
 EngineManager& EngineManager::getInstance() {
