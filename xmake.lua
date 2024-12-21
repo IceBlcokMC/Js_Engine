@@ -1,7 +1,20 @@
 add_rules("mode.debug", "mode.release")
 
 add_repositories("levilamina https://github.com/LiteLDev/xmake-repo.git")
+package("endstone")
+    set_kind("library", {headeronly = true})
+    set_homepage("https://github.com/EndstoneMC/endstone")
+    set_description("Endstone - High-level Plugin API for Bedrock Dedicated Servers (BDS), in both Python and C++")
+    set_license("Apache-2.0")
 
+    add_urls("https://github.com/EndstoneMC/endstone/archive/refs/tags/$(version).tar.gz","https://github.com/EndstoneMC/endstone.git")
+    add_versions("v0.5.6","b6a78473aef733d02aa99fe960ea3ffee6e52486")
+    add_patches("v0.5.6", "https://github.com/engsr6982/Js_Engine/raw/refs/heads/develop/patch/cxx20.patch",
+                        "547ae3d325b8deb68747179b6bc3aa8772ba4efe36263bf31f34be7a3aac2ceb")
+    on_install("windows", "linux", function (package)
+        os.cp("include", package:installdir())
+    end)
+package_end()
 add_requires(
     "fmt >=10.0.0 <11.0.0",
     "expected-lite 0.8.0",
@@ -10,7 +23,8 @@ add_requires(
     "nlohmann_json 3.11.3",
     "boost 1.85.0",
     "glm 1.0.1",
-    "concurrentqueue 1.0.4"
+    "concurrentqueue 1.0.4",
+    "endstone v0.5.6"
 )
 add_requires("magic_enum 0.9.7")
 
@@ -33,10 +47,7 @@ target("Js_Engine")
         "_AMD64_"
     )
     add_files("src/**.cc")
-    add_includedirs(
-        "build/_deps/endstone-src/include",
-        "src"
-    )
+    add_includedirs("src")
     add_packages(
         "fmt",
         "expected-lite",
@@ -45,7 +56,8 @@ target("Js_Engine")
         "nlohmann_json",
         "boost",
         "glm",
-        "concurrentqueue"
+        "concurrentqueue",
+        "endstone"
     )
     add_packages("magic_enum")
     set_kind("shared")

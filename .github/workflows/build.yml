@@ -18,8 +18,6 @@ on:
   workflow_dispatch:
 
 env:
-  EndStoneVersion: "v0.5.6"
-  EndStoneSDKPath: "build/_deps/endstone-src"
   LLVM_VERSION: 15
 
 jobs:
@@ -36,14 +34,6 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Checkout EndStone repo
-        uses: actions/checkout@v4
-        with:
-          repository: EndstoneMC/endstone
-          ref: ${{ env.EndStoneVersion }}
-          path: ${{ env.EndStoneSDKPath }}
-          fetch-depth: 0
-
       - uses: actions/cache@v4
         with:
           path: |
@@ -51,16 +41,6 @@ jobs:
           key: xmake-${{ hashFiles('xmake.lua') }}
           restore-keys: |
             xmake-
-
-      - name: Apply Patch
-        run: |
-          cd ${{ env.EndStoneSDKPath }}
-          git apply "${{ github.workspace }}/patch/cxx20.patch"
-
-      - name: Apply Patch(Linux)
-        run: |
-          cd ${{ env.EndStoneSDKPath }}
-          git apply "${{ github.workspace }}/patch/linux.patch"
 
       - uses: xmake-io/github-action-setup-xmake@v1
         # with:
