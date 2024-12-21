@@ -56,4 +56,8 @@ endstone::PluginDescription const& Entry::getDescription() const { return descri
 
 } // namespace jse
 
+#if defined(_WIN32)
 extern "C" __declspec(dllexport) endstone::Plugin* init_endstone_plugin() { return jse::Entry::getInstance(); }
+else
+extern "C" __attribute__((visibility("default"))) endstone::Plugin* init_endstone_plugin() { return jse::Entry::getInstance(); }
+#endif

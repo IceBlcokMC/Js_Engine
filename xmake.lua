@@ -23,7 +23,6 @@ package_end()
 
 
 add_requires(
-    "fmt >=10.0.0 <11.0.0",
     "expected-lite 0.8.0",
     "entt 3.14.0",
     "microsoft-gsl 4.0.0",
@@ -31,14 +30,16 @@ add_requires(
     "boost 1.85.0",
     "glm 1.0.1",
     "concurrentqueue 1.0.4",
-    "endstone 0.5.6"
+    "endstone 0.5.6",
+    "magic_enum 0.9.7"
 )
-add_requires("magic_enum 0.9.7")
 
-if is_plat("linux") then
-    -- EndStone Linux Toolchain: LLVM5(Clang & libc++)
+if is_plat("windows") then 
+    add_requires("fmt >=10.0.0 <11.0.0")
+elseif is_plat("linux") then
+    set_toolchains("clang") -- LLVM15(Clang & libc++)
     add_requires("libelf 0.8.13")
-    set_toolchains("clang")
+    add_requires("fmt >=10.0.0 <11.0.0", {configs = {header_only = true}})
 end
 
 if is_plat("windows") then
@@ -64,9 +65,9 @@ target("Js_Engine")
         "boost",
         "glm",
         "concurrentqueue",
-        "endstone"
+        "endstone",
+        "magic_enum"
     )
-    add_packages("magic_enum")
     set_kind("shared")
     set_languages("cxx20")
     set_symbols("debug")
@@ -76,7 +77,7 @@ target("Js_Engine")
     add_defines("ENTT_SPARSE_PAGE=2048")
     add_defines("ENTT_PACKED_PAGE=128")
 
-    -- ScriptX & QuickJs
+    -- ScriptX
     add_includedirs("third-party/scriptx/src/include")
     add_files(
         "third-party/scriptx/src/**.cc",
@@ -95,31 +96,27 @@ target("Js_Engine")
         add_cxflags(
             "/EHa",
             "/utf-8",
-            -- "/W4", -- 开启警告
+            -- "/W4",
             "/sdl"
         )
     elseif is_plat("linux") then
         add_includedirs("./third-party/quickjs/linux/include")
-        add_links("./third-party/quickjs/linux/lib/quickjs.a")
+        add_ldflags("-Wl,--whole-archive ./third-party/quickjs/linux/lib/quickjs.a -Wl,--no-whole-archive", {force = true})
+        add_files("./third-party/quickjs/linux/lib/quickjs.a")
 
         add_cxflags(
             "-fPIC",
             "-stdlib=libc++",
             "-fdeclspec",
-            -- "-fexceptions",
-            -- "-frtti",
             {force = true}
         )
-        -- add_ldflags(
-        --     "-stdlib=libc++",
-        --     {force = true}
-        -- )
-        -- add_syslinks("dl", "pthread", "c++", "c++abi")
-        -- add_defines("_LIBCPP_VERSION")  -- 指示使用 libc++
-        -- add_syslinks("dl", "stdc++fs")
+        add_ldflags(
+            "-stdlib=libc++",
+            {force = true}
+        )
+        add_syslinks("dl", "pthread", "c++", "c++abi")
         add_packages("libelf")
     end 
-
 
     if is_mode("debug") then
         add_defines("DEBUG")
