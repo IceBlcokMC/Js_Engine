@@ -1,5 +1,5 @@
 #pragma once
-#include <endstone/plugin/plugin.h>
+#include "endstone/plugin/plugin.h"
 
 namespace jse {
 

@@ -17,9 +17,18 @@ on:
       - .github/workflows/build.yml
   workflow_dispatch:
 
+env:
+  LLVM_VERSION: 15
+
 jobs:
   build:
-    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-22.04, windows-2022]
+
+    name: Build with ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -37,17 +46,33 @@ jobs:
         # with:
         #   xmake-version: branch@master
 
+      - name: Set up Cland(Linux)
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update -y -q
+          sudo apt-get install -y -q lsb-release wget software-properties-common gnupg
+          sudo wget https://apt.llvm.org/llvm.sh
+          sudo chmod +x llvm.sh
+          sudo ./llvm.sh ${{env.LLVM_VERSION}}
+          sudo apt-get install -y -q libc++-${{env.LLVM_VERSION}}-dev libc++abi-${{env.LLVM_VERSION}}-dev
+          sudo update-alternatives --install /usr/bin/cc cc /usr/bin/clang-${{env.LLVM_VERSION}} 100
+          sudo update-alternatives --install /usr/bin/c++ c++ /usr/bin/clang++-${{env.LLVM_VERSION}} 100
+          sudo update-alternatives --install /usr/bin/clang clang /usr/bin/clang-${{env.LLVM_VERSION}} 100
+          sudo update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-${{env.LLVM_VERSION}} 100
+          sudo update-alternatives --install /usr/bin/llvm-cov llvm-cov /usr/bin/llvm-cov-${{env.LLVM_VERSION}} 100
+          sudo update-alternatives --install /usr/bin/ld ld /usr/bin/ld.lld-${{env.LLVM_VERSION}} 100
+
       - run: |
           xmake repo -u
 
       - run: |
-          xmake f -a x64 -m release -p windows -v -y
+          xmake f -a x64 -m release -v -y
 
       - run: |
           xmake -v -y
 
       - uses: actions/upload-artifact@v4
         with:
-          name: ${{ github.event.repository.name }}-windows-x64-${{ github.sha }}
+          name: ${{ github.event.repository.name }}-${{ matrix.os }}-x64-${{ github.sha }}
           path: |
             bin/

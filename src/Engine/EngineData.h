@@ -14,7 +14,6 @@
 #include <optional>
 #include <utility>
 #include <vector>
-
 #define TRY_PARSE_MACRO(NAME, KEY, TYPE, SCRIPT_TYPE, DEFAULT)                                                         \
     TYPE tryParse##NAME() {                                                                                            \
         try {                                                                                                          \
@@ -47,6 +46,9 @@ struct EngineData {
     script::Global<Object> mRegisterInfo;
 
     JavaScriptPlugin* mPlugin{nullptr};
+
+public:
+    explicit EngineData(uint64_t engineID) : mEngineId(engineID) {}
 
 public:
     CALL_PLUGIN_MACRO(OnLoad, "onLoad");

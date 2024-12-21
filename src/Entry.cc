@@ -2,12 +2,15 @@
 #include "Loader/JavaScriptPluginLoader.h"
 #include "Utils/Using.h"
 #include "endstone/plugin/plugin_manager.h"
-#include <debugapi.h>
+
 #include <filesystem>
 #include <memory>
 #include <thread>
 #include <utility>
 
+#if (defined(WIN32) || defined(_WIN32)) && defined(DEBUG)
+#include <debugapi.h>
+#endif
 
 namespace jse {
 
@@ -17,7 +20,7 @@ Entry* Entry::getInstance() {
 }
 
 void Entry::onLoad() {
-#ifdef DEBUG
+#if (defined(WIN32) || defined(_WIN32)) && defined(DEBUG)
     getLogger().setLevel(endstone::Logger::Debug);
     getLogger().info("Waiting for VC debugger attach...");
     while (!IsDebuggerPresent()) {
@@ -53,4 +56,10 @@ endstone::PluginDescription const& Entry::getDescription() const { return descri
 
 } // namespace jse
 
-extern "C" __declspec(dllexport) endstone::Plugin* init_endstone_plugin() { return jse::Entry::getInstance(); }
+
+#if defined(WIN32) || defined(_WIN32)
+#define EXPORT_ENTRY_POINT __declspec(dllexport)
+#else
+#define EXPORT_ENTRY_POINT __attribute__((visibility("default")))
+#endif
+extern "C" [[maybe_unused]] EXPORT_ENTRY_POINT endstone::Plugin* init_endstone_plugin() { return jse::Entry::getInstance(); }
