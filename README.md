@@ -14,7 +14,7 @@ JsEngine 基于 ScriptX 和 QuickJs 实现，支持在 EndStone 中运行 JavaSc
 
 ## 开发
 
-目前项目没有任何开发文档，您可以阅读 `types` 目录下的类型定义文件，了解 JsEngine 的 API。
+目前项目没有任何开发文档，您可以阅读 `lib/dts` 目录下的类型定义文件，了解 JsEngine 的 API。
 
 ## 关于项目
 

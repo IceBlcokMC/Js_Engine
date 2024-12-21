@@ -1,9 +1,7 @@
 /// <reference path="../index.d.ts"/>
 
 /** 插件实例 */
-declare class Plugin {
-    private constructor();
-
+interface Plugin { // 保证正常补全
     toString(): "<Plugin>";
 
     /** 获取插件相关信息 */

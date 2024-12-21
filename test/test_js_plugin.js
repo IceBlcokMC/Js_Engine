@@ -1,5 +1,8 @@
 /// <reference path="./js_engine/dts/index.d.ts"/>
 
+import JsonFileConfig from "./plugins/js_engine/shortcutApi/JsonFileConfig.js";
+/** @type {import("./js_engine/shortcutApi/JsonFileConfig.js")["default"]} */const JsonFileConfig = JsonFileConfig;
+
 "use strict";
 
 JSE.registerPlugin({
