@@ -6,7 +6,6 @@
 #include <optional>
 #include <string>
 #include <string_view>
-#include <stringapiset.h>
 #include <type_traits>
 #include <utility>
 #include <vector>
@@ -191,36 +190,6 @@ enum : unsigned int {
 };
 } // namespace CodePage
 
-inline std::string wstr2str(std::wstring_view wstr, unsigned int codePage = CodePage::UTF8) {
-    int         len = WideCharToMultiByte(codePage, 0, wstr.data(), (int)wstr.size(), nullptr, 0, nullptr, nullptr);
-    std::string str;
-    if (len == 0) return str;
-    str.resize(len);
-    WideCharToMultiByte(codePage, 0, wstr.data(), (int)wstr.size(), str.data(), (int)str.size(), nullptr, nullptr);
-    return str;
-}
-
-
-inline std::wstring str2wstr(std::string_view str, unsigned int codePage = CodePage::UTF8) {
-    int          len = MultiByteToWideChar(codePage, 0, str.data(), (int)str.size(), nullptr, 0);
-    std::wstring wstr;
-    if (len == 0) return wstr;
-    wstr.resize(len);
-    MultiByteToWideChar(codePage, 0, str.data(), (int)str.size(), wstr.data(), len);
-    return wstr;
-}
-
-inline std::string str2str(
-    std::string_view str,
-    unsigned int     fromCodePage = CodePage::DefaultACP,
-    unsigned int     toCodePage   = CodePage::UTF8
-) {
-    return wstr2str(str2wstr(str, fromCodePage), toCodePage);
-}
-
-inline std::string tou8str(std::string_view str) {
-    return isu8str(str) ? std::string{str} : str2str(str, CodePage::DefaultACP, CodePage::UTF8);
-}
 
 inline std::string toSnakeCase(std::string_view str) {
     std::string res;
