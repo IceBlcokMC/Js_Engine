@@ -76,4 +76,10 @@ declare class JSE {
 
     /** 输出调试信息 */
     static debug(...args: any[]): void;
+
+    /** 当前引擎是否运行在 Linux 平台 */
+    static isLinux(): boolean;
+
+    /** 当前引擎是否运行在 Windows 平台 */
+    static isWindows(): boolean;
 }

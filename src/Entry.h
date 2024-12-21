@@ -7,8 +7,7 @@ class PluginDescriptionBuilderImpl : public endstone::detail::PluginDescriptionB
 public:
     PluginDescriptionBuilderImpl() {
         description  = "JavaScript Engine";
-        authors      = {"engsr6982"};
-        contributors = {"engsr6982", "zimuya4153"}; // Github Username
+        contributors = {"engsr6982", "zimuya4153", "killcerr"}; // Github Username
         website      = "https://github.com/engsr6982/Js_Engine";
     }
 };

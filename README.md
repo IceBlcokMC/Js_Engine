@@ -14,9 +14,7 @@ JsEngine 基于 ScriptX 和 QuickJs 实现，支持在 EndStone 中运行 JavaSc
 
 ## 开发
 
-项目没有提供任何开发文档，仅提供了类型定义文件，你可以通过查看类型定义文件来了解 JsEngine 的 API。
-
-您可以参考项目 `test` 目录下的示例代码来了解如何使用 JsEngine。
+目前项目没有任何开发文档，您可以阅读 `types` 目录下的类型定义文件，了解 JsEngine 的 API。
 
 ## 关于项目
 
@@ -25,23 +23,21 @@ JsEngine 基于 ScriptX 和 QuickJs 实现，支持在 EndStone 中运行 JavaSc
 | Platform | Backend | Version    | ECMA Version | Support |
 | :------- | :------ | :--------- | :----------- | :------ |
 | Windows  | QuickJs | 2021-03-27 | 2020         | y       |
-| Linux    | QuickJs | 2024-01-13 | 2023         | x       |
+| Linux    | QuickJs | 2024-01-13 | 2023         | y       |
 
 ### 从源码编译
 
-#### Windows
+在编译之前，确保您已经安装了以下工具链：
+
+- Xmake
+- MSVC++ 2019 或更高版本 (仅限 Windows)
+- LLVM 15 (附带 Clang、libc++) (仅限 Linux)
 
 ```bash
 git clone --depth=1 https://github.com/engsr6982/JS_Engine.git
 cd JS_Engine
 xmake -y
 ```
-
-#### Linux(Ubuntu)
-
-暂不支持，具体情况见 build-linux 分支
-
-> 由于一些玄学问题，目前无法编译 Linux 平台，请等待后续更新（欢迎提交 PR）
 
 ## 贡献
 

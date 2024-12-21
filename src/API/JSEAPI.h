@@ -1,16 +1,20 @@
 #pragma once
-
+#include "Utils/Defines.h"
 #include "Utils/Using.h"
 
 namespace jse {
 
 class JSEAPI {
 public:
-    static Local<Value> registerPlugin(Arguments const& args); // 注册插件
+    static METHODS(registerPlugin);
 
-    static Local<Value> getPlugin(Arguments const& args);
+    static METHODS(getPlugin);
 
-    static Local<Value> debug(Arguments const& args);
+    static METHODS(debug);
+
+    static METHODS(isLinux);
+
+    static METHODS(isWindows);
 
 
     static ClassDefine<void> builder;
