@@ -7,14 +7,13 @@ package("endstone")
     set_description("Endstone - High-level Plugin API for Bedrock Dedicated Servers (BDS), in both Python and C++")
     set_license("Apache-2.0")
 
-    add_urls("https://github.com/EndstoneMC/endstone/archive/refs/tags/$(version).tar.gz","https://github.com/EndstoneMC/endstone.git")
-    add_versions("v0.5.6","b6a78473aef733d02aa99fe960ea3ffee6e52486")
-    add_patches("v0.5.6", "https://github.com/engsr6982/Js_Engine/raw/refs/heads/develop/patch/cxx20.patch",
+    add_urls("https://github.com/EndstoneMC/endstone/archive/refs/tags/v$(version).tar.gz","https://github.com/EndstoneMC/endstone.git")
+    add_versions("0.5.6","2a991d4009025a10c4469f160a15ad40594f82ebd08dab510ea0f42d61b7c8dd")
+    add_patches("0.5.6", "https://raw.githubusercontent.com/engsr6982/Js_Engine/refs/heads/develop/patch/cxx20.patch",
                         "547ae3d325b8deb68747179b6bc3aa8772ba4efe36263bf31f34be7a3aac2ceb")
-
     if (is_plat("linux")) then 
-        add_patches("v0.5.6", "https://github.com/engsr6982/Js_Engine/raw/refs/heads/develop/patch/linux.patch",
-                        "a4aa780bb8031bc2d5a016669c279939e787d13895fae212dde2699158064b70")   
+        add_patches("0.5.6", "https://raw.githubusercontent.com/engsr6982/Js_Engine/refs/heads/build-linux/patch/linux.patch",
+                        "1e7c6a961abf821803b42dcd43d1c88524caa8012e333b9e47ec6faa00037c74")   
     end
 
     on_install("windows", "linux", function (package)
@@ -32,7 +31,7 @@ add_requires(
     "boost 1.85.0",
     "glm 1.0.1",
     "concurrentqueue 1.0.4",
-    "endstone v0.5.6"
+    "endstone 0.5.6"
 )
 add_requires("magic_enum 0.9.7")
 
