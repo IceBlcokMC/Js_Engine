@@ -8,7 +8,7 @@
 #include <thread>
 #include <utility>
 
-#if defined(WIN32) && defined(DEBUG)
+#if (defined(WIN32) || defined(_WIN32)) && defined(DEBUG)
 #include <debugapi.h>
 #endif
 
@@ -20,7 +20,7 @@ Entry* Entry::getInstance() {
 }
 
 void Entry::onLoad() {
-#if defined(WIN32) && defined(DEBUG)
+#if (defined(WIN32) || defined(_WIN32)) && defined(DEBUG)
     getLogger().setLevel(endstone::Logger::Debug);
     getLogger().info("Waiting for VC debugger attach...");
     while (!IsDebuggerPresent()) {
@@ -56,8 +56,10 @@ endstone::PluginDescription const& Entry::getDescription() const { return descri
 
 } // namespace jse
 
-#if defined(_WIN32)
-extern "C" __declspec(dllexport) endstone::Plugin* init_endstone_plugin() { return jse::Entry::getInstance(); }
-else
-extern "C" __attribute__((visibility("default"))) endstone::Plugin* init_endstone_plugin() { return jse::Entry::getInstance(); }
+
+#if defined(WIN32) || defined(_WIN32)
+#define EXPORT_ENTRY_POINT __declspec(dllexport)
+#else
+#define EXPORT_ENTRY_POINT __attribute__((visibility("default")))
 #endif
+extern "C" [[maybe_unused]] EXPORT_ENTRY_POINT endstone::Plugin* init_endstone_plugin() { return jse::Entry::getInstance(); }

@@ -101,9 +101,8 @@ target("Js_Engine")
         )
     elseif is_plat("linux") then
         add_includedirs("./third-party/quickjs/linux/include")
-        add_ldflags("-Wl,--whole-archive ./third-party/quickjs/linux/lib/quickjs.a -Wl,--no-whole-archive", {force = true})
-        add_files("./third-party/quickjs/linux/lib/quickjs.a")
-
+        add_links("third-party/quickjs/linux/lib/quickjs.a")
+        
         add_cxflags(
             "-fPIC",
             "-stdlib=libc++",
