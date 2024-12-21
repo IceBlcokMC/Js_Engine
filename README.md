@@ -34,18 +34,6 @@ JsEngine 基于 ScriptX 和 QuickJs 实现，支持在 EndStone 中运行 JavaSc
 ```bash
 git clone --depth=1 https://github.com/engsr6982/JS_Engine.git
 cd JS_Engine
-
-mkdir build/_deps
-cd build/_deps
-
-git clone --depth=1 https://github.com/EndstoneMC/endstone.git
-mv endstone endstone-src
-cd endstone-src
-
-git apply ../../../patch/cxx20.patch
-
-cd ../../..
-
 xmake -y
 ```
 
