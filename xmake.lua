@@ -11,10 +11,18 @@ package("endstone")
     add_versions("v0.5.6","b6a78473aef733d02aa99fe960ea3ffee6e52486")
     add_patches("v0.5.6", "https://github.com/engsr6982/Js_Engine/raw/refs/heads/develop/patch/cxx20.patch",
                         "547ae3d325b8deb68747179b6bc3aa8772ba4efe36263bf31f34be7a3aac2ceb")
+
+    if (is_plat("linux")) then 
+        add_patches("v0.5.6", "https://github.com/engsr6982/Js_Engine/raw/refs/heads/develop/patch/linux.patch",
+                        "a4aa780bb8031bc2d5a016669c279939e787d13895fae212dde2699158064b70")   
+    end
+
     on_install("windows", "linux", function (package)
         os.cp("include", package:installdir())
     end)
 package_end()
+
+
 add_requires(
     "fmt >=10.0.0 <11.0.0",
     "expected-lite 0.8.0",
