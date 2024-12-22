@@ -131,7 +131,7 @@ target("Js_Engine")
 
         os.cp(target:targetfile(), path.join(output_dir, target:basename() .. ext))
 
-        os.cp(path.join(os.projectdir(), "types"), path.join(os.projectdir(), "bin", "js_engine", "dts"))
+        os.cp(path.join(os.projectdir(), "lib"), path.join(os.projectdir(), "bin", "js_engine"))
 
         local pdb_path = path.join(output_dir, target:name() .. ".pdb")
         if os.isfile(target:symbolfile()) then 

@@ -3,6 +3,7 @@
 #include "API/EnumAPI.h"
 #include "API/JSEAPI.h"
 #include "API/LoggerAPI.h"
+#include "API/FileAPI.h"
 #include "API/PermissibleAPI.h"
 #include "API/PluginAPI.h"
 #include "API/PluginDescriptionAPI.h"
@@ -21,6 +22,7 @@ inline void BindAPI(ScriptEngine* engine) {
 
     // instance class
     engine->registerNativeClass<PluginAPI>(PluginAPI::builder);
+    engine->registerNativeClass<FileAPI>(FileAPI::builder);
     engine->registerNativeClass<LoggerAPI>(LoggerAPI::builder);
     engine->registerNativeClass<PluginDescriptionAPI>(PluginDescriptionAPI::builder);
     engine->registerNativeClass<PermissibleAPI>(PermissibleAPI::builder);

@@ -8,3 +8,4 @@
 /// <reference path="./API/PluginDescription.d.ts"/>
 /// <reference path="./API/CommandSender.d.ts"/>
 /// <reference path="./API/Permissible.d.ts"/>
+/// <reference path="./API/File.d.ts"/>
