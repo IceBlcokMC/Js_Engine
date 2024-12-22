@@ -1,7 +1,12 @@
 #include "EngineManager.h"
+#include "API/APIHelper.h"
 #include "BindAPI.h"
 #include "EngineData.h"
+#include "Entry.h"
 #include "Utils/Convert.h"
+#include <exception>
+#include <stop_token>
+#include <thread>
 #include <unordered_map>
 
 namespace jse {
@@ -45,4 +50,38 @@ ScriptEngine* EngineManager::createEngine() {
 
     return engine;
 }
+
+
+void EngineManager::initMessageLoop() {
+    mMessageLoopThread = std::jthread([this](std::stop_token tk) {
+        while (!tk.stop_requested()) {
+            std::this_thread::sleep_for(std::chrono::milliseconds(5));
+            if (tk.stop_requested()) return;
+            for (auto& [_, engine] : this->mEngines) {
+                try {
+                    if (EngineScope::currentEngine() == engine) {
+                        engine->messageQueue()->loopQueue(script::utils::MessageQueue::LoopType::kLoopOnce);
+                    } else {
+                        EngineScope scope(engine);
+                        engine->messageQueue()->loopQueue(script::utils::MessageQueue::LoopType::kLoopOnce);
+                    }
+                } catch (script ::Exception const& e) {
+                    Entry::getInstance()->getLogger().error("Error occurred while looping message queue");
+                    PrintScriptError(e);
+                } catch (...) {
+                    PrintScriptError("Unknown error occurred while looping message queue");
+                }
+            }
+        }
+    });
+}
+
+void EngineManager::stopMessageLoop() {
+    if (mMessageLoopThread.joinable()) {
+        mMessageLoopThread.request_stop();
+        mMessageLoopThread.join();
+    }
+}
+
+
 } // namespace jse

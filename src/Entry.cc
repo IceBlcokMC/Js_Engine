@@ -1,4 +1,5 @@
 #include "Entry.h"
+#include "Engine/EngineManager.h"
 #include "Loader/JavaScriptPluginLoader.h"
 #include "Utils/Using.h"
 #include "endstone/plugin/plugin_manager.h"
@@ -32,25 +33,11 @@ void Entry::onLoad() {
     auto& pluginManager = server.getPluginManager();
     pluginManager.registerLoader(std::make_unique<jse::JavaScriptPluginLoader>(server));
     pluginManager.loadPlugins(std::move(jse::JavaScriptPluginLoader::filterPlugins(fs::current_path() / "plugins")));
+    EngineManager::getInstance().initMessageLoop();
 }
 
-void Entry::onEnable() {
-    // getLogger().info("Load javascript plugin...");
-    // auto& server        = getServer();
-    // auto& pluginManager = server.getPluginManager();
-    // pluginManager.registerLoader(std::make_unique<jse::JavaScriptPluginLoader>(server));
-    // auto plugins =
-    //     pluginManager.loadPlugins(std::move(jse::JavaScriptPluginLoader::filterPlugins(fs::current_path() /
-    //     "plugins"))
-    //     );
-    // for (auto& plugin : plugins) {
-    //     if (!plugin->isEnabled()) {
-    //         pluginManager.enablePlugin(*plugin); // 由于 onEnable 流程结束，这里手动调用 enablePlugin
-    //     }
-    // }
-}
-
-void Entry::onDisable() {}
+void Entry::onEnable() {}
+void Entry::onDisable() { EngineManager::getInstance().stopMessageLoop(); }
 
 endstone::PluginDescription const& Entry::getDescription() const { return description_; }
 
@@ -62,4 +49,6 @@ endstone::PluginDescription const& Entry::getDescription() const { return descri
 #else
 #define EXPORT_ENTRY_POINT __attribute__((visibility("default")))
 #endif
-extern "C" [[maybe_unused]] EXPORT_ENTRY_POINT endstone::Plugin* init_endstone_plugin() { return jse::Entry::getInstance(); }
+extern "C" [[maybe_unused]] EXPORT_ENTRY_POINT endstone::Plugin* init_endstone_plugin() {
+    return jse::Entry::getInstance();
+}

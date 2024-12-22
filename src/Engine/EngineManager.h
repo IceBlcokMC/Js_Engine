@@ -1,5 +1,7 @@
 #pragma once
 #include "Utils/Using.h"
+#include <atomic>
+#include <thread>
 #include <unordered_map>
 
 
@@ -24,6 +26,12 @@ public:
     ScriptEngine* getEngine(EngineID engineId);
 
     ScriptEngine* createEngine();
+
+
+    // 事件循环
+    std::jthread mMessageLoopThread;
+    void         initMessageLoop();
+    void         stopMessageLoop();
 };
 
 
