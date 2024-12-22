@@ -1,7 +1,8 @@
 {
     "include": [
         "*.js",
-        "../types/**/*.d.ts"
+        "../lib/dts/index.d.ts",
+        "../lib/shortcutApi/*.d.ts"
     ],
     "compilerOptions": {
         "module": "ES6",
