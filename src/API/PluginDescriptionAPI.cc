@@ -1,5 +1,6 @@
 #include "PluginDescriptionAPI.h"
 #include "API/APIHelper.h"
+#include "API/PermissionAPI.h"
 #include "Engine/EngineData.h"
 #include "Utils/Convert.h"
 #include "Utils/Using.h"
@@ -74,7 +75,18 @@ PLUGINDESCRIPTIONAPI_MACRO(getDefaultPermission, GETDESCRIPTION_MACRO(getDefault
 
 PLUGINDESCRIPTIONAPI_MACRO(getCommands, return Local<Value>()); // todo
 
-PLUGINDESCRIPTIONAPI_MACRO(getPermissions, return Local<Value>()); // todo
+// PLUGINDESCRIPTIONAPI_MACRO(getPermissions, GETDESCRIPTION_MACRO(getPermissions));
+Local<Value> PluginDescriptionAPI::getPermissions(Arguments const& args) {
+    try {
+        auto perms = ENGINE_DATA()->mPlugin->getDescription().getPermissions();
+        auto array = Array::newArray(perms.size());
+        for (auto p : perms) {
+            array.add(PermissionAPI::newPermissionAPI(&p));
+        }
+        return array;
+    }
+    Catch;
+}
 
 #undef PLUGINDESCRIPTIONAPI_MACRO
 #undef GETDESCRIPTION_MACRO

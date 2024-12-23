@@ -8,10 +8,12 @@ declare class Permissible {
     setOp(value: boolean): void;
 
     isPermissionSet(name: string): boolean;
-    // isPermissionSet(perm: Permission): boolean // TODO
+
+    isPermissionSet(perm: Permission): boolean;
 
     hasPermission(name: string): boolean;
-    // hasPermission(perm: Permission): boolean // TODO
+
+    hasPermission(perm: Permission): boolean;
 
     // addAttachment(plugin: Plugin): any // TODO
     // addAttachment(plugin: Plugin, name: string, value: boolean): any // TODO

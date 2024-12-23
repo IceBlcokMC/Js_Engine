@@ -1,5 +1,6 @@
 #include "PermissibleAPI.h"
 #include "API/CommandSenderAPI.h"
+#include "API/PermissionAPI.h"
 #include "API/PluginAPI.h"
 #include "APIHelper.h"
 #include "Loader/JavaScriptPlugin.h"
@@ -53,8 +54,11 @@ Local<Value> PermissibleAPI::isPermissionSet(Arguments const& args) {
         if (args[0].isString()) {
             // overload 1
             return ConvertToScriptX(this->mPermissible->isPermissionSet(args[0].asString().toString()));
+        } else if (IsInstanceOf<PermissionAPI>(args[0])) {
+            // overload 2
+            return ConvertToScriptX(this->mPermissible->isPermissionSet(*PermissionAPI::unWarp(args[0])));
         }
-        // TODO: overload 2
+        return ConvertToScriptX(false);
     }
     Catch;
 }
@@ -64,8 +68,11 @@ Local<Value> PermissibleAPI::hasPermission(Arguments const& args) {
         if (args[0].isString()) {
             // overload 1
             return ConvertToScriptX(this->mPermissible->hasPermission(args[0].asString().toString()));
+        } else if (IsInstanceOf<PermissionAPI>(args[0])) {
+            // overload 2
+            return ConvertToScriptX(this->mPermissible->hasPermission(*PermissionAPI::unWarp(args[0])));
         }
-        // TODO: overload 2
+        return ConvertToScriptX(false);
     }
     Catch;
 }

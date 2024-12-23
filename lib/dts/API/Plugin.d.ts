@@ -22,17 +22,17 @@ interface Plugin { // 保证正常补全
     /** 插件是否已启用 */
     isEnabled(): boolean;
 
-    // getPluginLoader(): any;
+    // getPluginLoader(): any; // TODO
 
-    // getServer(): any;
+    // getServer(): any; // TODO
 
     /** 获取插件名字 */
     getName(): string;
 
-    // getCommand(): any;
+    // getCommand(): any; // TODO
 
     /** 获取插件的数据存储目录 */
     getDataFolder(): string;
 
-    // registerEvent(): any;
+    // registerEvent(): any; // TODO
 }
