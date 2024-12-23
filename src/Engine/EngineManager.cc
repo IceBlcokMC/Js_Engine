@@ -3,9 +3,6 @@
 #include "BindAPI.h"
 #include "EngineData.h"
 #include "Entry.h"
-#include "Utils/Convert.h"
-#include <exception>
-#include <stop_token>
 #include <thread>
 #include <unordered_map>
 
@@ -53,10 +50,11 @@ ScriptEngine* EngineManager::createEngine() {
 
 
 void EngineManager::initMessageLoop() {
-    mMessageLoopThread = std::jthread([this](std::stop_token tk) {
-        while (!tk.stop_requested()) {
+    mMessageLoopRunning = true;
+    mMessageLoopThread  = std::thread([this]() {
+        while (this->mMessageLoopRunning) {
             std::this_thread::sleep_for(std::chrono::milliseconds(5));
-            if (tk.stop_requested()) return;
+            if (!this->mMessageLoopRunning) return;
             for (auto& [_, engine] : this->mEngines) {
                 try {
                     if (EngineScope::currentEngine() == engine) {
@@ -74,11 +72,12 @@ void EngineManager::initMessageLoop() {
             }
         }
     });
+    mMessageLoopThread.detach();
 }
 
 void EngineManager::stopMessageLoop() {
+    mMessageLoopRunning = false;
     if (mMessageLoopThread.joinable()) {
-        mMessageLoopThread.request_stop();
         mMessageLoopThread.join();
     }
 }

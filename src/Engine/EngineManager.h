@@ -29,9 +29,10 @@ public:
 
 
     // 事件循环
-    std::jthread mMessageLoopThread;
-    void         initMessageLoop();
-    void         stopMessageLoop();
+    std::thread       mMessageLoopThread;
+    std::atomic<bool> mMessageLoopRunning;
+    void              initMessageLoop();
+    void              stopMessageLoop();
 };
 
 
