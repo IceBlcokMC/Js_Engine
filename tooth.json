@@ -8,7 +8,8 @@
     "author": "All contributors",
     "tags": [
       "platform:endstone",
-      "type:mod"
+      "type:mod",
+      "plugin-engine"
     ]
   }
 }
