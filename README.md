@@ -20,10 +20,10 @@ JsEngine 基于 ScriptX 和 QuickJs 实现，支持在 EndStone 中运行 JavaSc
 
 ### 支持平台
 
-| Platform | Backend | Version    | ECMA Version | Support |
-| :------- | :------ | :--------- | :----------- | :------ |
-| Windows  | QuickJs | 2021-03-27 | 2020         | y       |
-| Linux    | QuickJs | 2024-01-13 | 2023         | y       |
+| Platform | Backend | Version  | Support |
+| :------- | :------ | :------- | :------ |
+| Windows  | NodeJs  | v16.20.2 | y       |
+| Linux    | NodeJs  | v16.20.2 | x       |
 
 ### 从源码编译
 
