@@ -3,6 +3,7 @@
 #include "BindAPI.h"
 #include "EngineData.h"
 #include "Entry.h"
+#include "Utils/Using.h"
 #include "Utils/Util.h"
 #include "env.h"
 #include "fmt/core.h"
@@ -10,6 +11,7 @@
 #include "uv/uv.h"
 #include "v8/v8.h"
 #include <filesystem>
+#include <memory>
 #include <thread>
 #include <unordered_map>
 #include <utility>
@@ -57,14 +59,8 @@ void NodeManager::shutdownNodeJs() {
 
 bool NodeManager::hasEngine(EngineID id) const { return mEngines.contains(id); }
 
-EngineID NodeManager::getEngineID(node::Environment* env) const {
-    if (mEnvMap.contains(env)) {
-        return mEnvMap.at(env);
-    }
-    return -1;
-}
 
-ScriptEngine* NodeManager::newScriptEngine() {
+EngineWrapper* NodeManager::newScriptEngine() {
     static EngineID NextEngineID = 0;
     if (!mIsInitialized) {
         return nullptr;
@@ -89,10 +85,13 @@ ScriptEngine* NodeManager::newScriptEngine() {
     v8::Context::Scope contextScope(envSetup->context());
 
     ScriptEngine* engine = new ScriptEngineImpl({}, isolate, envSetup->context(), false);
+    engine->setData(std::make_shared<EngineData>(id)); // 设置引擎数据
 
-    NodeWrapper warpper{NextEngineID, {}, engine, std::move(envSetup), true};
-    mEnvMap.insert({env, id});
-    mEngines.insert({NextEngineID, std::move(warpper)});
+    EngineScope scope(engine);
+    BindAPI(engine); // 绑定API
+
+    EngineWrapper warpper{id, engine, std::move(envSetup)};
+    mEngines.insert({id, std::move(warpper)});
 
     node::AddEnvironmentCleanupHook(
         isolate,
@@ -103,15 +102,16 @@ ScriptEngine* NodeManager::newScriptEngine() {
         engine
     );
 
-    return engine;
+    return &mEngines[id];
 }
 
-ScriptEngine* NodeManager::getEngine(EngineID id) {
+EngineWrapper* NodeManager::getEngine(EngineID id) {
     if (mEngines.contains(id)) {
-        return mEngines[id].mEngine;
+        return &mEngines[id];
     }
     return nullptr;
 }
+
 
 bool NodeManager::destroyEngine(EngineID id) {
     if (!hasEngine(id)) {
@@ -128,81 +128,6 @@ bool NodeManager::destroyEngine(EngineID id) {
     return true;
 }
 
-bool NodeManager::loadFile(EngineID id, fs::path const& path) {
-    if (!hasEngine(id)) {
-        return false;
-    }
-
-    auto& wrapper = mEngines[id];
-    auto* env     = wrapper.mEnvSetup->env();
-    auto* isolate = wrapper.mEnvSetup->isolate();
-
-    auto js_code = this->readFileContent(path);
-    if (!js_code) {
-        return false;
-    }
-
-    string dirname  = ReplaceWinPath(path.parent_path().string());
-    string filename = ReplaceWinPath(path.filename().string());
-
-    try {
-        EngineScope enter(wrapper.mEngine);
-
-        if (wrapper.mPackage.awaitInspectDebugger) {
-            static string debug_wait_code = R"(
-                process._debugProcess(process.pid);
-                const startTime = Date.now();
-                const timeout = 30000; // 30秒超时
-                while (!process.debugPort) {
-                    if (Date.now() - startTime > timeout) {
-                        console.error('等待调试器超时');
-                        break;
-                    }
-                }
-            )";
-
-            node::LoadEnvironment(env, debug_wait_code.c_str());
-        }
-
-        // TODO: ECMAScript Module Support
-        // Node.Js 22 的 ESM 和 16 写法不同、需查找16的写法
-        static string prepare_code = R"(
-                const PublicRequire = require('module').createRequire(`${process.cwd()}/ {0} `);
-                const PublicModule = require('module');
-                PublicModule.exports = {};
-                (function(exports, require, module, __filename, __dirname){ {1} })
-                ({}, PublicRequire, PublicModule, '{2}', '{3}');
-            )";
-        string        compiler = RuntimeFormat(prepare_code, dirname, js_code.value(), filename, dirname).value_or("");
-        if (compiler.empty()) {
-            Entry::getInstance()->getLogger().error("Failed to compile code");
-            return false;
-        }
-
-        node::SetProcessExitHandler(env, [this](node::Environment* env_, int exit_code) {
-            Entry::getInstance()->getLogger().debug("Node.js process exit with code: {}", exit_code);
-            auto id = this->getEngineID(env_);
-            if (id != -1) {
-                this->destroyEngine(id);
-            }
-        });
-
-        v8::MaybeLocal<v8::Value> loadValue = node::LoadEnvironment(env, compiler.c_str());
-        if (loadValue.IsEmpty()) {
-            node::Stop(env);
-            uv_stop(wrapper.mEnvSetup->event_loop());
-            return false;
-        }
-
-        // TODO: uv_run
-        //  EngineScope enter(engine);
-        //  uv_run(eventLoop, UV_RUN_NOWAIT);
-
-        return true;
-    } catch (...) {
-        return false;
-    }
-}
 
 bool NodeManager::npm(string const& cmd, string npmExecuteDir) {
     if (!mIsInitialized) {
@@ -232,20 +157,15 @@ bool NodeManager::npm(string const& cmd, string npmExecuteDir) {
     v8::HandleScope    handle_scope(isolate);
     v8::Context::Scope context_scope(setup->context());
 
-    static string prepare_code = R"(
-            const cwd = process.cwd();
-            const PublicRequire = require('module').createRequire(`${cwd}/plugins/js_engine`);
-            require("process").chdir(`{0}`);
-            PublicRequire("npm-js-interface")(`{1}`);
-            require("process").chdir(cwd);
-        )";
-
-    string compiler = RuntimeFormat(prepare_code, npmExecuteDir, cmd).value_or("");
-    if (compiler.empty()) {
-        Entry::getInstance()->getLogger().error("Failed to compile code, npm command: {}", cmd);
-        node::Stop(env);
-        return false;
-    }
+    // clang-format off
+    string compiler = R"(
+        const cwd = process.cwd();
+        const PublicRequire = require('module').createRequire(`${cwd}/plugins/js_engine`);
+        require("process").chdir(` )" +npmExecuteDir+ R"( `);
+        PublicRequire("npm-js-interface")(` )" +cmd+ R"( `);
+        require("process").chdir(cwd);
+    )";
+    // clang-format on
 
     bool success = false;
     try {
@@ -264,6 +184,60 @@ bool NodeManager::npm(string const& cmd, string npmExecuteDir) {
 }
 
 
+bool NodeManager::loadFile(EngineWrapper* wrapper, fs::path const& path) {
+    if (!wrapper) {
+        return false;
+    }
+
+    auto* env     = wrapper->mEnvSetup->env();
+    auto* isolate = wrapper->mEnvSetup->isolate();
+
+    auto js_code = readFileContent(path);
+    if (!js_code) {
+        return false;
+    }
+
+    string dirname  = ReplaceWinPath(path.parent_path().string());
+    string filename = ReplaceWinPath(path.filename().string());
+
+    try {
+        EngineScope enter(wrapper->mEngine);
+
+        // TODO: ECMAScript Module Support
+        // Node.Js 22 的 ESM 和 16 写法不同、需查找16的写法
+        // clang-format off
+        string compiler = R"(
+            const PublicRequire = require('module').createRequire(`${process.cwd()}/ )" + dirname +  R"( `);
+            const PublicModule = require('module');
+            PublicModule.exports = {};
+            (function(exports, require, module, __filename, __dirname){ )" + js_code.value() + R"( })
+            ({}, PublicRequire, PublicModule, ` )" +filename+ R"( `, ` )" +dirname+ R"( `);
+        )";
+        // clang-format on
+
+        node::SetProcessExitHandler(env, [id{wrapper->mID}](node::Environment* env_, int exit_code) {
+            Entry::getInstance()->getLogger().debug("Node.js process exit with code: {}", exit_code);
+            NodeManager::getInstance().destroyEngine(id);
+        });
+
+        v8::MaybeLocal<v8::Value> loadValue = node::LoadEnvironment(env, compiler.c_str());
+        if (loadValue.IsEmpty()) {
+            node::Stop(env);
+            uv_stop(wrapper->mEnvSetup->event_loop());
+            return false;
+        }
+
+        // TODO: uv_run
+        //  EngineScope enter(engine);
+        //  uv_run(eventLoop, UV_RUN_NOWAIT);
+
+        return true;
+    } catch (...) {
+        return false;
+    }
+}
+
+
 std::optional<string> NodeManager::readFileContent(const fs::path& path) {
     std::ifstream file(path);
     if (!file.is_open()) {
@@ -275,10 +249,10 @@ std::optional<string> NodeManager::readFileContent(const fs::path& path) {
     return std::move(content);
 }
 
-std::optional<Package> NodeManager::parsePackage(const fs::path& packagePath) {
+
+std::optional<string> NodeManager::findMainScript(const fs::path& packagePath) {
     try {
         if (!fs::exists(packagePath)) {
-            Entry::getInstance()->getLogger().error("Package.json not found: {}", packagePath.string());
             return std::nullopt;
         }
 
@@ -288,13 +262,27 @@ std::optional<Package> NodeManager::parsePackage(const fs::path& packagePath) {
         }
 
         auto json = nlohmann::json::parse(*content);
-        return Package{
-            .entry                = json.value("main", ""),
-            .hasDependency        = json.contains("dependencies"),
-            .awaitInspectDebugger = json.value("awaitInspectDebugger", false),
-        };
+        return json.value("main", "");
     } catch (...) {
         return std::nullopt;
+    }
+}
+
+bool NodeManager::packageHasDependency(const fs::path& packagePath) {
+    try {
+        if (!fs::exists(packagePath)) {
+            return false;
+        }
+
+        auto content = readFileContent(packagePath);
+        if (!content) {
+            return false;
+        }
+
+        auto json = nlohmann::json::parse(*content);
+        return json.contains("dependencies");
+    } catch (...) {
+        return false;
     }
 }
 

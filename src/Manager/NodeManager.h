@@ -11,18 +11,21 @@
 namespace jse {
 
 
-struct Package {
-    string entry;                       // 入口文件
-    bool   hasDependency{false};        // 是否有依赖
-    bool   awaitInspectDebugger{false}; // 是否等待调试器
-};
-
-struct NodeWrapper {
-    EngineID                                      mID;
-    Package                                       mPackage;
+struct EngineWrapper {
+    EngineID                                      mID; // 引擎ID
     ScriptEngine*                                 mEngine;
     std::unique_ptr<node::CommonEnvironmentSetup> mEnvSetup;
     bool                                          mIsRunning{false};
+
+public:
+    EngineWrapper() = default;
+    EngineWrapper(EngineID id, ScriptEngine* engine, std::unique_ptr<node::CommonEnvironmentSetup> envs)
+    : mID(id),
+      mEngine(engine),
+      mEnvSetup(std::move(envs)),
+      mIsRunning(true) {}
+
+    operator ScriptEngine*() const { return mEngine; }
 };
 
 class NodeManager final {
@@ -31,12 +34,11 @@ private:
     NodeManager(const NodeManager&)            = delete;
     NodeManager& operator=(const NodeManager&) = delete;
 
-    bool                                             mIsInitialized{false}; // 是否初始化
-    std::vector<string>                              mArgs;                 // 参数
-    std::vector<string>                              mExecArgs;             // 执行参数
-    std::unique_ptr<node::MultiIsolatePlatform>      mPlatform;             // v8 平台
-    std::unordered_map<EngineID, NodeWrapper>        mEngines;              // 引擎列表
-    std::unordered_map<node::Environment*, EngineID> mEnvMap;               // 环境映射
+    bool                                        mIsInitialized{false}; // 是否初始化
+    std::vector<string>                         mArgs;                 // 参数
+    std::vector<string>                         mExecArgs;             // 执行参数
+    std::unique_ptr<node::MultiIsolatePlatform> mPlatform;             // v8 平台
+    std::unordered_map<EngineID, EngineWrapper> mEngines;              // 引擎列表
 
 public:
     static NodeManager& getInstance();
@@ -48,22 +50,21 @@ public:
 public:
     bool hasEngine(EngineID id) const;
 
-    EngineID getEngineID(node::Environment* env) const;
+    EngineWrapper* newScriptEngine();
 
-    ScriptEngine* newScriptEngine();
-
-    ScriptEngine* getEngine(EngineID id);
+    EngineWrapper* getEngine(EngineID id);
 
     bool destroyEngine(EngineID id);
 
-    bool loadFile(EngineID id, fs::path const& file);
-
-    bool npm(string const& cmd = "npm install", string npmExecuteDir = "plugins/js_engine");
+    bool npm(string const& cmd, string npmExecuteDir);
 
 public:
-    std::optional<string> readFileContent(const fs::path& file);
+    static bool loadFile(EngineWrapper* wrapper, fs::path const& file);
 
-    std::optional<Package> parsePackage(const fs::path& packagePath);
+    static std::optional<string> readFileContent(const fs::path& file);
+
+    static std::optional<string> findMainScript(const fs::path& packagePath);
+    static bool                  packageHasDependency(const fs::path& packagePath);
 };
 
 

@@ -15,58 +15,65 @@ namespace jse {
 JavaScriptPluginLoader::JavaScriptPluginLoader(endstone::Server& server) : PluginLoader(server) {}
 std::vector<std::string> JavaScriptPluginLoader::getPluginFileFilters() const { return {".js"}; }
 
-#define LOAD_CATCH(TYPE, ...)                                                                                          \
-    catch (TYPE & e) {                                                                                                 \
-        Entry::getInstance()->getLogger().error("Failed to load plugin: {}", file);                                    \
-        Entry::getInstance()->getLogger().error("Error: {}", e.what());                                                \
-        __VA_ARGS__;                                                                                                   \
+endstone::Plugin* JavaScriptPluginLoader::loadPlugin(std::string file) {
+    auto& manager = NodeManager::getInstance();
+    auto  wrapper = manager.newScriptEngine();
+
+    EngineScope scope(wrapper->mEngine);
+    auto        data = ENGINE_DATA();
+    try {
+        auto path = fs::path(file);
+
+        data->mFileName = path.filename().string();
+
+        // 安装依赖
+        if (NodeManager::packageHasDependency(path.parent_path() / "package.json")) {
+            Entry::getInstance()->getLogger().info("Installing dependencies for plugin: {}", path.filename());
+            manager.npm("npm install", path.parent_path().string());
+        }
+
+        if (!NodeManager::loadFile(wrapper, file)) {
+            Entry::getInstance()->getLogger().error("Failed to load plugin: {}", file);
+            return nullptr;
+        }
+
+        // 解析注册数据
+        JsPluginDescriptionBuilder builder{};
+        builder.description        = data->tryParseDescription();
+        builder.load               = data->tryParseLoad();
+        builder.authors            = data->tryParseAuthors();
+        builder.contributors       = data->tryParseContributors();
+        builder.website            = data->tryParseWebsite();
+        builder.prefix             = data->tryParsePrefix();
+        builder.provides           = data->tryParseProvides();
+        builder.depend             = data->tryParseDepend();
+        builder.soft_depend        = data->tryParseSoftDepend();
+        builder.load_before        = data->tryParseLoadBefore();
+        builder.default_permission = data->tryParseDefaultPermission();
+        data->tryParseCommands(builder);
+        data->tryParsePermissions(builder);
+
+        // 创建插件实例
+        auto plugin   = new JavaScriptPlugin(data->mID, builder.build(data->tryParseName(), data->tryParseVersion()));
+        data->mPlugin = plugin;
+
+        return plugin;
+    } catch (script::Exception& e) {
+        Entry::getInstance()->getLogger().error("Failed to load plugin: {}", file);
+        Entry::getInstance()->getLogger().error("JavaScript error: {}", e.what());
+        Entry::getInstance()->getLogger().error("Stack trace: {}", e.stacktrace());
+    } catch (std::exception& e) {
+        Entry::getInstance()->getLogger().error("Failed to load plugin: {}", file);
+        Entry::getInstance()->getLogger().error("Unknown error: {}", e.what());
+    } catch (...) {
+        Entry::getInstance()->getLogger().error("Failed to load plugin: {}", file);
+        Entry::getInstance()->getLogger().error("Unknown error");
     }
 
-endstone::Plugin* JavaScriptPluginLoader::loadPlugin(std::string file) {
-    // auto&       manager = EngineManager::getInstance();
-    // auto        engine  = manager.createEngine();
-    // EngineScope scope(engine);
-    // auto        data = ENGINE_DATA();
-    // try {
-    //     auto path = fs::path(file);
-
-    //     // 加载文件
-    //     data->mFileName = path.filename().string();
-    //     engine->loadFile(file);
-
-    //     // 解析注册数据
-    //     JsPluginDescriptionBuilder builder{};
-    //     builder.description        = data->tryParseDescription();
-    //     builder.load               = data->tryParseLoad();
-    //     builder.authors            = data->tryParseAuthors();
-    //     builder.contributors       = data->tryParseContributors();
-    //     builder.website            = data->tryParseWebsite();
-    //     builder.prefix             = data->tryParsePrefix();
-    //     builder.provides           = data->tryParseProvides();
-    //     builder.depend             = data->tryParseDepend();
-    //     builder.soft_depend        = data->tryParseSoftDepend();
-    //     builder.load_before        = data->tryParseLoadBefore();
-    //     builder.default_permission = data->tryParseDefaultPermission();
-    //     data->tryParseCommands(builder);
-    //     data->tryParsePermissions(builder);
-
-    //     // 创建插件实例
-    //     auto plugin =
-    //         new JavaScriptPlugin(data->mEngineId, builder.build(data->tryParseName(), data->tryParseVersion()));
-    //     data->mPlugin = plugin;
-
-    //     return plugin;
-    // }
-    // LOAD_CATCH(script::Exception, Entry::getInstance()->getLogger().error("Stacktrace: \n{}", e.stacktrace()))
-    // LOAD_CATCH(std::exception) catch (...) {
-    //     Entry::getInstance()->getLogger().error("Failed to load plugin: {}", file);
-    //     Entry::getInstance()->getLogger().error("Unknown error");
-    // }
-    // manager.destroyEngine(data->mEngineId);
+    manager.destroyEngine(data->mID);
     return nullptr;
 }
 
-#undef LOAD_CATCH
 
 std::vector<std::string> JavaScriptPluginLoader::filterPlugins(const fs::path& directory) {
     std::vector<std::string> plugins;
@@ -75,9 +82,21 @@ std::vector<std::string> JavaScriptPluginLoader::filterPlugins(const fs::path& d
     }
 
     for (const auto& entry : fs::directory_iterator(directory)) {
-        if (entry.path().extension() == ".js") {
-            plugins.push_back(entry.path().string());
+        if (!entry.is_directory()) {
+            continue;
         }
+
+        fs::path package = entry.path() / "package.json";
+        if (!fs::exists(package)) {
+            continue;
+        }
+
+        auto main = NodeManager::findMainScript(package);
+        if (!main) {
+            continue;
+        }
+
+        plugins.push_back((entry.path() / *main).string());
     }
 
     return plugins;

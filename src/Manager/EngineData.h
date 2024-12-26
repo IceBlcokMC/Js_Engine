@@ -41,14 +41,14 @@ namespace jse {
 
 
 struct EngineData {
-    uint64_t               mEngineId{uint64_t(-1)};
+    uint64_t               mID{uint64_t(-1)};
     string                 mFileName;
     script::Global<Object> mRegisterInfo;
 
     JavaScriptPlugin* mPlugin{nullptr};
 
 public:
-    explicit EngineData(uint64_t engineID) : mEngineId(engineID) {}
+    explicit EngineData(uint64_t engineID) : mID(engineID) {}
 
 public:
     CALL_PLUGIN_MACRO(OnLoad, "onLoad");

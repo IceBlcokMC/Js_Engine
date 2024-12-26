@@ -1,9 +1,6 @@
-/// <reference path="./js_engine/dts/index.d.ts"/>
+// / <reference path="./js_engine/dts/index.d.ts"/>
 
-import JsonFileConfig from "./plugins/js_engine/lib/shortcutApi/JsonFileConfig.js";
-/** @type {import("./js_engine/shortcutApi/JsonFileConfig.js")["default"]} */const JsonFileConfig = JsonFileConfig;
-
-"use strict";
+// /** @type {import("./js_engine/shortcutApi/JsonFileConfig.js")["default"]} */const JsonFileConfig = require("js_engine/lib/shortcutApi/JsonFileConfig.js");
 
 JSE.registerPlugin({
     name: "test_js_plugin",
