@@ -1,6 +1,7 @@
 add_rules("mode.debug", "mode.release")
 
 add_repositories("levilamina https://github.com/LiteLDev/xmake-repo.git")
+
 package("endstone")
     set_kind("library", {headeronly = true})
     set_homepage("https://github.com/EndstoneMC/endstone")
@@ -34,12 +35,13 @@ add_requires(
     "magic_enum 0.9.7"
 )
 
+local fmt_version = "fmt >=10.0.0 <11.0.0";
 if is_plat("windows") then 
-    add_requires("fmt >=10.0.0 <11.0.0")
+    add_requires(fmt_version)
 elseif is_plat("linux") then
-    set_toolchains("clang") -- LLVM15(Clang & libc++)
+    set_toolchains("clang")
     add_requires("libelf 0.8.13")
-    add_requires("fmt >=10.0.0 <11.0.0", {configs = {header_only = true}})
+    add_requires(fmt_version, {configs = {header_only = true}})
 end
 
 if is_plat("windows") then
@@ -47,6 +49,7 @@ if is_plat("windows") then
         set_runtimes("MD")
     end
 end
+
 
 target("Js_Engine")
     add_defines(
@@ -71,28 +74,15 @@ target("Js_Engine")
     set_kind("shared")
     set_languages("cxx20")
     set_symbols("debug")
-    -- set_exceptions("none") -- 不使用异常处理
+    -- set_exceptions("none")
 
     -- EndStone Entt
     add_defines("ENTT_SPARSE_PAGE=2048")
     add_defines("ENTT_PACKED_PAGE=128")
 
-    -- ScriptX
-    add_includedirs("third-party/scriptx/src/include")
-    add_files(
-        "third-party/scriptx/src/**.cc",
-        "third-party/scriptx/backend/QuickJs/**.cc"
-    )
-    add_defines(
-        "SCRIPTX_BACKEND_QUICKJS",
-        "SCRIPTX_BACKEND_TRAIT_PREFIX=../third-party/scriptx/backend/QuickJs/trait/Trait"
-    )
 
-    -- QuickJs & Platform
+    -- 根据不同平台设定编译参数
     if is_plat("windows") then
-        add_includedirs("./third-party/quickjs/win/include")
-        add_links("./third-party/quickjs/win/lib/quickjs.lib")
-
         add_cxflags(
             "/EHa",
             "/utf-8",
@@ -100,9 +90,6 @@ target("Js_Engine")
             "/sdl"
         )
     elseif is_plat("linux") then
-        add_includedirs("./third-party/quickjs/linux/include")
-        add_links("third-party/quickjs/linux/lib/quickjs.a")
-        
         add_cxflags(
             "-fPIC",
             "-stdlib=libc++",
@@ -113,9 +100,31 @@ target("Js_Engine")
             "-stdlib=libc++",
             {force = true}
         )
-        add_syslinks("dl", "pthread", "c++", "c++abi")
         add_packages("libelf")
-    end 
+        add_syslinks("dl", "pthread", "c++", "c++abi")
+    end
+
+    -- ScriptX
+    add_includedirs("third-party/scriptx/src/include")
+    add_files(
+        "third-party/scriptx/src/**.cc",
+        "third-party/scriptx/backend/V8/**.cc"
+    )
+    add_defines(
+        "SCRIPTX_BACKEND_V8",
+        "SCRIPTX_BACKEND_TRAIT_PREFIX=../third-party/scriptx/backend/V8/trait/Trait"
+    )
+
+    if is_plat("windows") then
+        add_includedirs(
+            "third-party/nodejs/win/include",
+            "third-party/nodejs/win/include/v8"
+        )
+        add_links("third-party/nodejs/win/lib/libnode.lib")
+    elseif is_plat("linux") then
+        -- TODO: Implement V8 on Linux
+    end
+
 
     if is_mode("debug") then
         add_defines("DEBUG")

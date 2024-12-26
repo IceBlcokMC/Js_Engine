@@ -1,12 +1,13 @@
 #include "JSEAPI.h"
 #include "APIHelper.h"
-#include "Engine/EngineData.h"
-#include "Engine/EngineManager.h"
 #include "Entry.h"
+#include "Manager/EngineData.h"
+#include "Manager/NodeManager.h"
 #include "PluginAPI.h"
 #include "Utils/Using.h"
 #include "fmt/core.h"
 #include <iostream>
+
 
 
 namespace jse {

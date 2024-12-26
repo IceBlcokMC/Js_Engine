@@ -1,8 +1,9 @@
 #include "Entry.h"
-#include "Engine/EngineManager.h"
 #include "Loader/JavaScriptPluginLoader.h"
+#include "Manager/NodeManager.h"
 #include "Utils/Using.h"
 #include "endstone/plugin/plugin_manager.h"
+
 
 #include <filesystem>
 #include <memory>
@@ -28,16 +29,16 @@ void Entry::onLoad() {
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }
 #endif
+    NodeManager::getInstance().initNodeJs();
     getLogger().info("Load javascript plugin...");
     auto& server        = getServer();
     auto& pluginManager = server.getPluginManager();
     pluginManager.registerLoader(std::make_unique<jse::JavaScriptPluginLoader>(server));
     pluginManager.loadPlugins(std::move(jse::JavaScriptPluginLoader::filterPlugins(fs::current_path() / "plugins")));
-    EngineManager::getInstance().initMessageLoop();
 }
 
 void Entry::onEnable() {}
-void Entry::onDisable() { EngineManager::getInstance().stopMessageLoop(); }
+void Entry::onDisable() { NodeManager::getInstance().shutdownNodeJs(); }
 
 endstone::PluginDescription const& Entry::getDescription() const { return description_; }
 

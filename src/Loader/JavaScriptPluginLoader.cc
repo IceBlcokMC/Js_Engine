@@ -1,14 +1,13 @@
 #include "JavaScriptPluginLoader.h"
-#include "Engine/EngineData.h"
-#include "Engine/EngineManager.h"
 #include "Entry.h"
 #include "JavaScriptPlugin.h"
+#include "Manager/EngineData.h"
+#include "Manager/NodeManager.h"
 #include "Utils/Using.h"
 #include <filesystem>
 #include <memory>
 #include <string>
 #include <vector>
-
 
 
 namespace jse {
@@ -24,46 +23,46 @@ std::vector<std::string> JavaScriptPluginLoader::getPluginFileFilters() const { 
     }
 
 endstone::Plugin* JavaScriptPluginLoader::loadPlugin(std::string file) {
-    auto&       manager = EngineManager::getInstance();
-    auto        engine  = manager.createEngine();
-    EngineScope scope(engine);
-    auto        data = ENGINE_DATA();
-    try {
-        auto path = fs::path(file);
+    // auto&       manager = EngineManager::getInstance();
+    // auto        engine  = manager.createEngine();
+    // EngineScope scope(engine);
+    // auto        data = ENGINE_DATA();
+    // try {
+    //     auto path = fs::path(file);
 
-        // 加载文件
-        data->mFileName = path.filename().string();
-        engine->loadFile(file);
+    //     // 加载文件
+    //     data->mFileName = path.filename().string();
+    //     engine->loadFile(file);
 
-        // 解析注册数据
-        JsPluginDescriptionBuilder builder{};
-        builder.description        = data->tryParseDescription();
-        builder.load               = data->tryParseLoad();
-        builder.authors            = data->tryParseAuthors();
-        builder.contributors       = data->tryParseContributors();
-        builder.website            = data->tryParseWebsite();
-        builder.prefix             = data->tryParsePrefix();
-        builder.provides           = data->tryParseProvides();
-        builder.depend             = data->tryParseDepend();
-        builder.soft_depend        = data->tryParseSoftDepend();
-        builder.load_before        = data->tryParseLoadBefore();
-        builder.default_permission = data->tryParseDefaultPermission();
-        data->tryParseCommands(builder);
-        data->tryParsePermissions(builder);
+    //     // 解析注册数据
+    //     JsPluginDescriptionBuilder builder{};
+    //     builder.description        = data->tryParseDescription();
+    //     builder.load               = data->tryParseLoad();
+    //     builder.authors            = data->tryParseAuthors();
+    //     builder.contributors       = data->tryParseContributors();
+    //     builder.website            = data->tryParseWebsite();
+    //     builder.prefix             = data->tryParsePrefix();
+    //     builder.provides           = data->tryParseProvides();
+    //     builder.depend             = data->tryParseDepend();
+    //     builder.soft_depend        = data->tryParseSoftDepend();
+    //     builder.load_before        = data->tryParseLoadBefore();
+    //     builder.default_permission = data->tryParseDefaultPermission();
+    //     data->tryParseCommands(builder);
+    //     data->tryParsePermissions(builder);
 
-        // 创建插件实例
-        auto plugin =
-            new JavaScriptPlugin(data->mEngineId, builder.build(data->tryParseName(), data->tryParseVersion()));
-        data->mPlugin = plugin;
+    //     // 创建插件实例
+    //     auto plugin =
+    //         new JavaScriptPlugin(data->mEngineId, builder.build(data->tryParseName(), data->tryParseVersion()));
+    //     data->mPlugin = plugin;
 
-        return plugin;
-    }
-    LOAD_CATCH(script::Exception, Entry::getInstance()->getLogger().error("Stacktrace: \n{}", e.stacktrace()))
-    LOAD_CATCH(std::exception) catch (...) {
-        Entry::getInstance()->getLogger().error("Failed to load plugin: {}", file);
-        Entry::getInstance()->getLogger().error("Unknown error");
-    }
-    manager.destroyEngine(data->mEngineId);
+    //     return plugin;
+    // }
+    // LOAD_CATCH(script::Exception, Entry::getInstance()->getLogger().error("Stacktrace: \n{}", e.stacktrace()))
+    // LOAD_CATCH(std::exception) catch (...) {
+    //     Entry::getInstance()->getLogger().error("Failed to load plugin: {}", file);
+    //     Entry::getInstance()->getLogger().error("Unknown error");
+    // }
+    // manager.destroyEngine(data->mEngineId);
     return nullptr;
 }
 
