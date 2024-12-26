@@ -8,7 +8,9 @@
 #include "env.h"
 #include "fmt/core.h"
 #include "nlohmann/json.hpp"
+#include "node.h"
 #include "uv/uv.h"
+#include "v8-cppgc.h"
 #include "v8/v8.h"
 #include <filesystem>
 #include <memory>
@@ -52,6 +54,15 @@ void NodeManager::initNodeJs() {
 }
 
 void NodeManager::shutdownNodeJs() {
+    for (auto& [id, wrapper] : mEngines) {
+        if (wrapper.mIsRunning) {
+            node::Stop(wrapper.mEnvSetup->env());
+            wrapper.mIsRunning = false;
+        }
+    }
+
+    // 清空引擎列表
+    mEngines.clear();
     v8::V8::Dispose();
     v8::V8::ShutdownPlatform();
 }
@@ -90,8 +101,8 @@ EngineWrapper* NodeManager::newScriptEngine() {
     EngineScope scope(engine);
     BindAPI(engine); // 绑定API
 
-    EngineWrapper warpper{id, engine, std::move(envSetup)};
-    mEngines.insert({id, std::move(warpper)});
+    // EngineWrapper warpper;
+    mEngines.emplace(id, EngineWrapper{id, engine, std::move(envSetup)});
 
     node::AddEnvironmentCleanupHook(
         isolate,
