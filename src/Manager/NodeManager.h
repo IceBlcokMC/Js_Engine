@@ -1,13 +1,9 @@
 #pragma once
-#include "Entry.h"
 #include "Utils/Using.h"
 #include "node.h"
-#include "uv/uv.h"
-#include "v8/v8.h"
-#include <atomic>
 #include <filesystem>
 #include <memory>
-#include <thread>
+#include <optional>
 #include <unordered_map>
 #include <vector>
 
@@ -21,10 +17,11 @@ struct Package {
     bool   awaitInspectDebugger{false}; // 是否等待调试器
 };
 
-struct NodeWarpper {
+struct NodeWrapper {
     EngineID                                      mID;
+    Package                                       mPackage;
     ScriptEngine*                                 mEngine;
-    std::unique_ptr<node::CommonEnvironmentSetup> mEnvironment;
+    std::unique_ptr<node::CommonEnvironmentSetup> mEnvSetup;
     bool                                          mIsRunning{false};
 };
 
@@ -34,62 +31,39 @@ private:
     NodeManager(const NodeManager&)            = delete;
     NodeManager& operator=(const NodeManager&) = delete;
 
-    bool                                        mIsInitialized{false}; // 是否初始化
-    std::vector<string>                         mArgs;                 // 参数
-    std::vector<string>                         mExecArgs;             // 执行参数
-    std::unique_ptr<node::MultiIsolatePlatform> mPlatform;             // 平台
-    std::unordered_map<EngineID, NodeWarpper>   mEngines;              // 引擎
+    bool                                             mIsInitialized{false}; // 是否初始化
+    std::vector<string>                              mArgs;                 // 参数
+    std::vector<string>                              mExecArgs;             // 执行参数
+    std::unique_ptr<node::MultiIsolatePlatform>      mPlatform;             // v8 平台
+    std::unordered_map<EngineID, NodeWrapper>        mEngines;              // 引擎列表
+    std::unordered_map<node::Environment*, EngineID> mEnvMap;               // 环境映射
 
 public:
-    static NodeManager& getInstance() {
-        static NodeManager instance;
-        return instance;
-    }
+    static NodeManager& getInstance();
 
-    void initNodeJs() {
-        if (mIsInitialized) {
-            return;
-        }
+    void initNodeJs();
 
-        auto workingDir = fs::current_path() / "bedrock_server.exe";
-        mArgs           = {workingDir.string()};
-
-        char* cWorkingDir = const_cast<char*>(workingDir.string().c_str());
-        uv_setup_args(1, &cWorkingDir);
-
-        std::vector<string> errors;
-        if (node::InitializeNodeWithArgs(&mArgs, &mExecArgs, &errors) != 0) {
-            Entry::getInstance()->getLogger().critical("Failed to initialize Node.js: ");
-            for (auto const& error : errors) {
-                Entry::getInstance()->getLogger().critical(error);
-            }
-            return;
-        }
-
-        mPlatform = node::MultiIsolatePlatform::Create(std::thread::hardware_concurrency());
-        v8::V8::InitializePlatform(mPlatform.get());
-        v8::V8::Initialize();
-        mIsInitialized = true;
-    }
-
-    void shutdownNodeJs() {
-        v8::V8::Dispose();
-        v8::V8::ShutdownPlatform();
-    }
-
+    void shutdownNodeJs();
 
 public:
-    bool hasEngine(EngineID id) const { return false; }
+    bool hasEngine(EngineID id) const;
 
-    ScriptEngine* newScriptEngine() {}
+    EngineID getEngineID(node::Environment* env) const;
 
-    ScriptEngine* getEngine(EngineID id) { return nullptr; }
+    ScriptEngine* newScriptEngine();
 
-    bool destroyEngine(EngineID id) { return false; }
+    ScriptEngine* getEngine(EngineID id);
 
-    bool loadFile(EngineID id, fs::path const& path) { return false; }
+    bool destroyEngine(EngineID id);
 
-    bool npm(string const& cmd = "npm install") {}
+    bool loadFile(EngineID id, fs::path const& file);
+
+    bool npm(string const& cmd = "npm install", string npmExecuteDir = "plugins/js_engine");
+
+public:
+    std::optional<string> readFileContent(const fs::path& file);
+
+    std::optional<Package> parsePackage(const fs::path& packagePath);
 };
 
 

@@ -1,7 +1,10 @@
 #pragma once
+#include "fmt/format.h"
 #include <algorithm>
+#include <optional>
 #include <string>
 #include <vector>
+
 
 namespace jse {
 
@@ -17,6 +20,16 @@ inline std::string ReplaceStr(const std::string& str, char const& from, char con
 }
 
 inline std::string ReplaceWinPath(const std::string& path) { return ReplaceStr(path, '\\', '/'); }
+
+
+template <typename... Args>
+inline std::optional<std::string> RuntimeFormat(std::string const& fmt, Args... args) {
+    try {
+        return fmt::vformat(fmt, fmt::make_format_args(args...));
+    } catch (...) {
+        return std::nullopt;
+    }
+}
 
 
 } // namespace jse
