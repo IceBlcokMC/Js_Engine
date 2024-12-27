@@ -1,6 +1,15 @@
 // / <reference path="./js_engine/dts/index.d.ts"/>
 
-// /** @type {import("./js_engine/shortcutApi/JsonFileConfig.js")["default"]} */const JsonFileConfig = require("js_engine/lib/shortcutApi/JsonFileConfig.js");
+console.log("Current working directory:", process.cwd());
+console.log("Module paths:", module.paths);
+console.log("__dirname:", __dirname);
+console.log("__filename:", __filename);
+
+try {
+    require("./js_engine/lib/shortcutApi/JsonFileConfig.js");
+} catch (e) {
+    console.error("Failed to require JsonFileConfig:", e);
+}
 
 JSE.registerPlugin({
     name: "test_js_plugin",
@@ -112,5 +121,5 @@ JSE.registerPlugin({
         JSE.debug("sender: ", sender);
         JSE.debug("sender.sendMessage: ", sender.sendMessage);
         sender?.sendMessage("Hello: ", sender?.getName());
-    }
+    },
 });

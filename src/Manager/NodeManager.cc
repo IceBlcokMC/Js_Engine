@@ -218,9 +218,18 @@ bool NodeManager::loadFile(EngineWrapper* wrapper, fs::path const& path) {
         // Node.Js 22 的 ESM 和 16 写法不同、需查找16的写法
         // clang-format off
         string compiler = R"(
-            const PublicRequire = require('module').createRequire(`${process.cwd()}/ )" + dirname +  R"( `);
+            const PublicRequire = require('module').createRequire(`)" + dirname +  R"(`);
             const PublicModule = require('module');
             PublicModule.exports = {};
+
+            const fs = require('fs');
+            const path = require('path');
+            PublicModule.paths = [
+                //path.join(process.cwd(), 'plugins'), // plugins 目录
+                //path.resolve(` )"+dirname+R"( `), // 插件目录
+                //path.join(path.resolve(` )"+dirname+R"( `), 'node_modules') // 插件目录的 node_modules 目录
+            ];
+
             (function(exports, require, module, __filename, __dirname){ )" + js_code.value() + R"( })
             ({}, PublicRequire, PublicModule, ` )" +filename+ R"( `, ` )" +dirname+ R"( `);
         )";
