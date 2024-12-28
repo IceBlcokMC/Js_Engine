@@ -123,5 +123,6 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: ${{ github.event.repository.name }}-${{ matrix.os }}-full-x64-${{ github.sha }}
+          include-hidden-files: true
           path: |
             full/
