@@ -29,7 +29,7 @@ endstone::Plugin* JavaScriptPluginLoader::loadPlugin(std::string file) {
         // 安装依赖
         if (NodeManager::packageHasDependency(path.parent_path() / "package.json")) {
             Entry::getInstance()->getLogger().info("Installing dependencies for plugin: {}", path.filename());
-            manager.npm("npm install", path.parent_path().string());
+            manager.NpmInstall(path.parent_path().string());
         }
 
         if (!NodeManager::loadFile(wrapper, file)) {

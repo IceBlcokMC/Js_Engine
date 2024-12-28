@@ -56,7 +56,7 @@ public:
 
     bool destroyEngine(EngineID id);
 
-    bool npm(string const& cmd, string npmExecuteDir);
+    bool NpmInstall(string npmExecuteDir);
 
 public:
     static bool loadFile(EngineWrapper* wrapper, fs::path const& file);

@@ -140,7 +140,7 @@ bool NodeManager::destroyEngine(EngineID id) {
 }
 
 
-bool NodeManager::npm(string const& cmd, string npmExecuteDir) {
+bool NodeManager::NpmInstall(string npmExecuteDir) {
     if (!mIsInitialized) {
         return false;
     }
@@ -171,9 +171,17 @@ bool NodeManager::npm(string const& cmd, string npmExecuteDir) {
     // clang-format off
     string compiler = R"(
         const cwd = process.cwd();
-        const PublicRequire = require('module').createRequire(`${cwd}/plugins/js_engine`);
-        require("process").chdir(` )" +npmExecuteDir+ R"( `);
-        PublicRequire("npm-js-interface")(` )" +cmd+ R"( `);
+        require("process").chdir(` )"+npmExecuteDir+R"( `);
+        (async function npm() {
+            const NPM = require(`${cwd}/plugins/js_engine/node_modules/npm/lib/npm.js`);
+            const npm = new NPM();
+            try {
+                await npm.load();
+                await npm.exec("install", []);
+            } catch (e) {
+                console.error(e);
+            }
+        })();
         require("process").chdir(cwd);
     )";
     // clang-format on
