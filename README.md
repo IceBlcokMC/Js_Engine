@@ -1,14 +1,34 @@
 # JS_Engine
 
-JsEngine 基于 ScriptX 和 QuickJs 实现，支持在 EndStone 中运行 JavaScript 插件。
+| 中文 | [English](./README-EN.md) |
+
+JsEngine 基于 ScriptX 和 NodeJs 实现，支持在 EndStone 中运行 JavaScript 插件。
 
 ## 安装
 
 > 目前项目处于开发阶段，请手动前往 Actions 查看最新版本。
 
-1. 下载对应平台的 Js_Engine.zip 文件，如: `Js_Engine-windows-x64.zip`
+1. 下载对应平台的 Js_Engine-full.zip 文件，如: `Js_Engine-windows-full-x64.zip`
 
-2. 将 Js_Engine.zip 解压，复制 `js_engine.dll` 到 `EndStone\plugins` 目录下
+> full 为完整包，包含 LibNodeJs 和 JsEngine 的依赖库
+
+2. 将 Js_Engine-full.zip 解压，将压缩包内 libnode.xx 和 plugins 目录复制到 bedrock_server 的根目录下
+
+> 示例结构
+
+```tree
+.
+├── bedrock_server
+│   ├── bedrock_server.exe
+│   ├── libnode.xx
+│   └── plugins
+│       ├── js_engine
+│       │   ├── node_modules
+│       │   ├── dts
+│       │   └── ...
+│       └── js_engine.dll
+└── ...
+```
 
 3. 启动你的 endstone 服务器
 
@@ -23,7 +43,7 @@ JsEngine 基于 ScriptX 和 QuickJs 实现，支持在 EndStone 中运行 JavaSc
 | Platform | Backend | Version  | Support |
 | :------- | :------ | :------- | :------ |
 | Windows  | NodeJs  | v16.20.2 | y       |
-| Linux    | NodeJs  | v16.20.2 | x       |
+| Linux    | NodeJs  | v16.20.2 | y       |
 
 ### 从源码编译
 
