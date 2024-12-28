@@ -1,29 +1,11 @@
 add_rules("mode.debug", "mode.release")
 
 add_repositories("levilamina https://github.com/LiteLDev/xmake-repo.git")
+add_repositories("iceblcokmc https://github.com/IceBlcokMC/xmake-repo.git")
 
-package("endstone")
-    set_kind("library", {headeronly = true})
-    set_homepage("https://github.com/EndstoneMC/endstone")
-    set_description("Endstone - High-level Plugin API for Bedrock Dedicated Servers (BDS), in both Python and C++")
-    set_license("Apache-2.0")
-
-    add_urls("https://github.com/EndstoneMC/endstone/archive/refs/tags/v$(version).tar.gz","https://github.com/EndstoneMC/endstone.git")
-    add_versions("0.5.6","2a991d4009025a10c4469f160a15ad40594f82ebd08dab510ea0f42d61b7c8dd")
-    add_patches("0.5.6", "https://raw.githubusercontent.com/engsr6982/Js_Engine/refs/heads/develop/patch/cxx20.patch",
-                        "547ae3d325b8deb68747179b6bc3aa8772ba4efe36263bf31f34be7a3aac2ceb")
-    if (is_plat("linux")) then 
-        add_patches("0.5.6", "https://raw.githubusercontent.com/engsr6982/Js_Engine/refs/heads/develop/patch/linux.patch",
-                        "1e7c6a961abf821803b42dcd43d1c88524caa8012e333b9e47ec6faa00037c74")   
-    end
-
-    on_install("windows", "linux", function (package)
-        os.cp("include", package:installdir())
-    end)
-package_end()
-
-
+add_requires("node 16.20.2") -- iceblockmc
 add_requires(
+    "endstone 0.5.6",
     "expected-lite 0.8.0",
     "entt 3.14.0",
     "microsoft-gsl 4.0.0",
@@ -31,12 +13,11 @@ add_requires(
     "boost 1.85.0",
     "glm 1.0.1",
     "concurrentqueue 1.0.4",
-    "endstone 0.5.6",
     "magic_enum 0.9.7"
 )
 
 local fmt_version = "fmt >=10.0.0 <11.0.0";
-if is_plat("windows") then 
+if is_plat("windows") then
     add_requires(fmt_version)
 elseif is_plat("linux") then
     set_toolchains("clang")
@@ -59,6 +40,7 @@ target("Js_Engine")
     )
     add_files("src/**.cc")
     add_includedirs("src")
+    add_packages("node")
     add_packages(
         "fmt",
         "expected-lite",
@@ -115,16 +97,11 @@ target("Js_Engine")
         "SCRIPTX_BACKEND_TRAIT_PREFIX=../third-party/scriptx/backend/V8/trait/Trait"
     )
 
-    add_includedirs(
-        "third-party/nodejs/win/include",
-        "third-party/nodejs/win/include/v8",
-        "third-party/nodejs/win/include/uv"
-    )
     if is_plat("windows") then
-        add_links("third-party/nodejs/win/lib/libnode.lib")
+        -- add_links("third-party/nodejs/win/lib/libnode.lib")
     elseif is_plat("linux") then
         add_rpathdirs("$ORIGIN/../") -- ./plugins/js_engine/libnode.so.93
-        add_links("third-party/nodejs/linux/libnode.so")
+        -- add_links("third-party/nodejs/linux/libnode.so")
     end
 
 
