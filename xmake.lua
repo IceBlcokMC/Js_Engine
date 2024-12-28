@@ -123,7 +123,7 @@ target("Js_Engine")
     if is_plat("windows") then
         add_links("third-party/nodejs/win/lib/libnode.lib")
     elseif is_plat("linux") then
-        add_rpathdirs("$ORIGIN/js_engine") -- ./plugins/js_engine/libnode.so.93
+        add_rpathdirs("$ORIGIN/../") -- ./plugins/js_engine/libnode.so.93
         add_links("third-party/nodejs/linux/libnode.so")
     end
 
