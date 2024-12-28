@@ -115,14 +115,16 @@ target("Js_Engine")
         "SCRIPTX_BACKEND_TRAIT_PREFIX=../third-party/scriptx/backend/V8/trait/Trait"
     )
 
+    add_includedirs(
+        "third-party/nodejs/win/include",
+        "third-party/nodejs/win/include/v8",
+        "third-party/nodejs/win/include/uv"
+    )
     if is_plat("windows") then
-        add_includedirs(
-            "third-party/nodejs/win/include",
-            "third-party/nodejs/win/include/v8"
-        )
         add_links("third-party/nodejs/win/lib/libnode.lib")
     elseif is_plat("linux") then
-        -- TODO: Implement V8 on Linux
+        add_rpathdirs("$ORIGIN/js_engine") -- ./plugins/js_engine/libnode.so.93
+        add_links("third-party/nodejs/linux/libnode.so")
     end
 
 
