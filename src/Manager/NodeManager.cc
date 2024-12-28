@@ -195,7 +195,7 @@ bool NodeManager::NpmInstall(string npmExecuteDir) {
         }
         success = node::SpinEventLoop(env).FromMaybe(1) == 0;
     } catch (...) {
-        Entry::getInstance()->getLogger().error("Failed to run npm command: {}", cmd);
+        Entry::getInstance()->getLogger().error("Failed to run npm install");
     }
 
     node::Stop(env);

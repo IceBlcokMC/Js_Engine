@@ -3,7 +3,7 @@ add_rules("mode.debug", "mode.release")
 add_repositories("levilamina https://github.com/LiteLDev/xmake-repo.git")
 add_repositories("iceblcokmc https://github.com/IceBlcokMC/xmake-repo.git")
 
-add_requires("node 16.20.2") -- iceblockmc
+add_requires("nodejs 16.20.2") -- iceblockmc
 add_requires(
     "endstone 0.5.6",
     "expected-lite 0.8.0",
@@ -40,7 +40,7 @@ target("Js_Engine")
     )
     add_files("src/**.cc")
     add_includedirs("src")
-    add_packages("node")
+    add_packages("nodejs")
     add_packages(
         "fmt",
         "expected-lite",
