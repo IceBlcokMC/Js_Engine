@@ -94,9 +94,9 @@ jobs:
 
       - name: Download depends
         run: |
-          curl -o bin-linux.zip https://github.com/IceBlcokMC/node/releases/download/v16.20.2/bin-linux.zip
-          curl -o bin-windows.zip https://github.com/IceBlcokMC/node/releases/download/v16.20.2/bin-windows.zip
-          curl -o node_modules.zip https://github.com/IceBlcokMC/node/releases/download/v16.20.2/node_modules.zip
+          curl -o bin-linux.zip -L https://github.com/IceBlcokMC/node/releases/download/v16.20.2/bin-linux.zip
+          curl -o bin-windows.zip -L https://github.com/IceBlcokMC/node/releases/download/v16.20.2/bin-windows.zip
+          curl -o node_modules.zip -L https://github.com/IceBlcokMC/node/releases/download/v16.20.2/node_modules.zip
 
       - name: Unzip depends
         run: |
