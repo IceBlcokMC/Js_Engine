@@ -112,7 +112,7 @@ jobs:
           mkdir full/plugins
 
           cp -r bin/* full/plugins/
-          cp -r deps/node_modules/* full/plugins/js_engine/node_modules/
+          cp -r deps/node_modules full/plugins/js_engine/node_modules
 
           if [ "${{ matrix.os}}" == "windows-2022" ]; then
             cp deps/libnode.dll full/
