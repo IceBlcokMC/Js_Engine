@@ -25,9 +25,9 @@ void Entry::onLoad() {
 #if (defined(WIN32) || defined(_WIN32)) && defined(DEBUG)
     getLogger().setLevel(endstone::Logger::Debug);
     getLogger().info("Waiting for VC debugger attach...");
-    while (!IsDebuggerPresent()) {
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
-    }
+    // while (!IsDebuggerPresent()) {
+    //     std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    // }
 #endif
     NodeManager::getInstance().initNodeJs();
     getLogger().info("Load javascript plugin...");

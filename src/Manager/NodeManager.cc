@@ -158,7 +158,7 @@ bool NodeManager::NpmInstall(string npmExecuteDir) {
             Entry::getInstance()->getLogger().error("CommonEnvironmentSetup Error: {}", err.c_str());
         return false;
     }
-    npmExecuteDir = ReplaceWinPath(npmExecuteDir);
+    npmExecuteDir = ReplaceStr(npmExecuteDir, "\\", "/");
 
     v8::Isolate*       isolate = setup->isolate();
     node::Environment* env     = setup->env();
@@ -171,7 +171,7 @@ bool NodeManager::NpmInstall(string npmExecuteDir) {
     // clang-format off
     string compiler = R"(
         const cwd = process.cwd();
-        require("process").chdir(` )"+npmExecuteDir+R"( `);
+        require("process").chdir(`)"+npmExecuteDir+R"(`);
         (async function npm() {
             const NPM = require(`${cwd}/plugins/js_engine/node_modules/npm/lib/npm.js`);
             const npm = new NPM();
@@ -216,8 +216,10 @@ bool NodeManager::loadFile(EngineWrapper* wrapper, fs::path const& path) {
         return false;
     }
 
-    string dirname  = ReplaceWinPath(path.parent_path().string());
-    string filename = ReplaceWinPath(path.filename().string());
+    string dirname  = ReplaceStr(path.parent_path().string(), "\\", "\\\\");
+    string filename = ReplaceStr(path.string(), "\\", "\\\\");
+    Entry::getInstance()->getLogger().debug("dirname: {}", dirname);
+    Entry::getInstance()->getLogger().debug("filename: {}", filename);
 
     try {
         EngineScope enter(wrapper->mEngine);
@@ -226,20 +228,17 @@ bool NodeManager::loadFile(EngineWrapper* wrapper, fs::path const& path) {
         // Node.Js 22 的 ESM 和 16 写法不同、需查找16的写法
         // clang-format off
         string compiler = R"(
-            const PublicRequire = require('module').createRequire(`)" + dirname +  R"(`);
+            const PublicRequire = require('module').createRequire(`)"+dirname+R"(`);
             const PublicModule = require('module');
             PublicModule.exports = {};
 
-            const fs = require('fs');
             const path = require('path');
-            PublicModule.paths = [
-                //path.join(process.cwd(), 'plugins'), // plugins 目录
-                //path.resolve(` )"+dirname+R"( `), // 插件目录
-                //path.join(path.resolve(` )"+dirname+R"( `), 'node_modules') // 插件目录的 node_modules 目录
-            ];
+            PublicModule.paths == null ? PublicModule.paths = [] : null;
+            PublicModule.paths.push(`)"+dirname+R"(`); // 插件目录
+            PublicModule.paths.push(path.join(`)"+dirname+R"(`, 'node_modules')); // 插件目录下的 node_modules
 
-            (function(exports, require, module, __filename, __dirname){ )" + js_code.value() + R"( })
-            ({}, PublicRequire, PublicModule, ` )" +filename+ R"( `, ` )" +dirname+ R"( `);
+            (function(exports, require, module, __filename, __dirname){ )"+js_code.value()+R"( })
+            ({}, PublicRequire, PublicModule, `)"+filename+R"(`, `)"+dirname+R"(`);
         )";
         // clang-format on
 

@@ -13,13 +13,15 @@ inline bool FindVector(std::vector<T> const& vec, T const& value) {
     return std::find(vec.begin(), vec.end(), value) != vec.end();
 }
 
-inline std::string ReplaceStr(const std::string& str, char const& from, char const& to) {
-    std::string fixedStr = str;
-    std::replace(fixedStr.begin(), fixedStr.end(), from, to);
-    return fixedStr;
+inline std::string ReplaceStr(const std::string& str, std::string const& from, std::string const& to) {
+    std::string result    = str;
+    size_t      start_pos = 0;
+    while ((start_pos = result.find(from, start_pos)) != std::string::npos) {
+        result.replace(start_pos, from.length(), to);
+        start_pos += to.length(); // +1 for the advance
+    }
+    return result;
 }
-
-inline std::string ReplaceWinPath(const std::string& path) { return ReplaceStr(path, '\\', '/'); }
 
 
 template <typename... Args>
