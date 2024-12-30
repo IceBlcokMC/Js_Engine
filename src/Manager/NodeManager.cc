@@ -241,7 +241,7 @@ bool NodeManager::loadFile(EngineWrapper* wrapper, fs::path const& path) {
                         }}
                         return result;
                     }};
-                    require = module.createRequire("{0}");
+                    require = Module.createRequire("{0}");
                 }})();
                 {1}
             )", 
