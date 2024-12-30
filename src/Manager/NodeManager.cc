@@ -227,19 +227,27 @@ bool NodeManager::loadFile(EngineWrapper* wrapper, fs::path const& path) {
         // TODO: ECMAScript Module Support
         // Node.Js 22 的 ESM 和 16 写法不同、需查找16的写法
         // clang-format off
-        string compiler = R"(
-            const PublicRequire = require('module').createRequire(`)"+dirname+R"(`);
-            const PublicModule = require('module');
-            PublicModule.exports = {};
-
-            const path = require('path');
-            PublicModule.paths == null ? PublicModule.paths = [] : null;
-            PublicModule.paths.push(`)"+dirname+R"(`); // 插件目录
-            PublicModule.paths.push(path.join(`)"+dirname+R"(`, 'node_modules')); // 插件目录下的 node_modules
-
-            (function(exports, require, module, __filename, __dirname){ )"+js_code.value()+R"( })
-            ({}, PublicRequire, PublicModule, `)"+filename+R"(`, `)"+dirname+R"(`);
-        )";
+        string compiler = fmt::format(
+            R"(
+                (function ReplaeRequire() {{
+                    const Module = require('module').Module, ResolveLookupPathsOrigin = Module._resolveLookupPaths;
+                    Module._resolveLookupPaths = function (request, parent) {{
+                        let result = ResolveLookupPathsOrigin.call(this, request, parent);
+                        if (result.length <= 1) {{
+                            result = [
+                                "{0}",
+                                "{0}/node_modules"
+                            ];
+                        }}
+                        return result;
+                    }};
+                    require = module.createRequire("{0}");
+                }})();
+                {1}
+            )", 
+            dirname, 
+            js_code.value()
+        );
         // clang-format on
 
         node::SetProcessExitHandler(env, [id{wrapper->mID}](node::Environment* env_, int exit_code) {
