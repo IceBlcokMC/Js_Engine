@@ -1,3 +1,4 @@
+#pragma warning(disable : 4996)
 #include "NodeManager.h"
 #include "API/APIHelper.h"
 #include "BindAPI.h"
@@ -5,13 +6,12 @@
 #include "Entry.h"
 #include "Utils/Using.h"
 #include "Utils/Util.h"
-#include "env.h"
 #include "fmt/core.h"
 #include "nlohmann/json.hpp"
 #include "node.h"
-#include "uv/uv.h"
+#include "uv.h"
 #include "v8-cppgc.h"
-#include "v8/v8.h"
+#include "v8.h"
 #include <filesystem>
 #include <memory>
 #include <thread>
@@ -28,6 +28,7 @@ NodeManager& NodeManager::getInstance() {
 }
 
 void NodeManager::initNodeJs() {
+
     if (mIsInitialized) {
         return;
     }
@@ -37,7 +38,7 @@ void NodeManager::initNodeJs() {
 
     char* cWorkingDir = const_cast<char*>(workingDir.string().c_str());
     uv_setup_args(1, &cWorkingDir);
-
+    cppgc::InitializeProcess();
     std::vector<string> errors;
     if (node::InitializeNodeWithArgs(&mArgs, &mExecArgs, &errors) != 0) {
         Entry::getInstance()->getLogger().critical("Failed to initialize Node.js: ");
@@ -64,7 +65,7 @@ void NodeManager::shutdownNodeJs() {
     // 清空引擎列表
     mEngines.clear();
     v8::V8::Dispose();
-    v8::V8::ShutdownPlatform();
+    v8::V8::DisposePlatform();
 }
 
 
