@@ -65,6 +65,7 @@ target("Js_Engine")
 
     -- 根据不同平台设定编译参数
     if is_plat("windows") then
+        add_cxxflags("/Zc:__cplusplus")
         add_cxflags(
             "/EHa",
             "/utf-8",
