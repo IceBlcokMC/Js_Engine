@@ -40,10 +40,10 @@ JsEngine 基于 ScriptX 和 NodeJs 实现，支持在 EndStone 中运行 JavaScr
 
 ### 支持平台
 
-| Platform | Backend | Version  | Support |
-| :------- | :------ | :------- | :------ |
-| Windows  | NodeJs  | v16.20.2 | y       |
-| Linux    | NodeJs  | v16.20.2 | y       |
+| Platform | Backend | Version | Support |
+| :------- | :------ | :------ | :------ |
+| Windows  | NodeJs  | v23.5.0 | y       |
+| Linux    | NodeJs  | v23.5.0 | y       |
 
 ### 从源码编译
 
