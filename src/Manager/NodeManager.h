@@ -59,12 +59,13 @@ public:
     bool NpmInstall(string npmExecuteDir);
 
 public:
-    static bool loadFile(EngineWrapper* wrapper, fs::path const& file);
+    static bool loadFile(EngineWrapper* wrapper, fs::path const& file, bool esm = false);
 
     static std::optional<string> readFileContent(const fs::path& file);
 
     static std::optional<string> findMainScript(const fs::path& packagePath);
     static bool                  packageHasDependency(const fs::path& packagePath);
+    static bool                  packageIsEsm(const fs::path& packagePath);
 };
 
 

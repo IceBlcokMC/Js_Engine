@@ -26,14 +26,16 @@ endstone::Plugin* JavaScriptPluginLoader::loadPlugin(std::string file) {
 
         data->mFileName = path.filename().string();
 
+        fs::path package = path.parent_path() / "package.json";
+
         // 安装依赖
-        if (NodeManager::packageHasDependency(path.parent_path() / "package.json")
+        if (NodeManager::packageHasDependency(package)
             && !NodeManager::packageHasDependency(path.parent_path() / "node_modules")) {
             Entry::getInstance()->getLogger().info("Installing dependencies for plugin: {}", path.filename());
             manager.NpmInstall(path.parent_path().string());
         }
 
-        if (!NodeManager::loadFile(wrapper, file)) {
+        if (!NodeManager::loadFile(wrapper, file, NodeManager::packageIsEsm(package))) {
             Entry::getInstance()->getLogger().error("Failed to load plugin: {}", file);
             return nullptr;
         }

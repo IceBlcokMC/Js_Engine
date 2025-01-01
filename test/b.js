@@ -10,3 +10,7 @@ function b() {
 }
 
 module.exports = b;
+
+// export {
+//     b
+// };

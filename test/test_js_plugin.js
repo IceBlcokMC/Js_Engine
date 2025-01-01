@@ -5,8 +5,10 @@ console.log("[Main] Module paths:", module.paths);
 console.log("[Main] __dirname:", __dirname);
 console.log("[Main] __filename:", __filename);
 
+// import { b } from "./b.js";
+// b();
 try {
-    require("../js_engine/lib/shortcutApi/JsonFileConfig.js");
+    // require("../js_engine/lib/shortcutApi/JsonFileConfig.js");
     require("./b.js")(); // TODO: Fix this require root path error
 } catch (e) {
     console.error(e);

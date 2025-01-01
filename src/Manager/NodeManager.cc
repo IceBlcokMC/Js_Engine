@@ -204,7 +204,7 @@ bool NodeManager::NpmInstall(string npmExecuteDir) {
 }
 
 
-bool NodeManager::loadFile(EngineWrapper* wrapper, fs::path const& path) {
+bool NodeManager::loadFile(EngineWrapper* wrapper, fs::path const& path, bool esm) {
     if (!wrapper) {
         return false;
     }
@@ -230,32 +230,64 @@ bool NodeManager::loadFile(EngineWrapper* wrapper, fs::path const& path) {
     try {
         EngineScope enter(wrapper->mEngine);
 
-        // TODO: ECMAScript Module Support
-        // TODO：Fix Modules.paths、__dirname、__filename
-        // clang-format off
-        string compiler = fmt::format(
-            R"(
-                (function ReplaeRequire() {{
-                    const PublicModule = require('module').Module;
-                    const ResolveLookupPathsOrigin = PublicModule._resolveLookupPaths;
-                    PublicModule._resolveLookupPaths = function (request, parent) {{
-                        let result = ResolveLookupPathsOrigin.call(this, request, parent);
-                        if (result.length <= 1) {{
-                            result = [
-                                "{0}",
-                                "{0}/node_modules"
-                            ];
+        string compiler;
+        if (esm) {
+            // TODO: ECMAScript Module Support
+            // https://nodejs.org/api/embedding.html#enabling-esm
+            compiler = fmt::format(
+                R"(
+                    (async function LoadESM() {{
+                        try {{
+                            const {{ URL }} = require('url');
+                            const baseURL = new URL('file://{0}/');
+
+                            const context = {{
+                                url: new URL('file://{1}').href,
+                                format: 'module'
+                            }};
+
+                            return import(context.url);
+                        }} catch (error) {{
+                            console.error(error);
                         }}
-                        return result;
-                    }};
-                    require = PublicModule.createRequire(`{0}`);
-                }})();
-                {1}
-            )",
-            dirname, 
-            js_code.value()
-        );
-        // clang-format on
+                    }})();
+                )",
+                dirname,
+                filename
+            );
+        } else {
+            // TODO：Fix sub module's paths, __dirname, __filename
+            compiler = fmt::format(
+                R"(
+                    (function ReplaeRequire() {{
+                        const PublicModule = require('module').Module;
+                        const ResolveLookupPathsOrigin = PublicModule._resolveLookupPaths;
+                        PublicModule._resolveLookupPaths = function (request, parent) {{
+                            let result = ResolveLookupPathsOrigin.call(this, request, parent);
+                            if (result.length <= 1) {{
+                                result = [
+                                    "{0}",
+                                    "{0}/node_modules"
+                                ];
+                            }}
+                            return result;
+                        }};
+                        require = PublicModule.createRequire(`{0}`);
+                    }})();
+                    // Fix main module's paths, __dirname, __filename
+                    module.paths = [
+                        "{0}",
+                        "{0}/node_modules"
+                    ];
+                    __dirname = "{0}";
+                    __filename = "{2}";
+                    {1}
+                )",
+                dirname,
+                js_code.value(),
+                filename
+            );
+        }
 
         node::SetProcessExitHandler(env, [id{wrapper->mID}](node::Environment* env_, int exit_code) {
             Entry::getInstance()->getLogger().debug("Node.js process exit with code: {}", exit_code);
@@ -323,6 +355,24 @@ bool NodeManager::packageHasDependency(const fs::path& packagePath) {
 
         auto json = nlohmann::json::parse(*content);
         return json.contains("dependencies");
+    } catch (...) {
+        return false;
+    }
+}
+
+bool NodeManager::packageIsEsm(const fs::path& packagePath) {
+    try {
+        if (!fs::exists(packagePath)) {
+            return false;
+        }
+
+        auto content = readFileContent(packagePath);
+        if (!content) {
+            return false;
+        }
+
+        auto json = nlohmann::json::parse(*content);
+        return json.contains("type") && json.value("type", "") == "module";
     } catch (...) {
         return false;
     }
