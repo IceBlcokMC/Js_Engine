@@ -5,7 +5,7 @@ add_repositories("iceblcokmc https://github.com/IceBlcokMC/xmake-repo.git")
 
 add_requires("nodejs 23.5.0") -- iceblockmc
 add_requires(
-    "endstone 0.5.6",
+    "endstone 0.5.7.1",
     "expected-lite 0.8.0",
     "entt 3.14.0",
     "microsoft-gsl 4.0.0",
