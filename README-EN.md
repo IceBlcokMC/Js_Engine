@@ -40,10 +40,10 @@ Currently, there is no development documentation available. You can read the typ
 
 ### Supported Platforms
 
-| Platform | Backend | Version | Support |
-| :------- | :------ | :------ | :------ |
-| Windows  | NodeJs  | v23.5.0 | y       |
-| Linux    | NodeJs  | v23.5.0 | y       |
+| Platform | Backend | Version | Support | CommonJs | ESM | package manager |
+| :------- | :------ | :------ | :------ | :------- | :-- | :-------------- |
+| Windows  | NodeJs  | v23.5.0 | y       | y        | y   | npm             |
+| Linux    | NodeJs  | v23.5.0 | y       | y        | y   | npm             |
 
 ### Building from Source
 
