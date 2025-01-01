@@ -232,31 +232,23 @@ bool NodeManager::loadFile(EngineWrapper* wrapper, fs::path const& path, bool es
 
         string compiler;
         if (esm) {
-            // TODO: ECMAScript Module Support
-            // https://nodejs.org/api/embedding.html#enabling-esm
             compiler = fmt::format(
                 R"(
-                    (async function LoadESM() {{
-                        try {{
-                            const {{ URL }} = require('url');
-                            const baseURL = new URL('file://{0}/');
-
-                            const context = {{
-                                url: new URL('file://{1}').href,
-                                format: 'module'
-                            }};
-
-                            return import(context.url);
-                        }} catch (error) {{
-                            console.error(error);
-                        }}
-                    }})();
+                    import('url').then(url => {{
+                        const moduleUrl = url.pathToFileURL('{1}').href;
+                        import(moduleUrl).catch(error => {{
+                            console.error('Failed to load ESM module:', error);
+                            process.exit(1);
+                        }});
+                    }}).catch(error => {{
+                        console.error('Failed to import url module:', error);
+                        process.exit(1);
+                    }});
                 )",
                 dirname,
                 filename
             );
         } else {
-            // TODO：Fix sub module's paths, __dirname, __filename
             compiler = fmt::format(
                 R"(
                     (function ReplaeRequire() {{
@@ -304,6 +296,9 @@ bool NodeManager::loadFile(EngineWrapper* wrapper, fs::path const& path, bool es
         // TODO: uv_run
         //  EngineScope enter(engine);
         //  uv_run(eventLoop, UV_RUN_NOWAIT);
+        if (node::SpinEventLoop(env).FromMaybe(1) != 0) {
+            return false;
+        }
 
         return true;
     } catch (...) {

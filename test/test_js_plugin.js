@@ -1,18 +1,18 @@
 // / <reference path="./js_engine/dts/index.d.ts"/>
 
 console.log("[Main] Current working directory:", process.cwd());
-console.log("[Main] Module paths:", module.paths);
-console.log("[Main] __dirname:", __dirname);
-console.log("[Main] __filename:", __filename);
+// console.log("[Main] Module paths:", module.paths);
+// console.log("[Main] __dirname:", __dirname);
+// console.log("[Main] __filename:", __filename);
 
-// import { b } from "./b.js";
-// b();
-try {
-    // require("../js_engine/lib/shortcutApi/JsonFileConfig.js");
-    require("./b.js")(); // TODO: Fix this require root path error
-} catch (e) {
-    console.error(e);
-}
+import { b } from "./b.js";
+b();
+// try {
+//     // require("../js_engine/lib/shortcutApi/JsonFileConfig.js");
+//     require("./b.js")(); // TODO: Fix this require root path error
+// } catch (e) {
+//     console.error(e);
+// }
 
 JSE.registerPlugin({
     name: "test_js_plugin",
