@@ -5,52 +5,9 @@ console.log("[Main] Module paths:", module.paths);
 console.log("[Main] __dirname:", __dirname);
 console.log("[Main] __filename:", __filename);
 
-// 根路径: bds
-// 引擎: bds/plugins/js_engine.dll
-// 主程序: process.cwd() => bds/bedrock_server.exe
-// require 根路径为 bds/plugins
-
-// TODO: 修正 require 路径
-// 已尝试修改 PublicRequire、NodeJs启动参数均无法解决
-// [2024-12-30 01:15:47.818 DEBUG] [JsEngine] dirname: D:\\EsProject\\bedrock_server\\plugins\\test
-// [2024-12-30 01:15:47.819 DEBUG] [JsEngine] filename: D:\\EsProject\\bedrock_server\\plugins\\test\\test_js_plugin.js
-
-// 入口文件：
-// paths、__dirname、__filename 均正确，但 require 失败（require起始路径在 bds/plugins）
-// [Main] Current working directory: D:\EsProject\bedrock_server
-// [Main] Module paths: [
-//   'D:\\EsProject\\bedrock_server\\plugins\\test',
-//   'D:\\EsProject\\bedrock_server\\plugins\\test\\node_modules'
-// ]
-// [Main] __dirname: D:\EsProject\bedrock_server\plugins\test
-// [Main] __filename: D:\EsProject\bedrock_server\plugins\test\test_js_plugin.js
-
-// 被入口文件require的模块：
-// paths、__dirname、__filename 均错误，但 require 成功
-// [B] Current working directory: D:\EsProject\bedrock_server
-// [B] Module paths: [
-//   'D:\\EsProject\\Js_Engine\\test\\node_modules',
-//   'D:\\EsProject\\Js_Engine\\node_modules',
-//   'D:\\EsProject\\node_modules',
-//   'D:\\node_modules'
-// ]
-// [B] __dirname: D:\EsProject\Js_Engine\test
-// [B] __filename: D:\EsProject\Js_Engine\test\b.js
-
-
-function frequire(path) {
-    try {
-        const pathLib = require("path");
-        return require(pathLib.join(__dirname, path));
-    } catch (e) {
-        console.error(e);
-        return null;
-    }
-}
-
 try {
-    require("./js_engine/lib/shortcutApi/JsonFileConfig.js");
-    frequire("./b.js")();
+    require("../js_engine/lib/shortcutApi/JsonFileConfig.js");
+    require("./b.js")(); // TODO: Fix this require root path error
 } catch (e) {
     console.error(e);
 }

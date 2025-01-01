@@ -217,8 +217,13 @@ bool NodeManager::loadFile(EngineWrapper* wrapper, fs::path const& path) {
         return false;
     }
 
+#if defined(WIN32) || defined(_WIN32)
     string dirname  = ReplaceStr(path.parent_path().string(), "\\", "\\\\");
     string filename = ReplaceStr(path.string(), "\\", "\\\\");
+#elif defined(__linux__)
+    string dirname  = path.parent_path().string();
+    string filename = path.string();
+#endif
     Entry::getInstance()->getLogger().debug("dirname: {}", dirname);
     Entry::getInstance()->getLogger().debug("filename: {}", filename);
 
@@ -226,13 +231,14 @@ bool NodeManager::loadFile(EngineWrapper* wrapper, fs::path const& path) {
         EngineScope enter(wrapper->mEngine);
 
         // TODO: ECMAScript Module Support
-        // Node.Js 22 的 ESM 和 16 写法不同、需查找16的写法
+        // TODO：Fix Modules.paths、__dirname、__filename
         // clang-format off
         string compiler = fmt::format(
             R"(
                 (function ReplaeRequire() {{
-                    const Module = require('module').Module, ResolveLookupPathsOrigin = Module._resolveLookupPaths;
-                    Module._resolveLookupPaths = function (request, parent) {{
+                    const PublicModule = require('module').Module;
+                    const ResolveLookupPathsOrigin = PublicModule._resolveLookupPaths;
+                    PublicModule._resolveLookupPaths = function (request, parent) {{
                         let result = ResolveLookupPathsOrigin.call(this, request, parent);
                         if (result.length <= 1) {{
                             result = [
@@ -242,10 +248,10 @@ bool NodeManager::loadFile(EngineWrapper* wrapper, fs::path const& path) {
                         }}
                         return result;
                     }};
-                    require = Module.createRequire("{0}");
+                    require = PublicModule.createRequire(`{0}`);
                 }})();
                 {1}
-            )", 
+            )",
             dirname, 
             js_code.value()
         );

@@ -38,7 +38,10 @@ void Entry::onLoad() {
 }
 
 void Entry::onEnable() {}
-void Entry::onDisable() { NodeManager::getInstance().shutdownNodeJs(); }
+void Entry::onDisable() {
+    // TODO: 为所有Js插件添加依赖，避免引擎提前销毁
+    // NodeManager::getInstance().shutdownNodeJs();
+}
 
 endstone::PluginDescription const& Entry::getDescription() const { return description_; }
 
