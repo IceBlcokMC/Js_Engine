@@ -46,7 +46,7 @@ jobs:
         # with:
         #   xmake-version: branch@master
 
-      - name: Set up Cland(Linux)
+      - name: Set up Clang(Linux)
         if: runner.os == 'Linux'
         run: |
           sudo apt-get update -y -q
