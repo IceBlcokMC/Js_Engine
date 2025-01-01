@@ -259,33 +259,22 @@ bool NodeManager::loadFile(EngineWrapper* wrapper, fs::path const& path, bool es
             // TODO：Fix sub module's paths, __dirname, __filename
             compiler = fmt::format(
                 R"(
+                    __dirname = "{0}";
+                    __filename = "{1}";
                     (function ReplaeRequire() {{
                         const PublicModule = require('module').Module;
-                        const ResolveLookupPathsOrigin = PublicModule._resolveLookupPaths;
                         PublicModule._resolveLookupPaths = function (request, parent) {{
-                            let result = ResolveLookupPathsOrigin.call(this, request, parent);
-                            if (result.length <= 1) {{
-                                result = [
-                                    "{0}",
-                                    "{0}/node_modules"
-                                ];
-                            }}
+                            result = [parent.path.endsWith("plugins") ? "{0}" : parent.path];
+                            result.push(`${{result[0]}}/node_modules`);
                             return result;
                         }};
                         require = PublicModule.createRequire(`{0}`);
                     }})();
-                    // Fix main module's paths, __dirname, __filename
-                    module.paths = [
-                        "{0}",
-                        "{0}/node_modules"
-                    ];
-                    __dirname = "{0}";
-                    __filename = "{2}";
-                    {1}
+                    {2}
                 )",
                 dirname,
-                js_code.value(),
-                filename
+                filename,
+                js_code.value()
             );
         }
 
