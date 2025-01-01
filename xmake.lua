@@ -3,7 +3,7 @@ add_rules("mode.debug", "mode.release")
 add_repositories("levilamina https://github.com/LiteLDev/xmake-repo.git")
 add_repositories("iceblcokmc https://github.com/IceBlcokMC/xmake-repo.git")
 
-add_requires("nodejs 16.20.2") -- iceblockmc
+add_requires("nodejs 23.5.0") -- iceblockmc
 add_requires(
     "endstone 0.5.6",
     "expected-lite 0.8.0",
@@ -65,7 +65,6 @@ target("Js_Engine")
 
     -- 根据不同平台设定编译参数
     if is_plat("windows") then
-        add_cxxflags("/Zc:__cplusplus")
         add_cxflags(
             "/EHa",
             "/utf-8",
