@@ -34,7 +34,7 @@ JsEngine 基于 ScriptX 和 NodeJs 实现，支持在 EndStone 中运行 JavaScr
 
 ## 开发
 
-目前项目没有任何开发文档，您可以阅读 `lib/dts` 目录下的类型定义文件，了解 JsEngine 的 API。
+目前项目没有任何开发文档，您可以阅读 `lib/dts` 目录下的类型定义文件，或者使用我们提供的模板项目[Js_Engine_Plugin_Template](https://github.com/IceBlcokMC/js_engine_plugin_template)。
 
 ## 关于项目
 

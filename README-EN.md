@@ -34,7 +34,7 @@ JsEngine is implemented based on ScriptX and NodeJs, supporting JavaScript plugi
 
 ## Development
 
-Currently, there is no development documentation available. You can read the type definition files in the `lib/dts` directory to understand the JsEngine API.
+Currently, there is no development documentation available. You can read the type definition files in the `lib/dts` directory, or use the template items we provide [Js_Engine_Plugin_Template](https://github.com/IceBlcokMC/js_engine_plugin_template)。
 
 ## About
 
