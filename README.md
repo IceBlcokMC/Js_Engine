@@ -62,3 +62,7 @@ xmake -y
 ## 贡献
 
 欢迎提交 Issue 和 Pull Request。
+
+## 许可证
+
+本项目采用 GPL-3.0 许可证。
