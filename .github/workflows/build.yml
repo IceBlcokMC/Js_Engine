@@ -117,7 +117,7 @@ jobs:
           if [ "${{ matrix.os}}" == "windows-2022" ]; then
             cp deps/libnode.dll full/
           else
-            cp deps/libnode.so.93 full/
+            cp deps/libnode.so.131 full/
           fi
 
       - uses: actions/upload-artifact@v4
