@@ -131,12 +131,13 @@ bool NodeManager::destroyEngine(EngineID id) {
         return false;
     }
 
-    auto& warpper      = mEngines[id];
-    warpper.mIsRunning = false;
+    auto& wrapper      = mEngines[id];
+    wrapper.mIsRunning = false;
 
-    Entry::getInstance()->getServer().getScheduler().cancelTask(warpper.mUvLoopTask->getTaskId());
-    uv_stop(warpper.mEnvSetup->event_loop());
-    node::Stop(warpper.mEnvSetup->env());
+    Entry::getInstance()->getServer().getScheduler().cancelTask(wrapper.mUvLoopTask->getTaskId());
+    wrapper.mEngine->destroy(); // 销毁引擎
+    uv_stop(wrapper.mEnvSetup->event_loop());
+    node::Stop(wrapper.mEnvSetup->env());
 
     mEngines.erase(id); // 删除引擎
     return true;
