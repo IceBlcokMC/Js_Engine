@@ -33,6 +33,7 @@ end
 
 
 target("Js_Engine")
+    set_license("GPL-3.0")
     add_defines(
         "NOMINMAX",
         "UNICODE",
@@ -62,8 +63,6 @@ target("Js_Engine")
     add_defines("ENTT_SPARSE_PAGE=2048")
     add_defines("ENTT_PACKED_PAGE=128")
 
-
-    -- 根据不同平台设定编译参数
     if is_plat("windows") then
         add_cxxflags("/Zc:__cplusplus")
         add_cxflags(
@@ -73,6 +72,7 @@ target("Js_Engine")
             "/sdl"
         )
     elseif is_plat("linux") then
+        add_rpathdirs("$ORIGIN/../")
         add_cxflags(
             "-fPIC",
             "-stdlib=libc++",
@@ -97,14 +97,6 @@ target("Js_Engine")
         "SCRIPTX_BACKEND_V8",
         "SCRIPTX_BACKEND_TRAIT_PREFIX=../third-party/scriptx/backend/V8/trait/Trait"
     )
-
-    if is_plat("windows") then
-        -- add_links("third-party/nodejs/win/lib/libnode.lib")
-    elseif is_plat("linux") then
-        add_rpathdirs("$ORIGIN/../") -- ./plugins/js_engine/libnode.so.93
-        -- add_links("third-party/nodejs/linux/libnode.so")
-    end
-
 
     if is_mode("debug") then
         add_defines("DEBUG")
