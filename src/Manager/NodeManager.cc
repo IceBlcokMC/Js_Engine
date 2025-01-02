@@ -6,6 +6,7 @@
 #include "Entry.h"
 #include "Utils/Using.h"
 #include "Utils/Util.h"
+#include "endstone/scheduler/scheduler.h"
 #include "fmt/core.h"
 #include "nlohmann/json.hpp"
 #include "node.h"
@@ -133,10 +134,11 @@ bool NodeManager::destroyEngine(EngineID id) {
     auto& warpper      = mEngines[id];
     warpper.mIsRunning = false;
 
+    Entry::getInstance()->getServer().getScheduler().cancelTask(warpper.mUvLoopTask->getTaskId());
+    uv_stop(warpper.mEnvSetup->event_loop());
     node::Stop(warpper.mEnvSetup->env());
 
-    // TODO: Stop uv_loop
-
+    mEngines.erase(id); // 删除引擎
     return true;
 }
 
@@ -282,12 +284,16 @@ bool NodeManager::loadFile(EngineWrapper* wrapper, fs::path const& path, bool es
             return false;
         }
 
-        // TODO: uv_run
-        //  EngineScope enter(engine);
-        //  uv_run(eventLoop, UV_RUN_NOWAIT);
         if (node::SpinEventLoop(env).FromMaybe(1) != 0) {
             return false;
         }
+
+        wrapper->mUvLoopTask = Entry::getInstance()->getServer().getScheduler().runTaskTimer(
+            *Entry::getInstance(),
+            [loop{wrapper->mEnvSetup->event_loop()}]() { uv_run(loop, UV_RUN_NOWAIT); },
+            0,
+            2
+        );
 
         return true;
     } catch (...) {

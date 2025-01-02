@@ -1,5 +1,6 @@
 #pragma once
 #include "Utils/Using.h"
+#include "endstone/scheduler/task.h"
 #include "node.h"
 #include <filesystem>
 #include <memory>
@@ -15,6 +16,7 @@ struct EngineWrapper {
     EngineID                                      mID; // 引擎ID
     ScriptEngine*                                 mEngine;
     std::unique_ptr<node::CommonEnvironmentSetup> mEnvSetup;
+    std::shared_ptr<endstone::Task>               mUvLoopTask{nullptr};
     bool                                          mIsRunning{false};
 
 public:
