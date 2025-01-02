@@ -20,13 +20,6 @@ public:
         return (new PermissionAPI{permission})->getScriptObject();
     }
 
-    static endstone::Permission* unWarp(Local<Value> val) {
-        if (IsInstanceOf<PermissionAPI>(val)) {
-            return EngineScope::currentEngine()->getNativeInstance<PermissionAPI>(val)->get();
-        }
-        return nullptr;
-    }
-
     endstone::Permission* get() { return mPermission; }
 
     METHODS(toString);

@@ -51,7 +51,7 @@ declare class PluginDescriptionAPI {
   /** 获取插件默认命令权限 */
   getDefaultPermission(): Enums.PermissionDefault;
 
-  // getCommands(): any; // TODO
+  getCommands(): Command[];
 
   getPermissions(): Permission[];
 }

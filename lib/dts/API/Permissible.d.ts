@@ -1,28 +1,28 @@
 /// <reference path="../index.d.ts"/>
 
 declare class Permissible {
-    toString(): "<Permissible>";
+  toString(): "<Permissible>";
 
-    isOP(): boolean;
+  isOP(): boolean;
 
-    setOp(value: boolean): void;
+  setOp(value: boolean): void;
 
-    isPermissionSet(name: string): boolean;
+  isPermissionSet(name: string): boolean;
 
-    isPermissionSet(perm: Permission): boolean;
+  isPermissionSet(perm: Permission): boolean;
 
-    hasPermission(name: string): boolean;
+  hasPermission(name: string): boolean;
 
-    hasPermission(perm: Permission): boolean;
+  hasPermission(perm: Permission): boolean;
 
-    // addAttachment(plugin: Plugin): any // TODO
-    // addAttachment(plugin: Plugin, name: string, value: boolean): any // TODO
+  // addAttachment(plugin: Plugin): any // TODO: PermissionAttachment
+  // addAttachment(plugin: Plugin, name: string, value: boolean): any // TODO: PermissionAttachment
 
-    // removeAttachment(): any // TODO
+  // removeAttachment(): any // TODO: PermissionAttachment
 
-    recalculatePermissions(): void;
+  recalculatePermissions(): void;
 
-    // getEffectivePermissions(): any // TODO
+  // getEffectivePermissions(): any // TODO: PermissionAttachmentInfo
 
-    // asCommandSender(): any // TODO
+  // asCommandSender(): any // TODO: CommandSender
 }

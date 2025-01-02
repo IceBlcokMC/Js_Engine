@@ -1,28 +1,25 @@
-
-
 declare class Permission {
-    toString(): "Permission"
+  toString(): "<Permission>";
 
-    getName(): string;
+  getName(): string;
 
-    getChildren(): { [k: string]: boolean };
+  getChildren(): { [k: string]: boolean };
 
-    getDefault(): Enums.PermissionDefault;
+  getDefault(): Enums.PermissionDefault;
 
-    setDefault(default_: Enums.PermissionDefault): void;
+  setDefault(default_: Enums.PermissionDefault): void;
 
-    getDescription(): string
+  getDescription(): string;
 
-    setDescription(description: string): void;
+  setDescription(description: string): void;
 
-    getPermissibles(): Permissible[];
+  getPermissibles(): Permissible[];
 
-    recalculatePermissibles(): void;
+  recalculatePermissibles(): void;
 
-    addParent(name: string, value: boolean): Permission;
+  addParent(name: string, value: boolean): Permission;
 
-    addParent(perm: Permission, value: boolean): void;
+  addParent(perm: Permission, value: boolean): void;
 
-    // init(): any; // TODO
+  // init(): any; // TODO: PluginManager
 }
-

@@ -2,6 +2,7 @@
 #include "API/APIHelper.h"
 #include "API/PermissibleAPI.h"
 #include "Utils/Convert.h"
+#include "Utils/Defines.h"
 #include "endstone/permissions/permission_default.h"
 
 namespace jse {
@@ -79,7 +80,7 @@ Local<Value> PermissionAPI::addParent(Arguments const& args) {
                 return PermissionAPI::newPermissionAPI(val);
             }
         } else if (IsInstanceOf<PermissionAPI>(args[0])) {
-            this->mPermission->addParent(*unWarp(args[0]), args[1].asBoolean().value());
+            this->mPermission->addParent(*GetScriptClass(PermissionAPI, args[0])->get(), args[1].asBoolean().value());
         }
         return Local<Value>();
     }
@@ -88,7 +89,7 @@ Local<Value> PermissionAPI::addParent(Arguments const& args) {
 
 Local<Value> PermissionAPI::init(Arguments const& args) {
     try {
-        // TODO
+        // TODO: PluginManager
     }
     Catch;
 }

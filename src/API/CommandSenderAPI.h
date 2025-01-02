@@ -19,6 +19,8 @@ public:
         return (new CommandSenderAPI(sender))->getScriptObject();
     }
 
+    endstone::CommandSender* get() { return mSender; }
+
     METHODS(toString);
     // METHODS(asCommandSender);
     METHODS(asConsole);

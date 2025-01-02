@@ -49,17 +49,17 @@ PLUGINAPI_MACRO(getLogger, return LoggerAPI::newLoggerAPI());
 
 PLUGINAPI_MACRO(isEnabled, return Boolean::newBoolean(ENGINE_DATA()->mPlugin->isEnabled()));
 
-PLUGINAPI_MACRO(getPluginLoader, return Local<Value>()); // todo
+PLUGINAPI_MACRO(getPluginLoader, return Local<Value>()); // TODO: PluginLoader
 
-PLUGINAPI_MACRO(getServer, return Local<Value>()); // todo
+PLUGINAPI_MACRO(getServer, return Local<Value>()); // TODO：Server
 
 PLUGINAPI_MACRO(getName, return String::newString(ENGINE_DATA()->mPlugin->getName()));
 
-PLUGINAPI_MACRO(getCommand, return Local<Value>()); // todo
+PLUGINAPI_MACRO(getCommand, return Local<Value>()); // TODO: PluginCommand
 
 PLUGINAPI_MACRO(getDataFolder, return String::newString(ENGINE_DATA()->mPlugin->getDataFolder().string()));
 
-PLUGINAPI_MACRO(registerEvent, return Local<Value>()); // todo
+PLUGINAPI_MACRO(registerEvent, return Local<Value>()); // TODO: implement registerEvent
 
 #undef PLUGINAPI_MACRO
 

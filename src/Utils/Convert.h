@@ -1,10 +1,12 @@
 #pragma once
+#include "API/APIHelper.h"
 #include "Utils/Using.h"
 #include "fmt/format.h"
 #include "magic_enum/magic_enum.hpp"
 #include <cstddef>
 #include <type_traits>
 #include <unordered_map>
+#include <vector>
 
 
 namespace jse {
@@ -16,7 +18,7 @@ namespace jse {
 // std::vector<T> -> Array<T>
 // std::unordered_map<K, V> -> Object<string, V>
 // enum<T> -> Number
-namespace ConvertCppToScriptX {
+namespace IConvertCppToScriptX {
 
 // 基础模板
 template <typename T, typename Enable = void>
@@ -102,7 +104,7 @@ Local<Value> ConvertToScriptImpl(const T& value) {
     }
 }
 
-} // namespace ConvertCppToScriptX
+} // namespace IConvertCppToScriptX
 
 
 // ScriptX -> C++
@@ -113,7 +115,7 @@ Local<Value> ConvertToScriptImpl(const T& value) {
 // Array<T> -> std::vector<T>
 // Array<Value> -> std::vector<T>
 // Object<Value> -> std::unordered_map<std::string, T>
-namespace ConvertScriptXToCpp {
+namespace IConvertScriptXToCpp {
 
 // 基础模板
 template <typename T, typename Enable = void>
@@ -188,18 +190,26 @@ struct FromScriptType<T, std::enable_if_t<std::is_enum_v<T>>> {
     }
 };
 
-} // namespace ConvertScriptXToCpp
+} // namespace IConvertScriptXToCpp
 
 
 template <typename T>
 Local<Value> ConvertToScriptX(const T& value) {
-    return ConvertCppToScriptX::ConvertToScriptImpl(value);
+    return IConvertCppToScriptX::ConvertToScriptImpl(value);
 }
 
 template <typename T>
 T ConvertFromScriptX(const Local<Value>& value) {
-    return ConvertScriptXToCpp::FromScriptType<T>::Convert(value);
+    return IConvertScriptXToCpp::FromScriptType<T>::Convert(value);
 }
 
+template <typename T>
+std::vector<T> ConvertFromScriptXArgs(Arguments const& args) {
+    std::vector<T> result;
+    for (size_t i = 0; i < args.size(); i++) {
+        result.push_back(ConvertFromScriptX<T>(args[i]));
+    }
+    return result;
+}
 
 } // namespace jse

@@ -5,11 +5,7 @@
         "../lib/shortcutApi/*.d.ts"
     ],
     "compilerOptions": {
-        "module": "CommonJS",
-        "target": "ES2021",
-        "lib": [
-            "ES2021",
-        ],
-        "types": []
+        "module": "ESNext",
+        "target": "ES2022",
     }
 }

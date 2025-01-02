@@ -56,7 +56,8 @@ Local<Value> PermissibleAPI::isPermissionSet(Arguments const& args) {
             return ConvertToScriptX(this->mPermissible->isPermissionSet(args[0].asString().toString()));
         } else if (IsInstanceOf<PermissionAPI>(args[0])) {
             // overload 2
-            return ConvertToScriptX(this->mPermissible->isPermissionSet(*PermissionAPI::unWarp(args[0])));
+            return ConvertToScriptX(this->mPermissible->isPermissionSet(*GetScriptClass(PermissionAPI, args[0])->get())
+            );
         }
         return ConvertToScriptX(false);
     }
@@ -70,7 +71,7 @@ Local<Value> PermissibleAPI::hasPermission(Arguments const& args) {
             return ConvertToScriptX(this->mPermissible->hasPermission(args[0].asString().toString()));
         } else if (IsInstanceOf<PermissionAPI>(args[0])) {
             // overload 2
-            return ConvertToScriptX(this->mPermissible->hasPermission(*PermissionAPI::unWarp(args[0])));
+            return ConvertToScriptX(this->mPermissible->hasPermission(*GetScriptClass(PermissionAPI, args[0])->get()));
         }
         return ConvertToScriptX(false);
     }

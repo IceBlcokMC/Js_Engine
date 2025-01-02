@@ -1,10 +1,13 @@
 #include "JavaScriptPlugin.h"
 #include "API/APIHelper.h"
+#include "API/CommandAPI.h"
 #include "API/CommandSenderAPI.h"
 #include "Entry.h"
 #include "Manager/EngineData.h"
 #include "Manager/NodeManager.h"
+#include "Utils/Convert.h"
 #include "Utils/Using.h"
+#include "endstone/command/command.h"
 #include "endstone/logger.h"
 #include <iostream>
 
@@ -59,8 +62,15 @@ bool JavaScriptPlugin::onCommand(
         if (obj.has("onCommand")) {
             auto func = obj.get("onCommand");
             if (func.isFunction()) {
-                // TODO: args
-                return func.asFunction().call({}, CommandSenderAPI::newCommandSenderAPI(&sender)).asBoolean().value();
+                return func.asFunction()
+                    .call(
+                        {},
+                        CommandSenderAPI::newCommandSenderAPI(&sender),
+                        CommandAPI::newCommandAPI(const_cast<endstone::Command*>(&command)), // dangerous?
+                        ConvertToScriptX(args)
+                    )
+                    .asBoolean()
+                    .value();
             }
         }
         Entry::getInstance()->getLogger().error("Plugin '{}' does not register onCommand function", data->mFileName);
