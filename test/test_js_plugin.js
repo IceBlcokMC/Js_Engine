@@ -1,7 +1,6 @@
 /// <reference path="../js_engine/dts/index.d.ts"/>
 
-/** @type {import("../js_engine/shortcutApi/JsonFileConfig.js")["default"]} */
-// const JsonFileConfig = require("../js_engine/shortcutApi/JsonFileConfig.js")["default"];
+// const { JsonFileConfig } = require("../js_engine/shortcutApi/JsonFileConfig.js");
 
 import { b } from "./b.js";
 b();
