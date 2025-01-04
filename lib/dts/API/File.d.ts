@@ -1,6 +1,6 @@
 /// <reference path="../index.d.ts"/>
 
-declare class File {
+declare class FileAPI {
     private constructor();
 
     /** 读取文件 */

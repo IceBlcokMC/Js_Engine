@@ -6,7 +6,7 @@
 
 namespace jse {
 
-ClassDefine<FileAPI> FileAPI::builder = defineClass<FileAPI>("File")
+ClassDefine<FileAPI> FileAPI::builder = defineClass<FileAPI>("FileAPI")
                                             .constructor(nullptr)
                                             .instanceFunction("toString", &FileAPI::toString)
                                             .function("readFile", &FileAPI::readFile)
