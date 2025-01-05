@@ -193,43 +193,44 @@ bool NodeManager::NpmInstall(string npmExecuteDir) {
     Entry::getInstance()->getLogger().debug("Running npm install in {}", npmExecuteDir);
     // clang-format off
     string compiler = R"(
-        (async function npm() {
-            try {
-                const process = require("process");
-                const path = require("path");
-                const Module = require('module').Module;
+        try {
+            const path = require("path");
+            const process = require("process");
 
-                const cwd = process.cwd();
-                const PublicRequire = Module.createRequire(path.join(cwd, "plugins/js_engine"));
-                globalThis.require = PublicRequire;
+            globalThis.require = require('module').createRequire(path.join(process.cwd(), "plugins/js_engine"));
 
-                process.chdir(path.join(`)"+npmExecuteDir+R"(`));
-
-                const code = `
+            const code = `
+                (async function () {
                     const path = require("path");
-                    (async function () {
-                        try {
-                            const NPM = require(path.join(
-                                process.cwd(),
-                                "../",
-                                "js_engine/node_modules/npm/lib/npm.js"
-                            ));
-                            const npm = new NPM();
-                            await npm.load();
-                            await npm.exec("install", []);
-                        } catch (error) {
-                            console.error(error); // Handle the error appropriately
-                        }
-                    })();
-                `
+                    const process = require("process");
+                    const SourceCwd = path.join(process.cwd());
+                    const TargetCwd = path.join(")"+npmExecuteDir+R"(");
+                    try {
+                        process.chdir(TargetCwd);
 
-                require("vm").runInThisContext(code, "inline-code.js");
+                        const NPM = require(path.join(
+                            process.cwd(),
+                            "../",
+                            "js_engine/node_modules/npm/lib/npm.js"
+                        ));
+                        const npm = new NPM();
+                        await npm.load();
+                        await npm.exec("install", []);
 
-                process.chdir(cwd);
-            } catch (e) {
-                console.error(`Failed to run npm install:\n${e.stack}`);
-            }
-        })();
+                        console.info("npm install finished");
+                        process.chdir(SourceCwd);
+                        process.exit(0);
+                    } catch (error) {
+                        console.error(error);
+                        process.chdir(SourceCwd);
+                        process.exit(1);
+                    }
+                })();
+            `;
+            require("vm").runInThisContext(code, "inline-npm-install.js");
+        } catch (e) {
+            console.error(`Failed to run npm install:\n${e.stack}`);
+        }
     )";
     // clang-format on
 
