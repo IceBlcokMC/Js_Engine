@@ -38,34 +38,18 @@ void NodeManager::initNodeJs() {
 
     char* cWorkingDir = const_cast<char*>(workingDir.string().c_str());
     uv_setup_args(1, &cWorkingDir);
-
-    std::shared_ptr<node::InitializationResult> result = node::InitializeOncePerProcess(
-        mArgs,
-        {node::ProcessInitializationFlags::kNoInitializeV8,
-         node::ProcessInitializationFlags::kNoInitializeNodeV8Platform}
-    );
-
-    for (string const& err : result->errors()) {
-        Entry::getInstance()->getLogger().critical(err);
+    cppgc::InitializeProcess();
+    std::vector<string> errors;
+    if (node::InitializeNodeWithArgs(&mArgs, &mExecArgs, &errors) != 0) {
+        Entry::getInstance()->getLogger().critical("Failed to initialize Node.js: ");
+        for (auto const& error : errors) {
+            Entry::getInstance()->getLogger().critical(error);
+        }
+        return;
     }
-    if (result->early_return() != 0) return;
-
     mPlatform = node::MultiIsolatePlatform::Create(std::thread::hardware_concurrency());
     v8::V8::InitializePlatform(mPlatform.get());
     v8::V8::Initialize();
-
-    // cppgc::InitializeProcess();
-    // std::vector<string> errors;
-    // if (node::InitializeNodeWithArgs(&mArgs, &mExecArgs, &errors) != 0) {
-    //     Entry::getInstance()->getLogger().critical("Failed to initialize Node.js: ");
-    //     for (auto const& error : errors) {
-    //         Entry::getInstance()->getLogger().critical(error);
-    //     }
-    //     return;
-    // }
-    // mPlatform = node::MultiIsolatePlatform::Create(std::thread::hardware_concurrency());
-    // v8::V8::InitializePlatform(mPlatform.get());
-    // v8::V8::Initialize();
     mIsInitialized = true;
 }
 
