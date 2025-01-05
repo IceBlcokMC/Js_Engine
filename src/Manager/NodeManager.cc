@@ -29,7 +29,6 @@ NodeManager& NodeManager::getInstance() {
 }
 
 void NodeManager::initNodeJs() {
-
     if (mIsInitialized) {
         return;
     }
@@ -39,19 +38,34 @@ void NodeManager::initNodeJs() {
 
     char* cWorkingDir = const_cast<char*>(workingDir.string().c_str());
     uv_setup_args(1, &cWorkingDir);
-    cppgc::InitializeProcess();
-    std::vector<string> errors;
-    if (node::InitializeNodeWithArgs(&mArgs, &mExecArgs, &errors) != 0) {
-        Entry::getInstance()->getLogger().critical("Failed to initialize Node.js: ");
-        for (auto const& error : errors) {
-            Entry::getInstance()->getLogger().critical(error);
-        }
-        return;
+
+    std::shared_ptr<node::InitializationResult> result = node::InitializeOncePerProcess(
+        mArgs,
+        {node::ProcessInitializationFlags::kNoInitializeV8,
+         node::ProcessInitializationFlags::kNoInitializeNodeV8Platform}
+    );
+
+    for (string const& err : result->errors()) {
+        Entry::getInstance()->getLogger().critical(err);
     }
+    if (result->early_return() != 0) return;
 
     mPlatform = node::MultiIsolatePlatform::Create(std::thread::hardware_concurrency());
     v8::V8::InitializePlatform(mPlatform.get());
     v8::V8::Initialize();
+
+    // cppgc::InitializeProcess();
+    // std::vector<string> errors;
+    // if (node::InitializeNodeWithArgs(&mArgs, &mExecArgs, &errors) != 0) {
+    //     Entry::getInstance()->getLogger().critical("Failed to initialize Node.js: ");
+    //     for (auto const& error : errors) {
+    //         Entry::getInstance()->getLogger().critical(error);
+    //     }
+    //     return;
+    // }
+    // mPlatform = node::MultiIsolatePlatform::Create(std::thread::hardware_concurrency());
+    // v8::V8::InitializePlatform(mPlatform.get());
+    // v8::V8::Initialize();
     mIsInitialized = true;
 }
 
@@ -80,7 +94,7 @@ EngineWrapper* NodeManager::newScriptEngine() {
     }
     EngineID id = NextEngineID++;
 
-    std::vector<string> errors;
+    std::vector<string>           errors;
     node::EnvironmentFlags::Flags flags = static_cast<node::EnvironmentFlags::Flags>(
         node::EnvironmentFlags::kNoRegisterESMLoader | node::EnvironmentFlags::kNoCreateInspector
     );
@@ -176,21 +190,46 @@ bool NodeManager::NpmInstall(string npmExecuteDir) {
     v8::HandleScope    handle_scope(isolate);
     v8::Context::Scope context_scope(setup->context());
 
+    Entry::getInstance()->getLogger().debug("Running npm install in {}", npmExecuteDir);
     // clang-format off
     string compiler = R"(
-        const cwd = process.cwd();
-        require("process").chdir(`)"+npmExecuteDir+R"(`);
         (async function npm() {
-            const NPM = require(`${cwd}/plugins/js_engine/node_modules/npm/lib/npm.js`);
-            const npm = new NPM();
             try {
-                await npm.load();
-                await npm.exec("install", []);
+                const process = require("process");
+                const path = require("path");
+                const Module = require('module').Module;
+
+                const cwd = process.cwd();
+                const PublicRequire = Module.createRequire(path.join(cwd, "plugins/js_engine"));
+                globalThis.require = PublicRequire;
+
+                process.chdir(path.join(`)"+npmExecuteDir+R"(`));
+
+                const code = `
+                    const path = require("path");
+                    (async function () {
+                        try {
+                            const NPM = require(path.join(
+                                process.cwd(),
+                                "../",
+                                "js_engine/node_modules/npm/lib/npm.js"
+                            ));
+                            const npm = new NPM();
+                            await npm.load();
+                            await npm.exec("install", []);
+                        } catch (error) {
+                            console.error(error); // Handle the error appropriately
+                        }
+                    })();
+                `
+
+                require("vm").runInThisContext(code, "inline-code.js");
+
+                process.chdir(cwd);
             } catch (e) {
-                console.error(e);
+                console.error(`Failed to run npm install:\n${e.stack}`);
             }
         })();
-        require("process").chdir(cwd);
     )";
     // clang-format on
 
