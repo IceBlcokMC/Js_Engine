@@ -1,5 +1,4 @@
 #pragma once
-#include "API/APIHelper.h"
 #include "Utils/Using.h"
 #include "boost/pfr.hpp"
 #include "fmt/format.h"
@@ -26,7 +25,8 @@ namespace IConvertCppToScriptX {
 // 基础模板
 template <typename T, typename Enable = void>
 struct ToScriptType {
-    static_assert(sizeof(T) == 0, "Unsupported type conversion");
+    // static_assert(sizeof(T) == 0, "Unsupported type conversion");
+    using Type = void;
 };
 
 // 特化类型
@@ -107,15 +107,15 @@ Local<Value> DoScriptTypeConvert(const T& value) {
     }
 }
 template <typename T>
-constexpr bool IsScriptTypeConvertible = requires(const T& v) { DoScriptTypeConvert(v); };
+constexpr bool IsScriptTypeConvertible = !std::is_same_v<typename ToScriptType<T>::Type, void>;
 template <typename T>
-Local<Value> DoReflectConvert(const T& value, Local<Object>& res) {
+void DoReflectConvert(const T& value, Local<Object>& res) {
     boost::pfr::for_each_field(value, [&](auto& field, std::size_t index) {
-        if constexpr (IsScriptTypeConvertible<std::remove_cvref_t<T>>) {
+        if constexpr (IsScriptTypeConvertible<std::remove_cvref_t<decltype(field)>>) {
             res.set(boost::pfr::names_as_array<std::remove_cvref_t<T>>()[index], DoScriptTypeConvert(field));
-        } else if constexpr (IsReflectable<T>) {
+        } else if constexpr (IsReflectable<std::remove_cvref_t<decltype(field)>>) {
             Local<Object> obj = Object::newObject();
-            DoScriptTypeConvert(obj);
+            DoReflectConvert(field, obj);
             res.set(boost::pfr::names_as_array<std::remove_cvref_t<T>>()[index], obj);
         }
     });
