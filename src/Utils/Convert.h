@@ -1,6 +1,7 @@
 #pragma once
 #include "API/APIHelper.h"
 #include "Utils/Using.h"
+#include "boost/pfr.hpp"
 #include "fmt/format.h"
 #include "magic_enum/magic_enum.hpp"
 #include <cstddef>
@@ -10,6 +11,8 @@
 
 
 namespace jse {
+template <typename T>
+constexpr bool IsReflectable = std::is_aggregate_v<T> && !(requires(T& a) { a.operator[]; });
 
 // C++ -> ScriptX
 // std::string、char* -> String
@@ -74,9 +77,9 @@ struct ToScriptType<T, std::enable_if_t<std::is_enum_v<T>>> {
     using Type = Number;
 };
 
-// 实现
+
 template <typename T>
-Local<Value> ConvertToScriptImpl(const T& value) {
+Local<Value> DoScriptTypeConvert(const T& value) {
     using ScriptType = typename ToScriptType<T>::Type;
 
     if constexpr (std::is_enum_v<T>) {
@@ -92,15 +95,40 @@ Local<Value> ConvertToScriptImpl(const T& value) {
     } else if constexpr (std::is_same_v<ScriptType, Array>) {
         auto arr = Array::newArray(); // vector<T> -> array
         for (const auto& item : value) {
-            arr.add(ConvertToScriptImpl(item));
+            arr.add(DoScriptTypeConvert(item));
         }
         return arr;
     } else if constexpr (std::is_same_v<ScriptType, Object>) {
         auto obj = Object::newObject(); // unordered_map<K, V> -> object
         for (const auto& [key, val] : value) {
-            obj.set(fmt::to_string(key), ConvertToScriptImpl(val));
+            obj.set(fmt::to_string(key), DoScriptTypeConvert(val));
         }
         return obj;
+    }
+}
+template <typename T>
+constexpr bool IsScriptTypeConvertible = requires(const T& v) { DoScriptTypeConvert(v); };
+template <typename T>
+Local<Value> DoReflectConvert(const T& value, Local<Object>& res) {
+    boost::pfr::for_each_field(value, [&](auto& field, std::size_t index) {
+        if constexpr (IsScriptTypeConvertible<std::remove_cvref_t<T>>) {
+            res.set(boost::pfr::names_as_array<std::remove_cvref_t<T>>()[index], DoScriptTypeConvert(field));
+        } else if constexpr (IsReflectable<T>) {
+            Local<Object> obj = Object::newObject();
+            DoScriptTypeConvert(obj);
+            res.set(boost::pfr::names_as_array<std::remove_cvref_t<T>>()[index], obj);
+        }
+    });
+}
+// 实现
+template <typename T>
+Local<Value> ConvertToScriptImpl(const T& value) {
+    if constexpr (IsScriptTypeConvertible<T>) {
+        return DoScriptTypeConvert(value);
+    } else if constexpr (IsReflectable<T>) {
+        Local<Object> res = Object::newObject();
+        DoReflectConvert(value, res);
+        return res;
     }
 }
 
@@ -187,6 +215,19 @@ struct FromScriptType<T, std::enable_if_t<std::is_enum_v<T>>> {
             throw std::runtime_error("Invalid enum value: " + std::to_string(value.asNumber().toInt64()));
         }
         return enumValue.value();
+    }
+};
+
+template <typename T>
+struct FromScriptType<T, std::enable_if_t<IsReflectable<T>>> {
+    static T Convert(const Local<Value>& value, T res = {}) {
+        auto obj = value.asObject();
+        boost::pfr::for_each_field(res, [&](auto& field, std::size_t index) {
+            field = FromScriptType<std::remove_cvref_t<T>>::Convert(
+                obj.get(boost::pfr::names_as_array<std::remove_cvref_t<T>>()[index])
+            );
+        });
+        return res;
     }
 };
 
