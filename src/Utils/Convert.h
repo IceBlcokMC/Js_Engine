@@ -6,6 +6,7 @@
 #include <cstddef>
 #include <type_traits>
 #include <unordered_map>
+#include <variant>
 #include <vector>
 
 
@@ -77,7 +78,14 @@ struct ToScriptType<T, std::enable_if_t<std::is_enum_v<T>>> {
     using Type = Number;
 };
 
+// variant
+template <typename... Ts>
+struct ToScriptType<std::variant<Ts...>> {
+    using Type = Value;
+};
 
+template <typename T, std::size_t I = 0>
+Local<Value> VariantConvert(const T& value);
 template <typename T>
 Local<Value> DoScriptTypeConvert(const T& value) {
     using ScriptType = typename ToScriptType<T>::Type;
@@ -104,6 +112,19 @@ Local<Value> DoScriptTypeConvert(const T& value) {
             obj.set(fmt::to_string(key), DoScriptTypeConvert(val));
         }
         return obj;
+    } else if constexpr (std::is_same_v<ScriptType, Value>) {
+        VariantConvert(value);
+    }
+}
+template <typename T, std::size_t I>
+Local<Value> VariantConvert(const T& value) {
+    if (auto res = std::get_if<I>(&value)) {
+        return DoScriptTypeConvert(*res);
+    } else {
+        if constexpr (I < std::variant_size_v<T>) return VariantConvert<T, I + 1>(value);
+        else {
+            throw std::runtime_error("Invalid variant");
+        }
     }
 }
 template <typename T>
