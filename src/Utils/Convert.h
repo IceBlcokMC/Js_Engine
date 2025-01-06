@@ -113,7 +113,7 @@ Local<Value> DoScriptTypeConvert(const T& value) {
         }
         return obj;
     } else if constexpr (std::is_same_v<ScriptType, Value>) {
-        VariantConvert(value);
+        return VariantConvert(value);
     }
 }
 template <typename T, std::size_t I>
