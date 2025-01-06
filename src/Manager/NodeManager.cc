@@ -179,39 +179,20 @@ bool NodeManager::NpmInstall(string npmExecuteDir) {
     string compiler = R"(
         try {
             const path = require("path");
-            const process = require("process");
+            const cwd = path.join(process.cwd());
 
-            globalThis.require = require('module').createRequire(path.join(process.cwd(), "plugins/js_engine"));
+            let node;
+            if (process.platform === "win32") {
+                node = path.join(cwd, "node.exe");
+            } else {
+                node = path.join(cwd, "node");
+            }
 
-            const code = `
-                (async function () {
-                    const path = require("path");
-                    const process = require("process");
-                    const SourceCwd = path.join(process.cwd());
-                    const TargetCwd = path.join(")"+npmExecuteDir+R"(");
-                    try {
-                        process.chdir(TargetCwd);
+            const execute_dir = path.join(")"+npmExecuteDir+R"(");
+            const npm_cli = path.join(cwd, "plugins/js_engine/node_modules/npm/bin/npm-cli.js");
+            require("child_process").execFileSync(node, [npm_cli, "install"], { cwd: execute_dir });
 
-                        const NPM = require(path.join(
-                            process.cwd(),
-                            "../",
-                            "js_engine/node_modules/npm/lib/npm.js"
-                        ));
-                        const npm = new NPM();
-                        await npm.load();
-                        await npm.exec("install", []);
-
-                        console.info("npm install finished");
-                        process.chdir(SourceCwd);
-                        process.exit(0);
-                    } catch (error) {
-                        console.error(error);
-                        process.chdir(SourceCwd);
-                        process.exit(1);
-                    }
-                })();
-            `;
-            require("vm").runInThisContext(code, "inline-npm-install.js");
+            console.log("npm install success");
         } catch (e) {
             console.error(`Failed to run npm install:\n${e.stack}`);
         }
