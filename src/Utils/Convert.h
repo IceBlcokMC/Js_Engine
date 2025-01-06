@@ -244,7 +244,7 @@ struct FromScriptType<T, std::enable_if_t<IsReflectable<T>>> {
     static T Convert(const Local<Value>& value, T res = {}) {
         auto obj = value.asObject();
         boost::pfr::for_each_field(res, [&](auto& field, std::size_t index) {
-            field = FromScriptType<std::remove_cvref_t<T>>::Convert(
+            field = FromScriptType<std::remove_cvref_t<decltype(field)>>::Convert(
                 obj.get(boost::pfr::names_as_array<std::remove_cvref_t<T>>()[index])
             );
         });
