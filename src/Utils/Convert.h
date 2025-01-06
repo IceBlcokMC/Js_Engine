@@ -113,7 +113,7 @@ Local<Value> DoScriptTypeConvert(const T& value) {
         }
         return obj;
     } else if constexpr (std::is_same_v<ScriptType, Value>) {
-        VariantConvert(value);
+        return VariantConvert(value);
     }
 }
 template <typename T, std::size_t I>
@@ -121,7 +121,7 @@ Local<Value> VariantConvert(const T& value) {
     if (auto res = std::get_if<I>(&value)) {
         return DoScriptTypeConvert(*res);
     } else {
-        if constexpr (I < std::variant_size_v<T>) return VariantConvert<T, I + 1>(value);
+        if constexpr (I + 1 < std::variant_size_v<T>) return VariantConvert<T, I + 1>(value);
         else {
             throw std::runtime_error("Invalid variant");
         }
@@ -244,7 +244,7 @@ struct FromScriptType<T, std::enable_if_t<IsReflectable<T>>> {
     static T Convert(const Local<Value>& value, T res = {}) {
         auto obj = value.asObject();
         boost::pfr::for_each_field(res, [&](auto& field, std::size_t index) {
-            field = FromScriptType<std::remove_cvref_t<T>>::Convert(
+            field = FromScriptType<std::remove_cvref_t<decltype(field)>>::Convert(
                 obj.get(boost::pfr::names_as_array<std::remove_cvref_t<T>>()[index])
             );
         });
