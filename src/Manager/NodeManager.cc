@@ -62,6 +62,7 @@ std::vector<std::string> GetArgs() {
         }
         c = fgetc(cmdline);
     }
+    fclose(cmdline);
     return res;
 }
 #endif
