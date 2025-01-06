@@ -121,7 +121,7 @@ Local<Value> VariantConvert(const T& value) {
     if (auto res = std::get_if<I>(&value)) {
         return DoScriptTypeConvert(*res);
     } else {
-        if constexpr (I < std::variant_size_v<T>) return VariantConvert<T, I + 1>(value);
+        if constexpr (I + 1 < std::variant_size_v<T>) return VariantConvert<T, I + 1>(value);
         else {
             throw std::runtime_error("Invalid variant");
         }
