@@ -19,9 +19,52 @@
 #include <unordered_map>
 #include <utility>
 
+#ifdef _WIN32
+#include "Windows.h"
+#include "shellapi.h"
+#else
+#include <cstdio>
+#endif
+
 
 namespace jse {
 
+#ifdef _WIN32
+#pragma comment(lib, "Shell32.lib")
+std::string wstr2str(const std::wstring& ws) {
+    auto        len = WideCharToMultiByte(CP_ACP, 0, ws.c_str(), ws.size(), nullptr, 0, nullptr, nullptr);
+    std::string res(len + 1, 0);
+    WideCharToMultiByte(CP_ACP, 0, ws.c_str(), ws.size(), res.data(), len, nullptr, nullptr);
+    return res;
+}
+std::vector<std::string> GetArgs() {
+    int                      argc = 0;
+    auto                     argv = CommandLineToArgvW(GetCommandLineW(), &argc);
+    std::vector<std::string> res(argc);
+    for (int i = 0; i < argc; i++) {
+        res[i] = wstr2str(argv[i]);
+    }
+    LocalFree(argv);
+    return res;
+}
+#else
+std::vector<std::string> GetArgs() {
+    FILE*                    cmdline = fopen("/proc/self/cmdline", "rb");
+    std::vector<std::string> res;
+    std::string              t;
+    int                      c = fgetc(cmdline);
+    while (c != EOF) {
+        if (c == 0) {
+            if (!t.empty()) res.push_back(t);
+            t.clear();
+        } else {
+            t += c;
+        }
+        c = fgetc(cmdline);
+    }
+    return res;
+}
+#endif
 
 NodeManager& NodeManager::getInstance() {
     static NodeManager instance;
@@ -32,11 +75,10 @@ void NodeManager::initNodeJs() {
     if (mIsInitialized) {
         return;
     }
+    static auto args = GetArgs();
+    mArgs            = args;
 
-    auto workingDir = fs::current_path() / "bedrock_server.exe";
-    mArgs           = {workingDir.string()};
-
-    char* cWorkingDir = const_cast<char*>(workingDir.string().c_str());
+    char* cWorkingDir = args[0].data();
     uv_setup_args(1, &cWorkingDir);
     cppgc::InitializeProcess();
     std::vector<string> errors;
