@@ -172,7 +172,6 @@ bool NodeManager::destroyEngine(EngineID id) {
     }
 
     auto& wrapper      = mEngines[id];
-    wrapper.mIsRunning = false;
 
     Entry::getInstance()->getServer().getScheduler().cancelTask(wrapper.mUvLoopTask->getTaskId());
     wrapper.mEngine->destroy(); // 销毁引擎
