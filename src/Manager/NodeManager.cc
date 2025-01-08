@@ -81,11 +81,18 @@ void NodeManager::initNodeJs() {
 
     char* cWorkingDir = args[0].data();
     uv_setup_args(1, &cWorkingDir);
-    cppgc::InitializeProcess();
-    std::vector<string> errors;
-    if (node::InitializeNodeWithArgs(&mArgs, &mExecArgs, &errors) != 0) {
+    // cppgc::InitializeProcess();
+    auto result = node::InitializeOncePerProcess(
+        args,
+        node::ProcessInitializationFlags::Flags(
+            node::ProcessInitializationFlags::kNoInitializeV8
+            | node::ProcessInitializationFlags::kNoInitializeNodeV8Platform
+        )
+    );
+    mExecArgs = result->exec_args();
+    if (result->exit_code() != 0) {
         Entry::getInstance()->getLogger().critical("Failed to initialize Node.js: ");
-        for (auto const& error : errors) {
+        for (auto const& error : result->errors()) {
             Entry::getInstance()->getLogger().critical(error);
         }
         return;
@@ -119,6 +126,7 @@ EngineWrapper* NodeManager::newScriptEngine() {
     std::vector<string>           errors;
     node::EnvironmentFlags::Flags flags = static_cast<node::EnvironmentFlags::Flags>(
         node::EnvironmentFlags::kNoRegisterESMLoader | node::EnvironmentFlags::kNoCreateInspector
+        | node::EnvironmentFlags::kOwnsProcessState
     );
 
     std::unique_ptr<node::CommonEnvironmentSetup> envSetup =
@@ -171,7 +179,7 @@ bool NodeManager::destroyEngine(EngineID id) {
         return false;
     }
 
-    auto& wrapper      = mEngines[id];
+    auto& wrapper = mEngines[id];
 
     Entry::getInstance()->getServer().getScheduler().cancelTask(wrapper.mUvLoopTask->getTaskId());
     wrapper.mEngine->destroy(); // 销毁引擎
