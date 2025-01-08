@@ -42,8 +42,8 @@ Currently, there is no development documentation available. You can read the typ
 
 | Platform | Backend | Version | CommonJs | ESM | package manager |
 | :------- | :------ | :------ | :------- | :-- | :-------------- |
-| Windows  | NodeJs  | v23.5.0 | y        | y   | npm             |
-| Linux    | NodeJs  | v23.5.0 | y        | y   | npm             |
+| Windows  | NodeJs  | v22.12.0 | y        | y   | npm             |
+| Linux    | NodeJs  | v22.12.0 | y        | y   | npm             |
 
 ### Building from Source
 
