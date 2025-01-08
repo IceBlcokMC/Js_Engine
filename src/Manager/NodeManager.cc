@@ -325,7 +325,7 @@ bool NodeManager::loadFile(EngineWrapper* wrapper, fs::path const& path, bool es
                             }}
                             return result;
                         }};
-                        globalThis.require = PublicModule.createRequire(__PluginPath);
+                        require = PublicModule.createRequire(__PluginPath);
                     }})();
                     {2}
                 )",
