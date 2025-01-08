@@ -308,16 +308,24 @@ bool NodeManager::loadFile(EngineWrapper* wrapper, fs::path const& path, bool es
         } else {
             compiler = fmt::format(
                 R"(
-                    __dirname = "{0}";
+                    const __Path = require("path");
+                    const __PluginPath = __Path.join("{0}");
+                    const __PluginNodeModulesPath = __Path.join(__PluginPath, "node_modules");
+
+                    __dirname = __PluginPath;
                     __filename = "{1}";
                     (function ReplaeRequire() {{
                         const PublicModule = require('module').Module;
+                        const OriginalResolveLookupPaths = PublicModule._resolveLookupPaths;
                         PublicModule._resolveLookupPaths = function (request, parent) {{
-                            result = [parent.path.endsWith("plugins") ? "{0}" : parent.path];
-                            result.push(`${{result[0]}}/node_modules`);
+                            let result = OriginalResolveLookupPaths.call(this, request, parent);
+                            if (Array.isArray(result)) {{
+                                result.push(__PluginNodeModulesPath);
+                                result.push(__PluginPath);
+                            }}
                             return result;
                         }};
-                        require = PublicModule.createRequire(`{0}`);
+                        globalThis.require = PublicModule.createRequire(__PluginPath);
                     }})();
                     {2}
                 )",
