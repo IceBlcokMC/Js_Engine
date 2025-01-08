@@ -98,14 +98,9 @@ void NodeManager::initNodeJs() {
 
 void NodeManager::shutdownNodeJs() {
     for (auto& [id, wrapper] : mEngines) {
-        if (wrapper.mIsRunning) {
-            node::Stop(wrapper.mEnvSetup->env());
-            wrapper.mIsRunning = false;
-        }
+        this->destroyEngine(id);
     }
 
-    // 清空引擎列表
-    mEngines.clear();
     v8::V8::Dispose();
     v8::V8::DisposePlatform();
 }
@@ -326,18 +321,18 @@ bool NodeManager::loadFile(EngineWrapper* wrapper, fs::path const& path, bool es
         }
 
         node::SetProcessExitHandler(env, [id{wrapper->mID}](node::Environment* env_, int exit_code) {
-            Entry::getInstance()->getLogger().debug("Node.js process exit with code: {}", exit_code);
+            Entry::getInstance()->getLogger().debug("Node.js process exit with code: {}, id: {}", exit_code, id);
             NodeManager::getInstance().destroyEngine(id);
         });
 
         v8::MaybeLocal<v8::Value> loadValue = node::LoadEnvironment(env, compiler.c_str());
         if (loadValue.IsEmpty()) {
-            node::Stop(env);
-            uv_stop(wrapper->mEnvSetup->event_loop());
+            NodeManager::getInstance().destroyEngine(wrapper->mID);
             return false;
         }
 
         if (node::SpinEventLoop(env).FromMaybe(1) != 0) {
+            NodeManager::getInstance().destroyEngine(wrapper->mID);
             return false;
         }
 
