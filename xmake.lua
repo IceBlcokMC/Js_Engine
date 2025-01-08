@@ -3,7 +3,7 @@ add_rules("mode.debug", "mode.release")
 add_repositories("levilamina https://github.com/LiteLDev/xmake-repo.git")
 add_repositories("iceblcokmc https://github.com/IceBlcokMC/xmake-repo.git")
 
-add_requires("nodejs 23.5.0") -- iceblockmc
+add_requires("nodejs 22.12.0") -- iceblockmc
 add_requires(
     "endstone 0.5.7.1",
     "expected-lite 0.8.0",

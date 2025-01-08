@@ -1,128 +1,131 @@
 name: Build
 
 on:
-  push:
-    paths:
-      - xmake.lua
-      - src/**
-      - patch/**
-      - third-party/**
-      - .github/workflows/build.yml
-  pull_request:
-    paths:
-      - xmake.lua
-      - src/**
-      - patch/**
-      - third-party/**
-      - .github/workflows/build.yml
-  workflow_dispatch:
+    push:
+        paths:
+            - xmake.lua
+            - src/**
+            - patch/**
+            - third-party/**
+            - .github/workflows/build.yml
+    pull_request:
+        paths:
+            - xmake.lua
+            - src/**
+            - patch/**
+            - third-party/**
+            - .github/workflows/build.yml
+    workflow_dispatch:
 
 env:
-  LLVM_VERSION: 15
+    LLVM_VERSION: 15
+    LIBNODE_VERSION: 22.12.0
 
 jobs:
-  build:
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-22.04, windows-2022]
+    build:
+        strategy:
+            fail-fast: false
+            matrix:
+                os: [ubuntu-22.04, windows-2022]
 
-    name: Build with ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
+        name: Build with ${{ matrix.os }}
+        runs-on: ${{ matrix.os }}
+        steps:
+            - uses: actions/checkout@v4
+              with:
+                  fetch-depth: 0
 
-      - uses: actions/cache@v4
-        with:
-          path: |
-            ~/AppData/Local/.xmake
-          key: xmake-${{ hashFiles('xmake.lua') }}
-          restore-keys: |
-            xmake-
+            - uses: actions/cache@v4
+              with:
+                  path: |
+                      ~/AppData/Local/.xmake
+                  key: xmake-${{ hashFiles('xmake.lua') }}
+                  restore-keys: |
+                      xmake-
 
-      - uses: xmake-io/github-action-setup-xmake@v1
-        # with:
-        #   xmake-version: branch@master
+            - uses: xmake-io/github-action-setup-xmake@v1
+              # with:
+              #   xmake-version: branch@master
 
-      - name: Set up Clang(Linux)
-        if: runner.os == 'Linux'
-        run: |
-          sudo apt-get update -y -q
-          sudo apt-get install -y -q lsb-release wget software-properties-common gnupg
-          sudo wget https://apt.llvm.org/llvm.sh
-          sudo chmod +x llvm.sh
-          sudo ./llvm.sh ${{env.LLVM_VERSION}}
-          sudo apt-get install -y -q libc++-${{env.LLVM_VERSION}}-dev libc++abi-${{env.LLVM_VERSION}}-dev
-          sudo update-alternatives --install /usr/bin/cc cc /usr/bin/clang-${{env.LLVM_VERSION}} 100
-          sudo update-alternatives --install /usr/bin/c++ c++ /usr/bin/clang++-${{env.LLVM_VERSION}} 100
-          sudo update-alternatives --install /usr/bin/clang clang /usr/bin/clang-${{env.LLVM_VERSION}} 100
-          sudo update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-${{env.LLVM_VERSION}} 100
-          sudo update-alternatives --install /usr/bin/llvm-cov llvm-cov /usr/bin/llvm-cov-${{env.LLVM_VERSION}} 100
-          sudo update-alternatives --install /usr/bin/ld ld /usr/bin/ld.lld-${{env.LLVM_VERSION}} 100
+            - name: Set up Clang(Linux)
+              if: runner.os == 'Linux'
+              run: |
+                  sudo apt-get update -y -q
+                  sudo apt-get install -y -q lsb-release wget software-properties-common gnupg
+                  sudo wget https://apt.llvm.org/llvm.sh
+                  sudo chmod +x llvm.sh
+                  sudo ./llvm.sh ${{env.LLVM_VERSION}}
+                  sudo apt-get install -y -q libc++-${{env.LLVM_VERSION}}-dev libc++abi-${{env.LLVM_VERSION}}-dev
+                  sudo update-alternatives --install /usr/bin/cc cc /usr/bin/clang-${{env.LLVM_VERSION}} 100
+                  sudo update-alternatives --install /usr/bin/c++ c++ /usr/bin/clang++-${{env.LLVM_VERSION}} 100
+                  sudo update-alternatives --install /usr/bin/clang clang /usr/bin/clang-${{env.LLVM_VERSION}} 100
+                  sudo update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-${{env.LLVM_VERSION}} 100
+                  sudo update-alternatives --install /usr/bin/llvm-cov llvm-cov /usr/bin/llvm-cov-${{env.LLVM_VERSION}} 100
+                  sudo update-alternatives --install /usr/bin/ld ld /usr/bin/ld.lld-${{env.LLVM_VERSION}} 100
 
-      - run: |
-          xmake repo -u
+            - run: |
+                  xmake repo -u
 
-      - run: |
-          xmake f -a x64 -m release -v -y
+            - run: |
+                  xmake f -a x64 -m release -v -y
 
-      - run: |
-          xmake -v -y
+            - run: |
+                  xmake -v -y
 
-      - uses: actions/upload-artifact@v4
-        with:
-          name: ${{ github.event.repository.name }}-${{ matrix.os }}-x64-${{ github.sha }}
-          path: |
-            bin/
+            - uses: actions/upload-artifact@v4
+              with:
+                  name: ${{ github.event.repository.name }}-${{ matrix.os }}-x64-${{ github.sha }}
+                  path: |
+                      bin/
 
-  pack:
-    needs: build
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-22.04, windows-2022]
+    pack:
+        needs: build
+        strategy:
+            fail-fast: false
+            matrix:
+                os: [ubuntu-22.04, windows-2022]
 
-    name: Pack with ${{ matrix.os }}
-    runs-on: ubuntu-22.04
-    steps:
-      - uses: actions/download-artifact@v4
-        with:
-          name: ${{ github.event.repository.name }}-${{ matrix.os }}-x64-${{ github.sha }}
-          path: bin/
+        name: Pack with ${{ matrix.os }}
+        runs-on: ubuntu-22.04
+        steps:
+            - uses: actions/download-artifact@v4
+              with:
+                  name: ${{ github.event.repository.name }}-${{ matrix.os }}-x64-${{ github.sha }}
+                  path: bin/
 
-      - name: Download depends
-        run: |
-          curl -o bin-linux.zip -L https://github.com/IceBlcokMC/node/releases/download/v23.5.0/bin-linux.zip
-          curl -o bin-windows.zip -L https://github.com/IceBlcokMC/node/releases/download/v23.5.0/bin-windows.zip
-          curl -o node_modules.zip -L https://github.com/IceBlcokMC/node/releases/download/v23.5.0/node_modules.zip
+            - name: Download depends
+              run: |
+                  curl -o bin-linux.zip -L https://github.com/IceBlcokMC/node/releases/download/v${{env.LIBNODE_VERSION}}/bin-linux.zip
+                  curl -o bin-windows.zip -L https://github.com/IceBlcokMC/node/releases/download/v${{env.LIBNODE_VERSION}}/bin-windows.zip
+                  curl -o node_modules.zip -L https://github.com/IceBlcokMC/node/releases/download/v${{env.LIBNODE_VERSION}}/node_modules.zip
 
-      - name: Unzip depends
-        run: |
-          mkdir deps
-          mkdir deps/node_modules
-          unzip -a -q bin-linux.zip -d deps/
-          unzip -a -q bin-windows.zip -d deps/
-          unzip -a -q node_modules.zip -d deps/node_modules/
+            - name: Unzip depends
+              run: |
+                  mkdir deps
+                  mkdir deps/node_modules
+                  unzip -a -q bin-linux.zip -d deps/
+                  unzip -a -q bin-windows.zip -d deps/
+                  unzip -a -q node_modules.zip -d deps/node_modules/
 
-      - name: Pack
-        run: |
-          mkdir full
-          mkdir full/plugins
+            - name: Pack
+              run: |
+                  mkdir full
+                  mkdir full/plugins
 
-          cp -r bin/* full/plugins/
-          cp -a deps/node_modules/. full/plugins/js_engine/node_modules/
+                  cp -r bin/* full/plugins/
+                  cp -a deps/node_modules/. full/plugins/js_engine/node_modules/
 
-          if [ "${{ matrix.os}}" == "windows-2022" ]; then
-            cp deps/libnode.dll full/
-          else
-            cp deps/libnode.so.131 full/
-          fi
+                  if [ "${{ matrix.os}}" == "windows-2022" ]; then
+                    cp deps/libnode.dll full/
+                    cp deps/node.exe full/
+                  else
+                    cp deps/libnode.so.127 full/
+                    cp deps/node full/
+                  fi
 
-      - uses: actions/upload-artifact@v4
-        with:
-          name: ${{ github.event.repository.name }}-${{ matrix.os }}-full-x64-${{ github.sha }}
-          include-hidden-files: true
-          path: |
-            full/
+            - uses: actions/upload-artifact@v4
+              with:
+                  name: ${{ github.event.repository.name }}-${{ matrix.os }}-full-x64-${{ github.sha }}
+                  include-hidden-files: true
+                  path: |
+                      full/
