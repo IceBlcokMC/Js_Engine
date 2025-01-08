@@ -112,7 +112,7 @@ jobs:
                   mkdir full
                   mkdir full/plugins
 
-                  cp -r bin/js_engine full/plugins/
+                  cp -r bin/* full/plugins/
                   cp -a deps/node_modules/. full/plugins/js_engine/node_modules/
 
                   if [ "${{ matrix.os}}" == "windows-2022" ]; then
