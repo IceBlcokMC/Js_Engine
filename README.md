@@ -4,9 +4,9 @@
 
 JsEngine 基于 ScriptX 和 NodeJs 实现，支持在 EndStone 中运行 JavaScript 插件。
 
-## 安装
+## 📌 安装
 
-> 目前项目处于开发阶段，请手动前往 Actions 查看最新版本。
+> 🚧 目前项目处于开发阶段，请手动前往 Actions 查看最新版本。
 
 1. 下载对应平台的 Js_Engine-full.zip 文件，如: `Js_Engine-windows-full-x64.zip`
 
@@ -32,26 +32,24 @@ JsEngine 基于 ScriptX 和 NodeJs 实现，支持在 EndStone 中运行 JavaScr
 
 3. 启动你的 endstone 服务器
 
-## 开发
+## 📗 开发
 
 目前项目没有任何开发文档，您可以阅读 `lib/dts` 目录下的类型定义文件，或者使用我们提供的模板项目[Js_Engine_Plugin_Template](https://github.com/IceBlcokMC/js_engine_plugin_template)。
 
-## 关于项目
+## 💻 支持平台
 
-### 支持平台
-
-| Platform | Backend | Version | CommonJs | ESM | package manager |
-| :------- | :------ | :------ | :------- | :-- | :-------------- |
+| Platform | Backend | Version  | CommonJs | ESM | package manager |
+| :------- | :------ | :------- | :------- | :-- | :-------------- |
 | Windows  | NodeJs  | v22.12.0 | y        | y   | npm             |
 | Linux    | NodeJs  | v22.12.0 | y        | y   | npm             |
 
-### 从源码编译
+## 🔨 从源码编译
 
 在编译之前，确保您已经安装了以下工具链：
 
-- xmake
-- MSVC 2019 或更高版本 (仅限 Windows)
-- LLVM 15 (附带 Clang、libc++) (仅限 Linux)
+-   xmake
+-   MSVC 2019 或更高版本 (仅限 Windows)
+-   LLVM 15 (附带 Clang、libc++) (仅限 Linux)
 
 ```bash
 git clone --depth=1 https://github.com/engsr6982/JS_Engine.git
@@ -59,10 +57,10 @@ cd JS_Engine
 xmake -y
 ```
 
-## 贡献
+## 🎬 贡献
 
 欢迎提交 Issue 和 Pull Request。
 
-## 许可证
+## 📍 许可证
 
 本项目采用 GPL-3.0 许可证。
