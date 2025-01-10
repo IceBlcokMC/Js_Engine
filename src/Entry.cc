@@ -37,8 +37,9 @@ void Entry::onLoad() {
     pluginManager.loadPlugins(std::move(jse::JavaScriptPluginLoader::filterPlugins(fs::current_path() / "plugins")));
 }
 
-void Entry::onEnable() {}
+void Entry::onEnable() { NodeManager::getInstance().initUvLoopThread(); }
 void Entry::onDisable() {
+    NodeManager::getInstance().shutdownUvLoopThread();
     // TODO: 为所有Js插件添加依赖，避免引擎提前销毁
     // NodeManager::getInstance().shutdownNodeJs();
 }

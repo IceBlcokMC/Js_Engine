@@ -2,6 +2,7 @@
 #include "Utils/Using.h"
 #include "endstone/scheduler/task.h"
 #include "node.h"
+#include <atomic>
 #include <filesystem>
 #include <memory>
 #include <optional>
@@ -16,7 +17,8 @@ struct EngineWrapper {
     EngineID                                      mID; // 引擎ID
     ScriptEngine*                                 mEngine;
     std::unique_ptr<node::CommonEnvironmentSetup> mEnvSetup;
-    std::shared_ptr<endstone::Task>               mUvLoopTask{nullptr};
+    // std::shared_ptr<endstone::Task>               mUvLoopTask{nullptr};
+    bool mIsRunning{false};
 
 public:
     EngineWrapper() = default;
@@ -40,12 +42,17 @@ private:
     std::unique_ptr<node::MultiIsolatePlatform> mPlatform;             // v8 平台
     std::unordered_map<EngineID, EngineWrapper> mEngines;              // 引擎列表
 
+    std::atomic<bool> mUvLoopThreadRunning{true}; // uv loop 线程是否在运行
+
 public:
     static NodeManager& getInstance();
 
     void initNodeJs();
 
     void shutdownNodeJs();
+
+    void initUvLoopThread();
+    void shutdownUvLoopThread();
 
 public:
     bool hasEngine(EngineID id) const;

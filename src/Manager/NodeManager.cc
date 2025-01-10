@@ -112,6 +112,34 @@ void NodeManager::shutdownNodeJs() {
     v8::V8::DisposePlatform();
 }
 
+void NodeManager::initUvLoopThread() {
+    std::thread([this]() {
+        while (this->mUvLoopThreadRunning) {
+            std::this_thread::sleep_for(std::chrono::milliseconds(1));
+            try {
+                for (auto& [id, wrapper] : mEngines) {
+                    if (!wrapper.mIsRunning) {
+                        continue;
+                    }
+
+                    try {
+                        EngineScope enter(wrapper.mEngine);
+                        if (EngineScope::currentEngine() == wrapper.mEngine) {
+                            uv_run(wrapper.mEnvSetup->event_loop(), UV_RUN_NOWAIT);
+                        } else {
+                            EngineScope scope(wrapper.mEngine);
+                            uv_run(wrapper.mEnvSetup->event_loop(), UV_RUN_NOWAIT);
+                        }
+                    }
+                    CatchNotReturn;
+                }
+            }
+            CatchNotReturn;
+        }
+    }).detach();
+}
+void NodeManager::shutdownUvLoopThread() { mUvLoopThreadRunning = false; }
+
 
 bool NodeManager::hasEngine(EngineID id) const { return mEngines.contains(id); }
 
@@ -181,7 +209,8 @@ bool NodeManager::destroyEngine(EngineID id) {
 
     auto& wrapper = mEngines[id];
 
-    Entry::getInstance()->getServer().getScheduler().cancelTask(wrapper.mUvLoopTask->getTaskId());
+    // Entry::getInstance()->getServer().getScheduler().cancelTask(wrapper.mUvLoopTask->getTaskId());
+    wrapper.mIsRunning = false;
     wrapper.mEngine->destroy(); // 销毁引擎
     uv_stop(wrapper.mEnvSetup->event_loop());
     node::Stop(wrapper.mEnvSetup->env());
@@ -346,18 +375,21 @@ bool NodeManager::loadFile(EngineWrapper* wrapper, fs::path const& path, bool es
             return false;
         }
 
-        if (node::SpinEventLoop(env).FromMaybe(1) != 0) {
-            NodeManager::getInstance().destroyEngine(wrapper->mID);
-            return false;
-        }
+        // TODO: 检查 Scheduler 为什么不执行
+        // wrapper->mUvLoopTask = Entry::getInstance()->getServer().getScheduler().runTaskTimer(
+        //     *Entry::getInstance(),
+        //     [wrapper, loop{wrapper->mEnvSetup->event_loop()}]() {
+        //         EngineScope enter(wrapper->mEngine);
+        //         try {
+        //             uv_run(loop, UV_RUN_NOWAIT);
+        //         }
+        //         CatchNotReturn;
+        //     },
+        //     0,
+        //     1
+        // );
 
-        wrapper->mUvLoopTask = Entry::getInstance()->getServer().getScheduler().runTaskTimer(
-            *Entry::getInstance(),
-            [loop{wrapper->mEnvSetup->event_loop()}]() { uv_run(loop, UV_RUN_NOWAIT); },
-            0,
-            2
-        );
-
+        wrapper->mIsRunning = true;
         return true;
     } catch (...) {
         return false;
