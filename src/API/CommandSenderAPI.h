@@ -11,7 +11,12 @@ class CommandSenderAPI : public PermissibleAPI {
     endstone::CommandSender* mSender;
 
 public:
-    CommandSenderAPI(endstone::CommandSender* sender)
+    template <typename T>
+    explicit CommandSenderAPI(endstone::CommandSender* sender, ScriptClass::ConstructFromCpp<T> tag)
+    : PermissibleAPI(sender, tag),
+      mSender(sender) {}
+
+    explicit CommandSenderAPI(endstone::CommandSender* sender)
     : PermissibleAPI(sender, ScriptClass::ConstructFromCpp<CommandSenderAPI>{}),
       mSender(sender) {}
 

@@ -151,6 +151,7 @@ Local<Value> ConvertToScriptImpl(const T& value) {
         DoReflectConvert(value, res);
         return res;
     }
+    return Local<Value>();
 }
 
 } // namespace IConvertCppToScriptX
