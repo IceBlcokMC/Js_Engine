@@ -5,11 +5,11 @@ declare class CommandSender {
 
     // asCommandSender():any // depreciated
 
-    // asConsole(): any // TODO: ConsoleAPI
+    //asConsole(): ConsoleCommandSender // TODO: ConsoleAPI
 
-    // asActor(): any // TODO: ActorAPI
+    asActor(): Actor // TODO: ActorAPI
 
-    // asPlayer(): any // TODO: PlayerAPI
+    asPlayer(): Player|undefined;
 
     /** 返回正常消息 */
     sendMessage(...args: any[]): void;
@@ -17,7 +17,8 @@ declare class CommandSender {
     /** 返回错误消息 */
     sendErrorMessage(...args: any[]): void;
 
-    // getServer(): any // TODO: ServerAPI
+    // getServer(): Server // TODO: ServerAPI
 
     getName(): string;
+
 }
