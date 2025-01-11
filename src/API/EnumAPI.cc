@@ -13,11 +13,14 @@
 namespace jse::EnumAPI {
 
 void RegisterEnum(ScriptEngine* engine) {
-    static std::unordered_map<std::string, std::unordered_map<std::string_view, int>> enumMap;
-
-    REGISTER_ENUM_MACRO(endstone::PermissionDefault, "PermissionDefault");
-    REGISTER_ENUM_MACRO(endstone::PluginLoadOrder, "PluginLoadOrder");
-    REGISTER_ENUM_MACRO(endstone::Logger::Level, "LoggerLevel");
+    static std::unordered_map<std::string, std::unordered_map<std::string_view, int>> enumMap = []() {
+        std::unordered_map<std::string, std::unordered_map<std::string_view, int>> map;
+        REGISTER_ENUM_MACRO(endstone::PermissionDefault, "PermissionDefault");
+        REGISTER_ENUM_MACRO(endstone::PluginLoadOrder, "PluginLoadOrder");
+        REGISTER_ENUM_MACRO(endstone::Logger::Level, "LoggerLevel");
+        REGISTER_ENUM_MACRO(endstone::GameMode, "GameMode");
+        return map;
+    }();
 
     engine->set("Enums", ConvertToScriptX(enumMap));
 }
