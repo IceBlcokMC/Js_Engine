@@ -1,6 +1,5 @@
 #pragma once
-
-#include "API/CommandSenderAPI.h"
+#include "API/Command/CommandSenderAPI.h"
 #include "Utils/Defines.h"
 #include "Utils/Using.h"
 #include "endstone/actor/actor.h"

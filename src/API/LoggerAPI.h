@@ -4,7 +4,6 @@
 
 namespace jse {
 
-
 class LoggerAPI : public ScriptClass {
 public:
     explicit LoggerAPI() : ScriptClass(ScriptClass::ConstructFromCpp<LoggerAPI>{}){};

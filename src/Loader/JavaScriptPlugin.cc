@@ -1,16 +1,15 @@
-#include "JavaScriptPlugin.h"
+#include "Loader/JavaScriptPlugin.h"
 #include "API/APIHelper.h"
-#include "API/CommandAPI.h"
-#include "API/CommandSenderAPI.h"
+#include "API/Command/CommandAPI.h"
+#include "API/Command/CommandSenderAPI.h"
 #include "Entry.h"
 #include "Manager/EngineData.h"
 #include "Manager/NodeManager.h"
 #include "Utils/Convert.h"
 #include "Utils/Using.h"
-#include "endstone/command/command.h"
-#include "endstone/logger.h"
+#include <endstone/command/command.h>
+#include <endstone/logger.h>
 #include <iostream>
-
 
 namespace jse {
 

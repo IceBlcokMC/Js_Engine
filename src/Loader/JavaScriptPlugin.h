@@ -1,9 +1,8 @@
 #pragma once
-#include "endstone/detail/plugin/plugin_description_builder.h"
-#include "endstone/plugin/plugin.h"
-#include "endstone/plugin/plugin_description.h"
+#include <endstone/detail/plugin/plugin_description_builder.h>
+#include <endstone/plugin/plugin.h>
+#include <endstone/plugin/plugin_description.h>
 #include <cstdint>
-
 
 namespace jse {
 

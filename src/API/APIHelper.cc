@@ -1,13 +1,10 @@
 #include "APIHelper.h"
 #include "Entry.h"
 #include "Utils/Util.h"
-#include "fmt/core.h"
-#include "fmt/format.h"
+#include <fmt/core.h>
 #include <iostream>
 
-
 namespace jse {
-
 
 bool IsFloat(Local<Value> const& num) {
     try {

@@ -4,14 +4,12 @@
 #include "Utils/Convert.h"
 #include "Utils/StringUtils.h"
 #include "Utils/Using.h"
-#include "endstone/command/command.h"
-#include "endstone/permissions/permission.h"
-#include "endstone/permissions/permission_default.h"
-#include "endstone/plugin/plugin_load_order.h"
-#include "magic_enum/magic_enum.hpp"
-#include <cstddef>
 #include <cstdint>
-#include <optional>
+#include <endstone/command/command.h>
+#include <endstone/permissions/permission.h>
+#include <endstone/permissions/permission_default.h>
+#include <endstone/plugin/plugin_load_order.h>
+#include <magic_enum/magic_enum.hpp>
 #include <utility>
 #include <vector>
 

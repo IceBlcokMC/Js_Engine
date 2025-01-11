@@ -1,12 +1,6 @@
-#include "LoggerAPI.h"
-#include "APIHelper.h"
-#include "Entry.h"
+#include "API/LoggerAPI.h"
+#include "API/APIHelper.h"
 #include "Manager/EngineData.h"
-#include "Manager/NodeManager.h"
-#include "fmt/args.h"
-#include "fmt/format.h"
-
-
 
 namespace jse {
 

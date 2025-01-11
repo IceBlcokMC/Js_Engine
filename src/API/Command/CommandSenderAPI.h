@@ -1,11 +1,10 @@
 #pragma once
-
-#include "API/PermissibleAPI.h"
+#include "API/Permissions/PermissibleAPI.h"
 #include "Utils/Defines.h"
 #include "Utils/Using.h"
-#include "endstone/command/command_sender.h"
-namespace jse {
+#include <endstone/command/command_sender.h>
 
+namespace jse {
 
 class CommandSenderAPI : public PermissibleAPI {
     endstone::CommandSender* mSender;

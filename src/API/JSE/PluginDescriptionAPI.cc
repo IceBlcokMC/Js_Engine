@@ -1,11 +1,10 @@
-#include "PluginDescriptionAPI.h"
+#include "API/JSE/PluginDescriptionAPI.h"
 #include "API/APIHelper.h"
-#include "API/CommandAPI.h"
-#include "API/PermissionAPI.h"
+#include "API/Command/CommandAPI.h"
+#include "API/Permissions/PermissionAPI.h"
 #include "Manager/EngineData.h"
 #include "Utils/Convert.h"
 #include "Utils/Using.h"
-
 
 namespace jse {
 

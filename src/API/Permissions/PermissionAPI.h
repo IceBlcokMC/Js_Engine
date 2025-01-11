@@ -1,12 +1,9 @@
 #pragma once
-#include "API/APIHelper.h"
 #include "Utils/Defines.h"
 #include "Utils/Using.h"
-#include "endstone/permissions/permission.h"
-
+#include <endstone/permissions/permission.h>
 
 namespace jse {
-
 
 class PermissionAPI : public ScriptClass {
     endstone::Permission* mPermission;

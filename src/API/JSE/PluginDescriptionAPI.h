@@ -2,9 +2,7 @@
 #include "Utils/Defines.h"
 #include "Utils/Using.h"
 
-
 namespace jse {
-
 
 class PluginDescriptionAPI : public ScriptClass {
 public:

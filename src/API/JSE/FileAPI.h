@@ -1,5 +1,4 @@
 #pragma once
-
 #include "Utils/Defines.h"
 #include "Utils/Using.h"
 

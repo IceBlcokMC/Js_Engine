@@ -2,7 +2,6 @@
 #include "Manager/EngineData.h"
 #include "Utils/Using.h"
 
-
 namespace jse {
 
 bool IsFloat(Local<Value> const& num);

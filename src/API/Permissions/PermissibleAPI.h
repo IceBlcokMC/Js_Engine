@@ -1,11 +1,9 @@
 #pragma once
 #include "Utils/Defines.h"
 #include "Utils/Using.h"
-#include "endstone/permissions/permissible.h"
-
+#include <endstone/permissions/permissible.h>
 
 namespace jse {
-
 
 class PermissibleAPI : public ScriptClass {
     endstone::Permissible* mPermissible;

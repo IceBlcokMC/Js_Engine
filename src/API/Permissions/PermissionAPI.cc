@@ -1,9 +1,9 @@
-#include "PermissionAPI.h"
+#include "API/Permissions/PermissionAPI.h"
 #include "API/APIHelper.h"
-#include "API/PermissibleAPI.h"
+#include "API/Permissions/PermissibleAPI.h"
 #include "Utils/Convert.h"
 #include "Utils/Defines.h"
-#include "endstone/permissions/permission_default.h"
+#include <endstone/permissions/permission_default.h>
 
 namespace jse {
 

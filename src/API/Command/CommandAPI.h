@@ -1,11 +1,10 @@
 #pragma once
-
 #include "API/APIHelper.h"
 #include "Utils/Defines.h"
 #include "Utils/Using.h"
-#include "endstone/command/command.h"
-namespace jse {
+#include <endstone/command/command.h>
 
+namespace jse {
 
 class CommandAPI : public ScriptClass {
     endstone::Command* mCommand;

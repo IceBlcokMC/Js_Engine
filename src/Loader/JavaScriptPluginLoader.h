@@ -1,5 +1,5 @@
 #pragma once
-#include "endstone/plugin/plugin_loader.h"
+#include <endstone/plugin/plugin_loader.h>
 #include <string>
 #include <vector>
 

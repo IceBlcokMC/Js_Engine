@@ -1,6 +1,6 @@
-#include "JavaScriptPluginLoader.h"
+#include "Loader/JavaScriptPluginLoader.h"
 #include "Entry.h"
-#include "JavaScriptPlugin.h"
+#include "Loader/JavaScriptPlugin.h"
 #include "Manager/EngineData.h"
 #include "Manager/NodeManager.h"
 #include "Utils/Using.h"
@@ -8,7 +8,6 @@
 #include <memory>
 #include <string>
 #include <vector>
-
 
 namespace jse {
 

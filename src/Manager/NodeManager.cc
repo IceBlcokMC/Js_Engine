@@ -1,27 +1,23 @@
 #pragma warning(disable : 4996)
-#include "NodeManager.h"
+#include "Manager/NodeManager.h"
 #include "API/APIHelper.h"
-#include "BindAPI.h"
-#include "EngineData.h"
 #include "Entry.h"
-#include "Utils/Using.h"
+#include "Manager/BindAPI.h"
+#include "Manager/EngineData.h"
 #include "Utils/Util.h"
-#include "endstone/scheduler/scheduler.h"
-#include "fmt/core.h"
-#include "nlohmann/json.hpp"
-#include "node.h"
-#include "uv.h"
-#include "v8-cppgc.h"
-#include "v8.h"
+#include "Utils/Using.h"
+#include <endstone/scheduler/scheduler.h>
 #include <filesystem>
+#include <fmt/core.h>
 #include <memory>
+#include <nlohmann/json.hpp>
+#include <node.h>
 #include <thread>
-#include <unordered_map>
-#include <utility>
+#include <uv.h>
 
 #ifdef _WIN32
-#include "Windows.h"
-#include "shellapi.h"
+#include <Windows.h>
+#include <shellapi.h>
 #else
 #include <cstdio>
 #endif

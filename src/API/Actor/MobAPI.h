@@ -1,9 +1,8 @@
 #pragma once
-
-#include "API/ActorAPI.h"
+#include "API/Actor/ActorAPI.h"
 #include "Utils/Defines.h"
 #include "Utils/Using.h"
-#include "endstone/actor/mob.h"
+#include <endstone/actor/mob.h>
 
 namespace jse {
 
