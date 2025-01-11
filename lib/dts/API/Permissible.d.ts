@@ -15,14 +15,15 @@ declare class Permissible {
 
   hasPermission(perm: Permission): boolean;
 
-  // addAttachment(plugin: Plugin): any // TODO: PermissionAttachment
-  // addAttachment(plugin: Plugin, name: string, value: boolean): any // TODO: PermissionAttachment
+  // addAttachment(plugin: Plugin): Result<PermissionAttachment> // TODO: PermissionAttachment
 
-  // removeAttachment(): any // TODO: PermissionAttachment
+  // addAttachment(plugin: Plugin, name: string, value: boolean): Result<PermissionAttachment> // TODO: PermissionAttachment
+
+  // removeAttachment(attachment:PermissionAttachment): Result<void> // TODO: PermissionAttachment
 
   recalculatePermissions(): void;
 
-  // getEffectivePermissions(): any // TODO: PermissionAttachmentInfo
+  // getEffectivePermissions(): PermissionAttachmentInfo[] // TODO: PermissionAttachmentInfo
 
-  // asCommandSender(): any // TODO: CommandSender
+  // asCommandSender(): CommandSender // TODO: CommandSender
 }
