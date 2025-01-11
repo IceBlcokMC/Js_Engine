@@ -2,7 +2,9 @@
 #include "API/JSE/PluginDescriptionAPI.h"
 #include "API/APIHelper.h"
 #include "API/LoggerAPI.h"
+#include "API/ServerAPI.h"
 #include "Manager/EngineData.h"
+#include "APi/ServerAPI.h"
 #include "Utils/Using.h"
 
 namespace jse {
@@ -49,7 +51,7 @@ PLUGINAPI_MACRO(isEnabled, return Boolean::newBoolean(ENGINE_DATA()->mPlugin->is
 
 PLUGINAPI_MACRO(getPluginLoader, return Local<Value>()); // TODO: PluginLoader
 
-PLUGINAPI_MACRO(getServer, return Local<Value>()); // TODO：Server
+PLUGINAPI_MACRO(getServer, return ServerAPI::newServerAPI(&ENGINE_DATA()->mPlugin->getServer()));
 
 PLUGINAPI_MACRO(getName, return String::newString(ENGINE_DATA()->mPlugin->getName()));
 
