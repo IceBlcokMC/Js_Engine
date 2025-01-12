@@ -10,3 +10,5 @@
 /// <reference path="./API/Permissible.d.ts"/>
 /// <reference path="./API/File.d.ts"/>
 /// <reference path="./API/Command.d.ts"/>
+/// <reference path="./API/Player.d.ts"/>
+/// <reference path="./API/Actor.d.ts"/>
