@@ -1,4 +1,4 @@
-/// <reference path="../index.d.ts"/>
+/// <reference path="../../index.d.ts"/>
 
 /** 插件实例 */
 interface Plugin {

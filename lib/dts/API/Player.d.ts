@@ -1,95 +1,180 @@
 /// <reference path="../index.d.ts"/>
 
-declare class Player{
-    toString():string;
+/** 玩家 */
+declare class Player extends Mob {
+    toString(): "<Player>" | string;
 
-    getUniqueId():string;
+    /** 获取玩家的UUID */
+    getUniqueId(): string;
 
-    getXuid():string;
+    /** 获取玩家的XUID */
+    getXuid(): string;
 
-    getAddress():string;
+    /** 获取客户端连接地址 */
+    getAddress(): {
+        /** 地址 */
+        host: string;
+        /** 端口 */
+        port: number;
+    };
 
-    sendPopup(message:string):void;
+    /** 发生音符盒消息 */
+    sendPopup(
+        /** 消息 */
+        message: string
+    ): void;
 
-    sendTip(message:string):void;
+    /** 发送提示消息 */
+    sendTip(
+        /** 消息 */
+        message: string
+    ): void;
 
-    sendToast(title:string,content:string):void;
+    /** 发送弹幕消息 */
+    sendToast(
+        /** 标题 */
+        title: string,
+        /** 内容 */
+        content: string
+    ): void;
 
-    kick(message:string):void;
+    /** 踢出玩家 */
+    kick(
+        /** 踢出原因 */
+        message: string
+    ): void;
 
-    giveExp(amount:number):void;
+    /** 给予玩家经验值 */
+    giveExp(
+        /** 经验值 */
+        amount: number
+    ): void;
 
-    giveExpLevels(amount:number):void;
+    /** 给予玩家经验等级 */
+    giveExpLevels(
+        /** 经验等级 */
+        amount: number
+    ): void;
 
-    getExpProgress():number;
+    /** 获取经验值进度 */
+    getExpProgress(): number;
 
-    setExpProgress(progress:number):void;
+    /** 设置经验值进度 */
+    setExpProgress(progress: number): void;
 
-    getExpLevel():number;
+    /** 获取经验等级 */
+    getExpLevel(): number;
 
-    setExpLevel(level:number):void;
+    /** 设置经验等级 */
+    setExpLevel(level: number): void;
 
-    getTotalExp():number;
+    /** 获取总经验值 */
+    getTotalExp(): number;
 
-    getAllowFlight():boolean;
+    /** 玩家是否可以飞行 */
+    getAllowFlight(): boolean;
 
-    setAllowFlight(flight:boolean):void;
+    /** 设置玩家是否可以飞行 */
+    setAllowFlight(flight: boolean): void;
 
-    isFlying():boolean;
+    /** 玩家是否在飞行 */
+    isFlying(): boolean;
 
-    setFlying(value:boolean):void;
+    /** 设置玩家是否在飞行 */
+    setFlying(value: boolean): void;
 
-    getFlySpeed():number;
+    /** 获取玩家飞行速度 */
+    getFlySpeed(): number;
 
-    setFlySpeed(value:number):void;
+    /** 设置玩家飞行速度 */
+    setFlySpeed(value: number): void;
 
-    getWalkSpeed():number;
+    /** 获取玩家行走速度 */
+    getWalkSpeed(): number;
 
-    setWalkSpeed(value:number):void;
+    /** 设置玩家行走速度 */
+    setWalkSpeed(value: number): void;
 
     //getScoreboard():Scoreboard; //TODO Scoreboard
 
     //setScoreboard(scordboard:Scoreboard):void;//TODO Scoreboard
 
-    sendTitle(title:string,subtitle:string):void;
+    /** 发送屏幕消息 */
+    sendTitle(
+        /** 标题 */
+        title: string,
+        /** 副标题 */
+        subtitle: string
+    ): void;
 
-    sendTitle(title:string,subtitle:string,fade_in:number,stay:number,fade_out:number):void;
+    /** 发送屏幕消息 */
+    sendTitle(
+        /** 标题 */
+        title: string,
+        /** 副标题 */
+        subtitle: string,
+        /** 淡入时间 */
+        fade_in: number,
+        /** 停留时间 */
+        stay: number,
+        /** 淡出时间 */
+        fade_out: number
+    ): void;
 
-    resetTitle():void;
+    /** 清除屏幕消息 */
+    resetTitle(): void;
 
     //spawnParticle(name:string,location:Location); //TODO Location
 
-    spawnParticle(name:string,x:number,y:number,z:number):void; 
+    // spawnParticle(name: string, x: number, y: number, z: number): void;
 
-    spawnParticle(name:string,x:number,y:number,z:number,molang_variables_json?:string):void;
+    // spawnParticle(name: string, x: number, y: number, z: number, molang_variables_json?: string): void;
 
-    getPing():number;
+    /** 获取玩家延迟 */
+    getPing(): number;
 
-    updateCommands():void;
+    /** 更新玩家命令补全 */
+    updateCommands(): void;
 
-    performCommand(command:string):void;
+    /** 使玩家执行命令 */
+    performCommand(command: string): boolean;
 
-    //getGameMode():GameMode; //TODO GameMode
+    /** 获取玩家游戏模式 */
+    getGameMode(): Enums.GameMode;
 
-    //setGameMode(mode:GameMode):void; //TODO GameMode
+    /** 设置玩家游戏模式 */
+    setGameMode(
+        /** 游戏模式 */
+        mode: Enums.GameMode
+    ): void;
 
     //getInventory():PlayerInventory; //TODO PlayerInventory
 
-    getLocale():string;
+    /** 获取玩家语言 */
+    getLocale(): string;
 
-    getDeviceOS():string;
+    /** 获取玩家设备的操作系统 */
+    getDeviceOS(): string;
 
-    getDeviceId():string;
+    /** 玩家获取设备ID */
+    getDeviceId(): string;
 
-    getGameVersion():string;
+    /** 获取玩家游戏版本 */
+    getGameVersion(): string;
 
     //getSkin():Skin; //TODO Skin
 
-    transfer(host:string,port:number):void;
+    /** 将玩家转移到另一个服务器 */
+    transfer(
+        /** 服务器主机 */
+        host: string,
+        /** 服务器端口 */
+        port: number
+    ): void;
 
     //sendForm(form:FormVariant); //TODO FormVariant
 
-    closeForm():void;
+    // closeForm(): void;
 
-    //closeForm(packet:Packet); //TODO Packet
+    //sendPacket(packet:Packet); //TODO Packet
 }
