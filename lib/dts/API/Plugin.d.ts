@@ -23,14 +23,14 @@ interface Plugin {
   /** 插件是否已启用 */
   isEnabled(): boolean;
 
-  // getPluginLoader(): any; // TODO: PluginLoader
+  //getPluginLoader(): PluginLoader; // TODO: PluginLoader
 
-  // getServer(): any; // TODO：Server
+  getServer(): Server;
 
   /** 获取插件名字 */
   getName(): string;
 
-  // getCommand(): any; // TODO：PluginCommand
+  getCommand(): PluginCommand;
 
   /** 获取插件的数据存储目录 */
   getDataFolder(): string;
