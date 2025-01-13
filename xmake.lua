@@ -1,19 +1,21 @@
 add_rules("mode.debug", "mode.release")
 
-add_repositories("levilamina https://github.com/LiteLDev/xmake-repo.git")
 add_repositories("iceblcokmc https://github.com/IceBlcokMC/xmake-repo.git")
 
-add_requires("nodejs 22.12.0") -- iceblockmc
+-- iceblockmc
+add_requires("endstone 0.5.7.1")
+add_requires("scriptx jse", { configs = { backend = "V8" } })
+
+-- xmake-repo
 add_requires(
-    "endstone 0.5.7.1",
-    "expected-lite 0.8.0",
     "entt 3.14.0",
     "microsoft-gsl 4.0.0",
     "nlohmann_json 3.11.3",
     "boost 1.85.0",
     "glm 1.0.1",
     "concurrentqueue 1.0.4",
-    "magic_enum 0.9.7"
+    "magic_enum 0.9.7",
+    "expected-lite 0.8.0"
 )
 
 local fmt_version = "fmt >=10.0.0 <11.0.0";
@@ -21,7 +23,7 @@ if is_plat("windows") then
     add_requires(fmt_version)
 elseif is_plat("linux") then
     set_toolchains("clang")
-    add_requires("libelf 0.8.13")
+    add_requires("libelf 0.8.13") -- xmake-repo
     add_requires(fmt_version, {configs = {header_only = true}})
 end
 
@@ -41,7 +43,7 @@ target("Js_Engine")
     )
     add_files("src/**.cc")
     add_includedirs("src")
-    add_packages("nodejs")
+    add_packages("nodejs", "scriptx")
     add_packages(
         "fmt",
         "expected-lite",
@@ -86,17 +88,6 @@ target("Js_Engine")
         add_packages("libelf")
         add_syslinks("dl", "pthread", "c++", "c++abi")
     end
-
-    -- ScriptX
-    add_includedirs("third-party/scriptx/src/include")
-    add_files(
-        "third-party/scriptx/src/**.cc",
-        "third-party/scriptx/backend/V8/**.cc"
-    )
-    add_defines(
-        "SCRIPTX_BACKEND_V8",
-        "SCRIPTX_BACKEND_TRAIT_PREFIX=../third-party/scriptx/backend/V8/trait/Trait"
-    )
 
     if is_mode("debug") then
         add_defines("DEBUG")
