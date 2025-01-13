@@ -6,14 +6,12 @@ on:
             - xmake.lua
             - src/**
             - patch/**
-            - third-party/**
             - .github/workflows/build.yml
     pull_request:
         paths:
             - xmake.lua
             - src/**
             - patch/**
-            - third-party/**
             - .github/workflows/build.yml
     workflow_dispatch:
 
