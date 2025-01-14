@@ -18,6 +18,7 @@ struct EngineWrapper {
     std::unique_ptr<node::CommonEnvironmentSetup> mEnvSetup;
     // std::shared_ptr<endstone::Task>               mUvLoopTask{nullptr};
     bool mIsRunning{false};
+    bool mIsDestroying{false};
 
 public:
     EngineWrapper() = default;
@@ -29,17 +30,19 @@ public:
     operator ScriptEngine*() const { return mEngine; }
 };
 
+using EngineWrapperPtr = std::unique_ptr<EngineWrapper>;
+
 class NodeManager final {
 private:
     NodeManager()                              = default;
     NodeManager(const NodeManager&)            = delete;
     NodeManager& operator=(const NodeManager&) = delete;
 
-    bool                                        mIsInitialized{false}; // 是否初始化
-    std::vector<string>                         mArgs;                 // 参数
-    std::vector<string>                         mExecArgs;             // 执行参数
-    std::unique_ptr<node::MultiIsolatePlatform> mPlatform;             // v8 平台
-    std::unordered_map<EngineID, EngineWrapper> mEngines;              // 引擎列表
+    bool                                           mIsInitialized{false}; // 是否初始化
+    std::vector<string>                            mArgs;                 // 参数
+    std::vector<string>                            mExecArgs;             // 执行参数
+    std::unique_ptr<node::MultiIsolatePlatform>    mPlatform;             // v8 平台
+    std::unordered_map<EngineID, EngineWrapperPtr> mEngines;              // 引擎列表
 
     std::atomic<bool> mUvLoopThreadRunning{true}; // uv loop 线程是否在运行
 

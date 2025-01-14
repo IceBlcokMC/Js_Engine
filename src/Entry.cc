@@ -34,7 +34,7 @@ void Entry::onLoad() {
     auto& server        = getServer();
     auto& pluginManager = server.getPluginManager();
     pluginManager.registerLoader(std::make_unique<jse::JavaScriptPluginLoader>(server));
-    pluginManager.loadPlugins(std::move(jse::JavaScriptPluginLoader::filterPlugins(fs::current_path() / "plugins")));
+    pluginManager.loadPlugins(jse::JavaScriptPluginLoader::filterPlugins(fs::current_path() / "plugins"));
 }
 
 void Entry::onEnable() { NodeManager::getInstance().initUvLoopThread(); }

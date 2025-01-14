@@ -43,7 +43,7 @@ target("Js_Engine")
     )
     add_files("src/**.cc")
     add_includedirs("src")
-    add_packages("nodejs", "scriptx")
+    add_packages("scriptx")
     add_packages(
         "fmt",
         "expected-lite",
@@ -68,9 +68,9 @@ target("Js_Engine")
     if is_plat("windows") then
         add_cxxflags("/Zc:__cplusplus")
         add_cxflags(
-            "/EHa",
+            -- "/EHa",
             "/utf-8",
-            -- "/W4",
+            "/W4",
             "/sdl"
         )
     elseif is_plat("linux") then
@@ -88,6 +88,18 @@ target("Js_Engine")
         add_packages("libelf")
         add_syslinks("dl", "pthread", "c++", "c++abi")
     end
+
+    -- ScriptX test
+    -- local ScriptX_Dir = "D:/Codes/ScriptX"
+    -- add_includedirs(ScriptX_Dir.."/src/include")
+    -- add_files(
+    --     ScriptX_Dir.."/src/**.cc",
+    --     ScriptX_Dir.."/backend/V8/**.cc"
+    -- )
+    -- add_defines(
+    --     "SCRIPTX_BACKEND_V8",
+    --     "SCRIPTX_BACKEND_TRAIT_PREFIX="..ScriptX_Dir.."/backend/V8/trait/Trait"
+    -- )
 
     if is_mode("debug") then
         add_defines("DEBUG")
