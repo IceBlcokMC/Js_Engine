@@ -4,6 +4,8 @@
 #include "Manager/EngineData.h"
 #include "Manager/NodeManager.h"
 #include "Utils/Using.h"
+#include "uv.h"
+#include <cstddef>
 #include <filesystem>
 #include <memory>
 #include <string>
@@ -39,15 +41,31 @@ endstone::Plugin* JavaScriptPluginLoader::loadPlugin(std::string file) {
             manager.NpmInstall(path.parent_path().string());
         }
 
-        if (!NodeManager::loadFile(wrapper, file, NodeManager::packageIsEsm(package))) {
+        bool const esm = NodeManager::packageIsEsm(package);
+        if (!NodeManager::loadFile(wrapper, file, esm)) {
             Entry::getInstance()->getLogger().error("Failed to load plugin: {}", file);
             manager.destroyEngine(wrapper->mID);
             return nullptr;
         }
 
         {
-            EngineScope                enter(wrapper->mEngine);
-            auto                       data = ENGINE_DATA();
+            EngineScope enter(wrapper->mEngine);
+            auto        data = ENGINE_DATA();
+
+            if (esm) {
+                size_t max   = 12; // 一般情况下, ESM 模块插件在第4个事件循环就会执行全局完全局代码
+                size_t count = 0;
+                while (count < max && data->mRegisterInfo.isEmpty()) {
+                    count++;
+                    uv_run(wrapper->mEnvSetup->event_loop(), UV_RUN_ONCE);
+                }
+                Entry::getInstance()->getLogger().debug("A total of {} event loops are executed", count);
+                if (count == max && data->mRegisterInfo.isEmpty()) {
+                    Entry::getInstance()->getLogger().warning("Failed to get plugin registration data, and the plugin "
+                                                              "may not have called JSE.registerPlugin()");
+                }
+            }
+
             JsPluginDescriptionBuilder builder{};
             builder.description        = data->tryParseDescription();
             builder.load               = data->tryParseLoad();
