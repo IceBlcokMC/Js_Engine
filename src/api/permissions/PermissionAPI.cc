@@ -31,6 +31,8 @@ Local<Value> PermissionAPI::getDefault(Arguments const& /* args */) {
 }
 
 Local<Value> PermissionAPI::setDefault(Arguments const& args) {
+    CheckArgsCount(args, 1);
+    CheckArgType(args[0], ValueKind::kNumber);
     try {
         this->mPermission->setDefault(ConvertFromScriptX<endstone::PermissionDefault>(args[0]));
         return Local<Value>();
@@ -46,6 +48,8 @@ Local<Value> PermissionAPI::getDescription(Arguments const& /* args */) {
 }
 
 Local<Value> PermissionAPI::setDescription(Arguments const& args) {
+    CheckArgsCount(args, 1);
+    CheckArgType(args[0], ValueKind::kString);
     try {
         this->mPermission->setDescription(args[0].asString().toString());
         return Local<Value>();
@@ -74,6 +78,7 @@ Local<Value> PermissionAPI::recalculatePermissibles(Arguments const& /* args */)
 }
 
 Local<Value> PermissionAPI::addParent(Arguments const& args) {
+    CheckArgsCount(args, 2);
     try {
         if (args[0].isString()) {
             if (auto val = this->mPermission->addParent(args[0].asString().toString(), args[1].asBoolean().value())) {
@@ -81,6 +86,8 @@ Local<Value> PermissionAPI::addParent(Arguments const& args) {
             }
         } else if (IsInstanceOf<PermissionAPI>(args[0])) {
             this->mPermission->addParent(*GetScriptClass(PermissionAPI, args[0])->get(), args[1].asBoolean().value());
+        } else {
+            throw script::Exception("Parameter 0 is of the wrong type");
         }
         return Local<Value>();
     }

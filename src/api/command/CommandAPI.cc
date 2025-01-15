@@ -35,6 +35,8 @@ ClassDefine<CommandAPI> CommandAPI::builder =
 Local<Value> CommandAPI::toString(Arguments const& /* args */) { return ConvertToScriptX("<Command>"); }
 
 Local<Value> CommandAPI::execute(Arguments const& args) {
+    CheckArgsCount(args, 2);
+    CheckArgType(args[1], ValueKind::kArray);
     try {
         if (!IsInstanceOf<CommandSenderAPI>(args[0])) {
             throw script::Exception("Invalid argument 0: expected CommandSenderAPI");
@@ -55,6 +57,8 @@ Local<Value> CommandAPI::getName(Arguments const& /* args */) {
 }
 
 Local<Value> CommandAPI::setName(Arguments const& args) {
+    CheckArgsCount(args, 1);
+    CheckArgType(args[0], ValueKind::kString);
     try {
         this->mCommand->setName(ConvertFromScriptX<string>(args[0]));
         return Local<Value>();
@@ -70,6 +74,8 @@ Local<Value> CommandAPI::getDescription(Arguments const& /* args */) {
 }
 
 Local<Value> CommandAPI::setDescription(Arguments const& args) {
+    CheckArgsCount(args, 1);
+    CheckArgType(args[0], ValueKind::kString);
     try {
         this->mCommand->setDescription(ConvertFromScriptX<string>(args[0]));
         return Local<Value>();
@@ -85,6 +91,7 @@ Local<Value> CommandAPI::getAliases(Arguments const& /* args */) {
 }
 
 Local<Value> CommandAPI::setAliases(Arguments const& args) {
+    // ...args 不限参数，但每个参数都必须是字符串
     try {
         this->mCommand->setAliases(ConvertFromScriptXArgs<string>(args));
         return Local<Value>();
@@ -100,6 +107,7 @@ Local<Value> CommandAPI::getUsages(Arguments const& /* args */) {
 }
 
 Local<Value> CommandAPI::setUsages(Arguments const& args) {
+    // ...args 不限参数，但每个参数都必须是字符串
     try {
         this->mCommand->setUsages(ConvertFromScriptXArgs<string>(args));
         return Local<Value>();
@@ -115,6 +123,7 @@ Local<Value> CommandAPI::getPermissions(Arguments const& /* args */) {
 }
 
 Local<Value> CommandAPI::setPermissions(Arguments const& args) {
+    // ...args 不限参数，但每个参数都必须是字符串
     try {
         this->mCommand->setPermissions(ConvertFromScriptXArgs<string>(args));
         return Local<Value>();
@@ -123,6 +132,8 @@ Local<Value> CommandAPI::setPermissions(Arguments const& args) {
 }
 
 Local<Value> CommandAPI::testPermission(Arguments const& args) {
+    CheckArgsCount(args, 1);
+    CheckArgType(args[0], ValueKind::kObject);
     try {
         if (!IsInstanceOf<CommandSenderAPI>(args[0])) {
             throw script::Exception("Invalid argument 0: expected CommandSenderAPI");
@@ -133,6 +144,8 @@ Local<Value> CommandAPI::testPermission(Arguments const& args) {
 }
 
 Local<Value> CommandAPI::testPermissionSilently(Arguments const& args) {
+    CheckArgsCount(args, 1);
+    CheckArgType(args[0], ValueKind::kObject);
     try {
         if (!IsInstanceOf<CommandSenderAPI>(args[0])) {
             throw script::Exception("Invalid argument 0: expected CommandSenderAPI");

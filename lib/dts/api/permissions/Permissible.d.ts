@@ -15,11 +15,13 @@ declare class Permissible {
 
     hasPermission(perm: Permission): boolean;
 
-    addAttachment(plugin: Plugin): any;
+    /** 此接口执行失败会抛出异常 */
+    // addAttachment(plugin: Plugin): any; // TODO: PermissionAttachment
 
-    addAttachment(plugin: Plugin, name: string, value: boolean): any;
+    /** 此接口执行失败会抛出异常 */
+    // addAttachment(plugin: Plugin, name: string, value: boolean): any; // TODO: PermissionAttachment
 
-    removeAttachment(attachment: PermissionAttachment): any;
+    // removeAttachment(attachment: PermissionAttachment): any; // TODO: PermissionAttachment
 
     recalculatePermissions(): void;
 

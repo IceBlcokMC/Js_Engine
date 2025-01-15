@@ -54,6 +54,7 @@ Local<Value> CommandSenderAPI::asPlayer(Arguments const& /* args */) {
 }
 
 Local<Value> CommandSenderAPI::sendMessage(Arguments const& args) {
+    // ...args 不限参数
     try {
         std::ostringstream oss;
         for (size_t i = 0; i < args.size(); ++i) ToString(args[i], oss);
@@ -64,6 +65,7 @@ Local<Value> CommandSenderAPI::sendMessage(Arguments const& args) {
 }
 
 Local<Value> CommandSenderAPI::sendErrorMessage(Arguments const& args) {
+    // ...args 不限参数
     try {
         std::ostringstream oss;
         for (size_t i = 0; i < args.size(); ++i) ToString(args[i], oss);

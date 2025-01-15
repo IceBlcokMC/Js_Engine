@@ -1,8 +1,8 @@
 #include "api/permissions/PermissibleAPI.h"
 #include "api/APIHelper.h"
 #include "api/command/CommandSenderAPI.h"
-#include "api/plugin/PluginAPI.h"
 #include "api/permissions/PermissionAPI.h"
+#include "api/plugin/PluginAPI.h"
 #include "utils/Convert.h"
 #include "utils/Defines.h"
 #include "utils/Using.h"
@@ -40,6 +40,8 @@ Local<Value> PermissibleAPI::isOP(Arguments const& /* args */) {
 }
 
 Local<Value> PermissibleAPI::setOp(Arguments const& args) {
+    CheckArgsCount(args, 1);
+    CheckArgType(args[0], ValueKind::kBoolean);
     try {
         this->mPermissible->setOp(args[0].asBoolean().value());
         return Local<Value>();
@@ -48,6 +50,7 @@ Local<Value> PermissibleAPI::setOp(Arguments const& args) {
 }
 
 Local<Value> PermissibleAPI::isPermissionSet(Arguments const& args) {
+    CheckArgsCount(args, 1);
     try {
         if (args[0].isString()) {
             // overload 1
@@ -56,6 +59,8 @@ Local<Value> PermissibleAPI::isPermissionSet(Arguments const& args) {
             // overload 2
             return ConvertToScriptX(this->mPermissible->isPermissionSet(*GetScriptClass(PermissionAPI, args[0])->get())
             );
+        } else {
+            throw script::Exception("Parameter 0 must be a string or Permission");
         }
         return ConvertToScriptX(false);
     }
@@ -63,6 +68,7 @@ Local<Value> PermissibleAPI::isPermissionSet(Arguments const& args) {
 }
 
 Local<Value> PermissibleAPI::hasPermission(Arguments const& args) {
+    CheckArgsCount(args, 1);
     try {
         if (args[0].isString()) {
             // overload 1
@@ -70,6 +76,8 @@ Local<Value> PermissibleAPI::hasPermission(Arguments const& args) {
         } else if (IsInstanceOf<PermissionAPI>(args[0])) {
             // overload 2
             return ConvertToScriptX(this->mPermissible->hasPermission(*GetScriptClass(PermissionAPI, args[0])->get()));
+        } else {
+            throw script::Exception("Parameter 0 must be a string or Permission");
         }
         return ConvertToScriptX(false);
     }
@@ -89,13 +97,15 @@ Local<Value> PermissibleAPI::addAttachment(Arguments const& args) {
                 args[1].asString().toString(),
                 args[2].asBoolean().value()
             );
+        } else {
+            throw script::Exception("Invalid arguments");
         }
 
         if (!val.has_value()) {
-            throw std::runtime_error(fmt::format("{}\n{}", val.error().getMessage(), val.error().getStackTrace()));
+            throw script::Exception(val.error().getMessage());
         }
 
-        // TODO: PermissionAttachment constructor
+        // TODO: PermissionAttachment
         return Local<Value>();
     }
     Catch;

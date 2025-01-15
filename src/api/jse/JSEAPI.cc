@@ -37,6 +37,7 @@ Local<Value> JSEAPI::getSelf(Arguments const&) {
 }
 
 Local<Value> JSEAPI::debug(Arguments const& args) {
+    // ...args 不限参数
     try {
         std::ostringstream oss;
         oss << "\033[1;42m";
