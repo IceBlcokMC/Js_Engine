@@ -1,3 +1,12 @@
+/*
+
+dts.js - 根据特征使用正则表达式生成dts文件
+
+使用方法：
+    node dts.js <dir_or_file>
+
+*/
+
 import process from "process";
 import path from "path";
 import fs from "fs";
@@ -23,7 +32,7 @@ function genDts(class_, methods, parent_class = null) {
      * @param {string} return_
      */
     const func = (fn, params, return_) => {
-        return `\t${fn}(${params.join(", ")}): ${return_};\n`;
+        return `\t${fn}(${params.join(", ")}): ${return_};\n\n`;
     };
 
     methods.forEach((fn) => {
@@ -33,6 +42,10 @@ function genDts(class_, methods, parent_class = null) {
         }
         dts += func(fn, [], "any");
     });
+
+    if (dts.endsWith("\n\n")) {
+        dts = dts.slice(0, -1); // 去掉最后的换行
+    }
 
     dts += `}\n`;
     return dts;
@@ -90,49 +103,65 @@ function writeFile(file, contents) {
     fs.writeFileSync(file, contents);
 }
 
-function getAllHeaderFiles(dir) {
-    const files = fs
-        .readdirSync(dir)
-        .filter((file) => path.extname(file) === ".h");
-    return files.map((file) => path.join(dir, file));
+/**
+ * @param {string} file
+ * @param {string} output_dir
+ */
+function processFile(file, output_dir) {
+    const filename = path.basename(file);
+    if (!filename.endsWith(".h")) {
+        return;
+    }
+
+    const exclude = ["APIHelper.h", "EnumAPI.h"];
+    if (exclude.includes(filename)) {
+        return;
+    }
+
+    const contents = readFile(file);
+    const { class_, methods } = getFunctions(contents);
+    const dts = genDts(class_[0], methods, class_[1]);
+
+    // 计算相对于输入目录的相对路径
+    const relativePath = path.relative(process.argv[2], path.dirname(file));
+    const outputSubDir = path.join(output_dir, relativePath);
+    if (!fs.existsSync(outputSubDir)) {
+        fs.mkdirSync(outputSubDir, { recursive: true });
+    }
+    writeFile(path.join(outputSubDir, `${class_[0]}.d.ts`), dts);
+    console.log(`${file} -> ${outputSubDir}/${class_[0]}.d.ts`);
 }
 
-function findHeader(dir) {
-    let files = [...getAllHeaderFiles(dir)];
-
-    // 递归搜索子文件夹下的文件
-    fs.readdirSync(dir).forEach((file) => {
-        const filePath = path.join(dir, file);
-        if (fs.statSync(filePath).isDirectory()) {
-            files = [...files, ...getAllHeaderFiles(filePath)];
+/**
+ * @param {string} dir
+ * @param {string} output_dir
+ */
+function processDir(dir, output_dir) {
+    const files = fs.readdirSync(dir);
+    files.forEach((file) => {
+        const file_path = path.join(dir, file);
+        if (fs.statSync(file_path).isDirectory()) {
+            processDir(file_path, output_dir);
+            return;
         }
+        processFile(file_path, output_dir);
     });
-
-    files.filter((f) => f.endsWith(".h"));
-
-    return files;
 }
 
 function main() {
-    const dir = path.join("./src/API");
-    const exclude = ["APIHelper.h", "EnumAPI.h"];
-
-    let files = findHeader(dir);
-
-    exclude.forEach((file) => {
-        files = files.filter((f) => !f.endsWith(file));
-    });
-
-    if (!fs.existsSync("out")) {
-        fs.mkdirSync("out");
+    const file_or_dir = process.argv[2];
+    const project_dir = process.cwd();
+    const output_dir = path.join(project_dir, "tmp");
+    if (!fs.existsSync(output_dir)) {
+        fs.mkdirSync(output_dir);
     }
 
-    for (const file of files) {
-        const contents = readFile(file);
-        const { class_, methods } = getFunctions(contents);
-        const dts = genDts(class_[0], methods, class_[1]);
-        writeFile(path.join("out", `${class_[0]}.d.ts`), dts);
+    if (!fs.statSync(file_or_dir).isDirectory()) {
+        processFile(file_or_dir, output_dir);
+        return;
     }
+
+    processDir(file_or_dir, output_dir);
 }
 
 main();
