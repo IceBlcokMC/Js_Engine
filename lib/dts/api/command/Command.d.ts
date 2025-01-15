@@ -1,39 +1,39 @@
 /// <reference path="../../index.d.ts"/>
 
 declare class Command {
-	toString(): "<Command>";
+    toString(): "<Command>";
 
-	execute(sender: CommandSender, args: string[]): boolean;
+    execute(sender: CommandSender, args: string[]): boolean;
 
-	getName(): string;
+    getName(): string;
 
-	setName(name: string): void;
+    setName(name: string): void;
 
-	getDescription(): string;
+    getDescription(): string;
 
-	setDescription(description: string): void;
+    setDescription(description: string): void;
 
-	getAliases(): string[];
+    getAliases(): string[];
 
-	setAliases(...aliases: string[]): void;
+    setAliases(...aliases: string[]): void;
 
-	getUsages(): string[];
+    getUsages(): string[];
 
-	setUsages(...usages: string[]): void;
+    setUsages(...usages: string[]): void;
 
-	getPermissions(): string[];
+    getPermissions(): string[];
 
-	setPermissions(...permissions: string[]): void;
+    setPermissions(...permissions: string[]): void;
 
-	testPermission(target: CommandSender): boolean;
+    testPermission(target: CommandSender): boolean;
 
-	testPermissionSilently(target: CommandSender): boolean;
+    testPermissionSilently(target: CommandSender): boolean;
 
-	// registerTo(): any; // TODO: CommandMap
+    // registerTo(): any; // TODO: CommandMap
 
-	// unregisterFrom(): any; // TODO: CommandMap
+    // unregisterFrom(): any; // TODO: CommandMap
 
-	isRegistered(): boolean;
+    isRegistered(): boolean;
 
-	// asPluginCommand(): any; // TODO: PluginCommand
+    // asPluginCommand(): any; // TODO: PluginCommand
 }

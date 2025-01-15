@@ -1,14 +1,21 @@
 #pragma once
+#include "endstone/logger.h"
 #include "utils/Defines.h"
 #include "utils/Using.h"
 
 namespace jse {
 
 class LoggerAPI : public ScriptClass {
-public:
-    explicit LoggerAPI() : ScriptClass(ScriptClass::ConstructFromCpp<LoggerAPI>{}) {};
+    endstone::Logger* mLogger;
 
-    static Local<Object> newLoggerAPI() { return (new LoggerAPI())->getScriptObject(); }
+public:
+    explicit LoggerAPI(endstone::Logger* logger)
+    : ScriptClass(ScriptClass::ConstructFromCpp<LoggerAPI>{}),
+      mLogger(logger) {};
+
+    static Local<Object> newLoggerAPI(endstone::Logger* logger) { return (new LoggerAPI(logger))->getScriptObject(); }
+
+    endstone::Logger* get() { return mLogger; }
 
 public:
     METHODS(toString);

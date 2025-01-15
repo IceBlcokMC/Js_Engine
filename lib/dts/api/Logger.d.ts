@@ -2,29 +2,27 @@
 
 /** 日志输出 */
 declare class Logger {
-    private constructor();
-
     toString(): "<Logger>";
 
     /** 输出日志 */
-    log(level: Enums.LoggerLevel, ...message: any[]): boolean;
+    log(level: Enums.LoggerLevel, ...message: any[]): void;
     /** 输出信息日志 */
-    info(...message: any[]): boolean;
+    info(...message: any[]): void;
     /** 输出警告日志 */
-    warning(...message: any[]): boolean;
+    warning(...message: any[]): void;
     /** 输出错误日志 */
-    error(...message: any[]): boolean;
+    error(...message: any[]): void;
     /** 输出调试日志 */
-    debug(...message: any[]): boolean;
+    debug(...message: any[]): void;
     /** 输出跟踪日志 */
-    trace(...message: any[]): boolean;
+    trace(...message: any[]): void;
     /** 输出致命错误日志 */
-    critical(...message: any[]): boolean;
-  
+    critical(...message: any[]): void;
+
     /** 设置日志输出等级 */
     setLevel(level: Enums.LoggerLevel): void;
     /** 是否可输出指定日志等级的日志 */
     isEnabledFor(level: Enums.LoggerLevel): boolean;
     /** 获取日志标题 */
-    getName(): string;
-  }
+    getName(): string | undefined;
+}

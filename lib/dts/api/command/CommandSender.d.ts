@@ -2,7 +2,7 @@
 
 /** 命令来源 */
 declare class CommandSender {
-    toString() : string | "<CommandSender>";
+    toString(): string | "<CommandSender>";
 
     /** 转成命令发送者 */
     asCommandSender(): CommandSender | undefined;

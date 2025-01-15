@@ -2,13 +2,25 @@
 #include "utils/Defines.h"
 #include "utils/Using.h"
 
+namespace endstone {
+class PluginDescription;
+}
+
 namespace jse {
 
 class PluginDescriptionAPI : public ScriptClass {
-public:
-    explicit PluginDescriptionAPI() : ScriptClass(ScriptClass::ConstructFromCpp<PluginDescriptionAPI>{}) {}
+    endstone::PluginDescription* mPluginDescription;
 
-    static Local<Object> newPluginDescriptionAPI() { return (new PluginDescriptionAPI())->getScriptObject(); }
+public:
+    explicit PluginDescriptionAPI(endstone::PluginDescription* pluginDescription)
+    : ScriptClass(ScriptClass::ConstructFromCpp<PluginDescriptionAPI>{}),
+      mPluginDescription(pluginDescription) {}
+
+    static Local<Object> newPluginDescriptionAPI(endstone::PluginDescription* pluginDescription) {
+        return (new PluginDescriptionAPI(pluginDescription))->getScriptObject();
+    }
+
+    endstone::PluginDescription* get() { return mPluginDescription; }
 
 public:
     METHODS(toString);

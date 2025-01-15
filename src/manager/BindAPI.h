@@ -8,9 +8,9 @@
 #include "api/jse/EnumAPI.h"
 #include "api/jse/FileAPI.h"
 #include "api/jse/JSEAPI.h"
-#include "api/jse/PluginAPI.h"
-#include "api/jse/PluginDescriptionAPI.h"
 #include "api/permissions/PermissibleAPI.h"
+#include "api/plugin/PluginAPI.h"
+#include "api/plugin/PluginDescriptionAPI.h"
 #include "utils/Using.h"
 
 

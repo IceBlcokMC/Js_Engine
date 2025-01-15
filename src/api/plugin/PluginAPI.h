@@ -1,4 +1,5 @@
 #pragma once
+#include "endstone/plugin/plugin.h"
 #include "utils/Defines.h"
 #include "utils/Using.h"
 
@@ -6,10 +7,16 @@ namespace jse {
 
 
 class PluginAPI : public ScriptClass {
-public:
-    explicit PluginAPI() : ScriptClass(ScriptClass::ConstructFromCpp<PluginAPI>{}) {}
+    endstone::Plugin* mPlugin;
 
-    static Local<Object> newPluginAPI() { return (new PluginAPI())->getScriptObject(); }
+public:
+    explicit PluginAPI(endstone::Plugin* plugin)
+    : ScriptClass(ScriptClass::ConstructFromCpp<PluginAPI>{}),
+      mPlugin(plugin) {}
+
+    static Local<Object> newPluginAPI(endstone::Plugin* plugin) { return (new PluginAPI(plugin))->getScriptObject(); }
+
+    endstone::Plugin* get() { return mPlugin; }
 
 public:
     METHODS(toString);

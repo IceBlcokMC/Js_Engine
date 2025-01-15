@@ -1,7 +1,7 @@
 #include "api/permissions/PermissibleAPI.h"
 #include "api/APIHelper.h"
 #include "api/command/CommandSenderAPI.h"
-#include "api/jse/PluginAPI.h"
+#include "api/plugin/PluginAPI.h"
 #include "api/permissions/PermissionAPI.h"
 #include "utils/Convert.h"
 #include "utils/Defines.h"

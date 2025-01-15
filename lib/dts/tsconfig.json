@@ -4,6 +4,10 @@
     ],
     "compilerOptions": {
         "module": "ES6",
-        "target": "ES2020"
+        "target": "ES2020",
+        "types": [],
+        "lib": [
+            "ES2020"
+        ]
     }
 }

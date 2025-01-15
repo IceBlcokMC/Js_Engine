@@ -8,7 +8,7 @@ class JSEAPI {
 public:
     static METHODS(registerPlugin);
 
-    static METHODS(getPlugin);
+    static METHODS(getSelf);
 
     static METHODS(debug);
 

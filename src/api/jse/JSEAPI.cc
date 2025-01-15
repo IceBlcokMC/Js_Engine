@@ -1,6 +1,6 @@
 #include "api/jse/JSEAPI.h"
-#include "PluginAPI.h"
 #include "api/APIHelper.h"
+#include "api/plugin/PluginAPI.h"
 #include "manager/EngineData.h"
 #include "utils/Using.h"
 #include <iostream>
@@ -10,7 +10,7 @@ namespace jse {
 
 ClassDefine<void> JSEAPI::builder = defineClass("JSE")
                                         .function("registerPlugin", &JSEAPI::registerPlugin)
-                                        .function("getPlugin", &JSEAPI::getPlugin)
+                                        .function("getSelf", &JSEAPI::getSelf)
                                         .function("debug", &JSEAPI::debug)
                                         .build();
 
@@ -26,9 +26,12 @@ Local<Value> JSEAPI::registerPlugin(Arguments const& args) {
     Catch;
 }
 
-Local<Value> JSEAPI::getPlugin(Arguments const&) {
+Local<Value> JSEAPI::getSelf(Arguments const&) {
     try {
-        return PluginAPI::newPluginAPI();
+        if (!ENGINE_DATA()->mPlugin) {
+            return Local<Value>();
+        }
+        return PluginAPI::newPluginAPI(ENGINE_DATA()->mPlugin);
     }
     Catch;
 }
@@ -37,7 +40,7 @@ Local<Value> JSEAPI::debug(Arguments const& args) {
     try {
         std::ostringstream oss;
         oss << "\033[1;42m";
-        for (int i = 0; i < args.size(); ++i) ToString(args[i], oss);
+        for (size_t i = 0; i < args.size(); ++i) ToString(args[i], oss);
         oss << "\033[0m";
         std::cout << oss.str() << std::endl;
         return Local<Value>();
@@ -45,14 +48,14 @@ Local<Value> JSEAPI::debug(Arguments const& args) {
     Catch;
 }
 
-Local<Value> JSEAPI::isWindows(const Arguments& args) {
+Local<Value> JSEAPI::isWindows(const Arguments& /* args */) {
 #if defined(_WIN32) || defined(WIN32)
     return Boolean::newBoolean(true);
 #endif
     return Boolean::newBoolean(false);
 }
 
-Local<Value> JSEAPI::isLinux(const Arguments& args) {
+Local<Value> JSEAPI::isLinux(const Arguments& /* args */) {
 #if defined(__linux__)
     return Boolean::newBoolean(true);
 #endif

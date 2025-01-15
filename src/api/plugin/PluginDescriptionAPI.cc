@@ -1,4 +1,4 @@
-#include "api/jse/PluginDescriptionAPI.h"
+#include "api/plugin/PluginDescriptionAPI.h"
 #include "api/APIHelper.h"
 #include "api/command/CommandAPI.h"
 #include "api/permissions/PermissionAPI.h"
@@ -33,14 +33,14 @@ ClassDefine<PluginDescriptionAPI> PluginDescriptionAPI::builder =
         .build();
 
 #define PLUGINDESCRIPTIONAPI_MACRO(FUNC_NAME, ...)                                                                     \
-    Local<Value> PluginDescriptionAPI::FUNC_NAME(Arguments const& args) {                                              \
+    Local<Value> PluginDescriptionAPI::FUNC_NAME(Arguments const& /* args */) {                                        \
         try {                                                                                                          \
             __VA_ARGS__;                                                                                               \
         }                                                                                                              \
         Catch;                                                                                                         \
     }
 
-#define GETDESCRIPTION_MACRO(FUNC_NAME) return ConvertToScriptX(ENGINE_DATA()->mPlugin->getDescription().FUNC_NAME());
+#define GETDESCRIPTION_MACRO(FUNC_NAME) return ConvertToScriptX(get()->FUNC_NAME());
 
 PLUGINDESCRIPTIONAPI_MACRO(toString, return String::newString("<PluginDescription>"));
 
@@ -74,10 +74,9 @@ PLUGINDESCRIPTIONAPI_MACRO(getLoadBefore, GETDESCRIPTION_MACRO(getLoadBefore));
 
 PLUGINDESCRIPTIONAPI_MACRO(getDefaultPermission, GETDESCRIPTION_MACRO(getDefaultPermission));
 
-// PLUGINDESCRIPTIONAPI_MACRO(getCommands, return Local<Value>());
-Local<Value> PluginDescriptionAPI::getCommands(Arguments const& args) {
+Local<Value> PluginDescriptionAPI::getCommands(Arguments const& /* args */) {
     try {
-        auto cmds  = ENGINE_DATA()->mPlugin->getDescription().getCommands();
+        auto cmds  = get()->getCommands();
         auto array = Array::newArray(cmds.size());
         for (auto c : cmds) {
             array.add(CommandAPI::newCommandAPI(&c));
@@ -87,10 +86,9 @@ Local<Value> PluginDescriptionAPI::getCommands(Arguments const& args) {
     Catch;
 }
 
-// PLUGINDESCRIPTIONAPI_MACRO(getPermissions, GETDESCRIPTION_MACRO(getPermissions));
-Local<Value> PluginDescriptionAPI::getPermissions(Arguments const& args) {
+Local<Value> PluginDescriptionAPI::getPermissions(Arguments const& /* args */) {
     try {
-        auto perms = ENGINE_DATA()->mPlugin->getDescription().getPermissions();
+        auto perms = get()->getPermissions();
         auto array = Array::newArray(perms.size());
         for (auto p : perms) {
             array.add(PermissionAPI::newPermissionAPI(&p));

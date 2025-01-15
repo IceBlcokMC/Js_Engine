@@ -1,6 +1,7 @@
 #include "api/LoggerAPI.h"
 #include "api/APIHelper.h"
 #include "manager/EngineData.h"
+#include <cstddef>
 
 namespace jse {
 
@@ -19,37 +20,37 @@ ClassDefine<LoggerAPI> LoggerAPI::builder = defineClass<LoggerAPI>("Logger")
                                                 .instanceFunction("getName", &LoggerAPI::getName)
                                                 .build();
 
-Local<Value> LoggerAPIHelper(endstone::Logger::Level level, string const& message) {
+void LoggerAPIHelper(endstone::Logger* logger, endstone::Logger::Level level, string const& message) {
     try {
-        auto data = ENGINE_DATA();
-        if (data->mPlugin) {
-            data->mPlugin->getLogger().log(level, message);
-            return Boolean::newBoolean(true);
+        if (logger) {
+            logger->log(level, message);
         }
-        return Boolean::newBoolean(false);
     }
-    Catch;
-}
-Local<Value> LoggerAPIHelper(endstone::Logger::Level level, Arguments const& args, int start = 0) {
-    try {
-        std::ostringstream oss;
-        for (int i = start; i < args.size(); ++i) ToString(args[i], oss);
-        return LoggerAPIHelper(level, oss.str());
-    }
-    Catch;
+    CatchNotReturn;
 }
 
-Local<Value> LoggerAPI::toString(Arguments const& args) { return String::newString("<Logger>"); }
+void LoggerAPIHelper(endstone::Logger* logger, endstone::Logger::Level level, Arguments const& args, int start = 0) {
+    try {
+        std::ostringstream oss;
+        for (size_t i = start; i < args.size(); ++i) ToString(args[i], oss);
+        LoggerAPIHelper(logger, level, oss.str());
+    }
+    CatchNotReturn;
+}
+
+Local<Value> LoggerAPI::toString(Arguments const& /* args */) { return String::newString("<Logger>"); }
 
 Local<Value> LoggerAPI::log(Arguments const& args) {
     auto level = magic_enum::enum_cast<endstone::Logger::Level>(args[0].asNumber().toInt64());
     if (!level.has_value()) return Boolean::newBoolean(false);
-    return LoggerAPIHelper(*level, args, 1);
+    LoggerAPIHelper(get(), *level, args, 1);
+    return Local<Value>();
 }
 
 #define LOGGERAPI_MACRO(FUNC_NAME, LEVEL)                                                                              \
     Local<Value> LoggerAPI::FUNC_NAME(Arguments const& args) {                                                         \
-        return LoggerAPIHelper(endstone::Logger::Level::LEVEL, args);                                                  \
+        LoggerAPIHelper(get(), endstone::Logger::Level::LEVEL, args);                                                  \
+        return Local<Value>();                                                                                         \
     }
 
 LOGGERAPI_MACRO(info, Info);
@@ -63,36 +64,31 @@ LOGGERAPI_MACRO(critical, Critical);
 
 Local<Value> LoggerAPI::setLevel(Arguments const& args) {
     try {
-        auto data = ENGINE_DATA();
-        if (data->mPlugin) {
-            data->mPlugin->getLogger().setLevel(static_cast<endstone::Logger::Level>(args[0].asNumber().toInt64()));
-            return Boolean::newBoolean(true);
+        if (get()) {
+            get()->setLevel(static_cast<endstone::Logger::Level>(args[0].asNumber().toInt64()));
         }
-        return Boolean::newBoolean(false);
+        return Local<Value>();
     }
     Catch;
 }
 
 Local<Value> LoggerAPI::isEnabledFor(Arguments const& args) {
     try {
-        auto data = ENGINE_DATA();
-        if (data->mPlugin) {
-            return Boolean::newBoolean(data->mPlugin->getLogger().isEnabledFor(
-                static_cast<endstone::Logger::Level>(args[0].asNumber().toInt64())
-            ));
+        if (!get()) {
+            return Boolean::newBoolean(false);
         }
-        return Boolean::newBoolean(false);
+        return Boolean::newBoolean(get()->isEnabledFor(static_cast<endstone::Logger::Level>(args[0].asNumber().toInt64()
+        )));
     }
     Catch;
 }
 
-Local<Value> LoggerAPI::getName(Arguments const& args) {
+Local<Value> LoggerAPI::getName(Arguments const& /* args */) {
     try {
-        auto data = ENGINE_DATA();
-        if (data->mPlugin) {
-            return String::newString(data->mPlugin->getLogger().getName());
+        if (!get()) {
+            return Local<Value>();
         }
-        return String::newString("");
+        return String::newString(get()->getName());
     }
     Catch;
 }
