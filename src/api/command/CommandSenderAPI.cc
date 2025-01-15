@@ -32,14 +32,16 @@ ClassDefine<CommandSenderAPI> CommandSenderAPI::builder =
         .instanceFunction("removeAttachment", &PermissibleAPI::removeAttachment)
         .instanceFunction("recalculatePermissions", &PermissibleAPI::recalculatePermissions)
         .instanceFunction("getEffectivePermissions", &PermissibleAPI::getEffectivePermissions)
-        // .instanceFunction("asCommandSender", &PermissibleAPI::getEffectivePermissions)
+        .instanceFunction("asCommandSender", &PermissibleAPI::asCommandSender)
 
         .build();
 
 
 Local<Value> CommandSenderAPI::toString(Arguments const& /* args */) { return ConvertToScriptX("<CommandSender>"); }
 
-// Local<Value> CommandSenderAPI::asCommandSender(Arguments const& /* args */) {}
+Local<Value> CommandSenderAPI::asCommandSender(Arguments const& /* args */) {
+    return CommandSenderAPI::newCommandSenderAPI(get());
+}
 
 Local<Value> CommandSenderAPI::asConsole(Arguments const& /* args */) { return Local<Value>(); }
 

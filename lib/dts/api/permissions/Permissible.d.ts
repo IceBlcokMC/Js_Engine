@@ -27,5 +27,5 @@ declare class Permissible {
 
     //getEffectivePermissions(): PermissionAttachmentInfo[] // TODO: PermissionAttachmentInfo
 
-    asCommandSender(): CommandSender;
+    asCommandSender(): CommandSender | undefined;
 }

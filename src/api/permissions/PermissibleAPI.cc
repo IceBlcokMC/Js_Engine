@@ -26,7 +26,7 @@ ClassDefine<PermissibleAPI> PermissibleAPI::builder =
         .instanceFunction("removeAttachment", &PermissibleAPI::removeAttachment)
         .instanceFunction("recalculatePermissions", &PermissibleAPI::recalculatePermissions)
         .instanceFunction("getEffectivePermissions", &PermissibleAPI::getEffectivePermissions)
-        .instanceFunction("asCommandSender", &PermissibleAPI::getEffectivePermissions)
+        .instanceFunction("asCommandSender", &PermissibleAPI::asCommandSender)
         .build();
 
 
@@ -137,8 +137,11 @@ Local<Value> PermissibleAPI::getEffectivePermissions(Arguments const& /* args */
 
 Local<Value> PermissibleAPI::asCommandSender(Arguments const& /* args */) {
     try {
-        // TODO: CommandSender
-        return Local<Value>();
+        auto sender = this->mPermissible->asCommandSender();
+        if (!sender) {
+            return Local<Value>();
+        }
+        return CommandSenderAPI::newCommandSenderAPI(sender);
     }
     Catch;
 }

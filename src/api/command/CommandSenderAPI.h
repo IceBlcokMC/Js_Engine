@@ -26,7 +26,7 @@ public:
     endstone::CommandSender* get() { return mSender; }
 
     METHODS(toString);
-    // METHODS(asCommandSender);
+    METHODS(asCommandSender);
     METHODS(asConsole);
     METHODS(asActor);
     METHODS(asPlayer);
