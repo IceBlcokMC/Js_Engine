@@ -1,6 +1,6 @@
-/// <reference path="./Enum/PermissionDefault.d.ts"/>
-/// <reference path="./Enum/LoggerLevel.d.ts"/>
-/// <reference path="./Enum/PluginLoadOrder.d.ts"/>
+/// <reference path="./Enum1/PermissionDefault.d.ts"/>
+/// <reference path="./Enum1/LoggerLevel.d.ts"/>
+/// <reference path="./Enum1/PluginLoadOrder.d.ts"/>
 
 /// <reference path="./API/Actor/Actor.d.ts"/>
 /// <reference path="./API/Actor/Mob.d.ts"/>
