@@ -1,9 +1,9 @@
-#include "API/ServerAPI.h"
-#include "API/APIHelper.h"
-#include "API/Command/CommandSenderAPI.h"
-#include "API/LoggerAPI.h"
-#include "API/PlayerAPI.h"
+#include "api/ServerAPI.h"
 #include "APIHelper.h"
+#include "api/APIHelper.h"
+#include "api/LoggerAPI.h"
+#include "api/PlayerAPI.h"
+#include "api/command/CommandSenderAPI.h"
 #include "endstone/server.h"
 
 

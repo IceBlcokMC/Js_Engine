@@ -1,15 +1,16 @@
-#include "API/Permissions/PermissibleAPI.h"
-#include "API/APIHelper.h"
-#include "API/Command/CommandSenderAPI.h"
-#include "API/JSE/PluginAPI.h"
-#include "API/Permissions/PermissionAPI.h"
-#include "Utils/Convert.h"
-#include "Utils/Defines.h"
-#include "Utils/Using.h"
+#include "api/permissions/PermissibleAPI.h"
+#include "api/APIHelper.h"
+#include "api/command/CommandSenderAPI.h"
+#include "api/jse/PluginAPI.h"
+#include "api/permissions/PermissionAPI.h"
+#include "utils/Convert.h"
+#include "utils/Defines.h"
+#include "utils/Using.h"
 #include <endstone/permissions/permissible.h>
 #include <endstone/plugin/plugin.h>
 #include <endstone/util/result.h>
 #include <stdexcept>
+
 
 namespace jse {
 

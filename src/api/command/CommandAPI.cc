@@ -1,9 +1,9 @@
-#include "API/Command/CommandAPI.h"
-#include "API/APIHelper.h"
-#include "API/Command/CommandSenderAPI.h"
-#include "Utils/Convert.h"
-#include "Utils/Defines.h"
-#include "Utils/Using.h"
+#include "api/command/CommandAPI.h"
+#include "api/APIHelper.h"
+#include "api/command/CommandSenderAPI.h"
+#include "utils/Convert.h"
+#include "utils/Defines.h"
+#include "utils/Using.h"
 #include <endstone/command/command.h>
 
 namespace jse {

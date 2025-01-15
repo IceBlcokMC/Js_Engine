@@ -1,9 +1,9 @@
-#include "Loader/JavaScriptPluginLoader.h"
+#include "loader/JavaScriptPluginLoader.h"
 #include "Entry.h"
-#include "Loader/JavaScriptPlugin.h"
-#include "Manager/EngineData.h"
-#include "Manager/NodeManager.h"
-#include "Utils/Using.h"
+#include "loader/JavaScriptPlugin.h"
+#include "manager/EngineData.h"
+#include "manager/NodeManager.h"
+#include "utils/Using.h"
 #include "uv.h"
 #include <cstddef>
 #include <filesystem>

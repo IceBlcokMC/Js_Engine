@@ -1,6 +1,6 @@
-#include "API/JSE/FileAPI.h"
-#include "API/APIHelper.h"
-#include "Utils/FileUtils.h"
+#include "api/jse/FileAPI.h"
+#include "api/APIHelper.h"
+#include "utils/FileUtils.h"
 #include <filesystem>
 
 namespace jse {

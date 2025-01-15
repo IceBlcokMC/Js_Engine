@@ -1,7 +1,7 @@
 #include "Entry.h"
-#include "Loader/JavaScriptPluginLoader.h"
-#include "Manager/NodeManager.h"
-#include "Utils/Using.h"
+#include "loader/JavaScriptPluginLoader.h"
+#include "manager/NodeManager.h"
+#include "utils/Using.h"
 #include "endstone/plugin/plugin_manager.h"
 
 

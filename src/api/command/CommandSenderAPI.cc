@@ -1,10 +1,11 @@
-#include "API/Command/CommandSenderAPI.h"
-#include "API/PlayerAPI.h"
-#include "API/APIHelper.h"
-#include "Utils/Convert.h"
-#include "Utils/Using.h"
+#include "api/command/CommandSenderAPI.h"
+#include "api/APIHelper.h"
+#include "api/PlayerAPI.h"
+#include "utils/Convert.h"
+#include "utils/Using.h"
 #include <cstddef>
 #include <sstream>
+
 
 namespace jse {
 

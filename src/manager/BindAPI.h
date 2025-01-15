@@ -1,17 +1,18 @@
 #pragma once
-#include "API/Actor/ActorAPI.h"
-#include "API/Actor/MobAPI.h"
-#include "API/Command/CommandAPI.h"
-#include "API/Command/CommandSenderAPI.h"
-#include "API/JSE/EnumAPI.h"
-#include "API/JSE/FileAPI.h"
-#include "API/JSE/JSEAPI.h"
-#include "API/LoggerAPI.h"
-#include "API/JSE/PluginAPI.h"
-#include "API/JSE/PluginDescriptionAPI.h"
-#include "API/Permissions/PermissibleAPI.h"
-#include "API/PlayerAPI.h"
-#include "Utils/Using.h"
+#include "api/LoggerAPI.h"
+#include "api/PlayerAPI.h"
+#include "api/actor/ActorAPI.h"
+#include "api/actor/MobAPI.h"
+#include "api/command/CommandAPI.h"
+#include "api/command/CommandSenderAPI.h"
+#include "api/jse/EnumAPI.h"
+#include "api/jse/FileAPI.h"
+#include "api/jse/JSEAPI.h"
+#include "api/jse/PluginAPI.h"
+#include "api/jse/PluginDescriptionAPI.h"
+#include "api/permissions/PermissibleAPI.h"
+#include "utils/Using.h"
+
 
 namespace jse {
 

@@ -1,9 +1,9 @@
 #pragma once
 #include "Entry.h"
-#include "Loader/JavaScriptPlugin.h"
-#include "Utils/Convert.h"
-#include "Utils/StringUtils.h"
-#include "Utils/Using.h"
+#include "loader/JavaScriptPlugin.h"
+#include "utils/Convert.h"
+#include "utils/StringUtils.h"
+#include "utils/Using.h"
 #include <cstdint>
 #include <endstone/command/command.h>
 #include <endstone/permissions/permission.h>

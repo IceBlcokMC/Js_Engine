@@ -1,12 +1,12 @@
 #include "v8-exception.h"
 #pragma warning(disable : 4996)
-#include "API/APIHelper.h"
 #include "Entry.h"
-#include "Manager/BindAPI.h"
-#include "Manager/EngineData.h"
-#include "Manager/NodeManager.h"
-#include "Utils/Using.h"
-#include "Utils/Util.h"
+#include "api/APIHelper.h"
+#include "manager/BindAPI.h"
+#include "manager/EngineData.h"
+#include "manager/NodeManager.h"
+#include "utils/Using.h"
+#include "utils/Util.h"
 #include <endstone/scheduler/scheduler.h>
 #include <filesystem>
 #include <fmt/core.h>
@@ -15,6 +15,7 @@
 #include <node.h>
 #include <thread>
 #include <uv.h>
+
 
 
 #ifdef _WIN32

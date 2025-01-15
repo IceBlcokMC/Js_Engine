@@ -1,8 +1,9 @@
 #pragma once
-#include "API/Command/CommandSenderAPI.h"
-#include "Utils/Defines.h"
-#include "Utils/Using.h"
+#include "api/command/CommandSenderAPI.h"
 #include "endstone/actor/actor.h"
+#include "utils/Defines.h"
+#include "utils/Using.h"
+
 
 namespace jse {
 

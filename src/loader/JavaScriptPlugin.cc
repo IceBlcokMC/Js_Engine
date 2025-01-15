@@ -1,15 +1,16 @@
-#include "Loader/JavaScriptPlugin.h"
-#include "API/APIHelper.h"
-#include "API/Command/CommandAPI.h"
-#include "API/Command/CommandSenderAPI.h"
+#include "loader/JavaScriptPlugin.h"
 #include "Entry.h"
-#include "Manager/EngineData.h"
-#include "Manager/NodeManager.h"
-#include "Utils/Convert.h"
-#include "Utils/Using.h"
+#include "api/APIHelper.h"
+#include "api/command/CommandAPI.h"
+#include "api/command/CommandSenderAPI.h"
+#include "manager/EngineData.h"
+#include "manager/NodeManager.h"
+#include "utils/Convert.h"
+#include "utils/Using.h"
 #include <endstone/command/command.h>
 #include <endstone/logger.h>
 #include <iostream>
+
 
 namespace jse {
 

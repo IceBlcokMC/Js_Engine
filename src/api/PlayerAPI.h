@@ -1,7 +1,7 @@
 #pragma once
-#include "API/Actor/MobAPI.h"
-#include "Utils/Defines.h"
-#include "Utils/Using.h"
+#include "api/actor/MobAPI.h"
+#include "utils/Defines.h"
+#include "utils/Using.h"
 #include <endstone/player.h>
 
 namespace jse {
@@ -11,10 +11,13 @@ class PlayerAPI : public MobAPI {
 
 public:
     template <typename T>
-    explicit PlayerAPI(endstone::Player* player, ScriptClass::ConstructFromCpp<T> tag) : MobAPI(player, tag),
-                                                                                   mPlayer(player) {}
+    explicit PlayerAPI(endstone::Player* player, ScriptClass::ConstructFromCpp<T> tag)
+    : MobAPI(player, tag),
+      mPlayer(player) {}
 
-    explicit PlayerAPI(endstone::Player* player) : MobAPI(player, ScriptClass::ConstructFromCpp<PlayerAPI>{}), mPlayer(player) {}
+    explicit PlayerAPI(endstone::Player* player)
+    : MobAPI(player, ScriptClass::ConstructFromCpp<PlayerAPI>{}),
+      mPlayer(player) {}
 
     static Local<Object> newPlayerAPI(endstone::Player* player) { return (new PlayerAPI(player))->getScriptObject(); }
 
@@ -60,8 +63,8 @@ public:
     METHODS(getGameVersion);
     METHODS(getSkin); // todo
     METHODS(transfer);
-    METHODS(sendForm); // todo
-    METHODS(closeForm); // todo
+    METHODS(sendForm);   // todo
+    METHODS(closeForm);  // todo
     METHODS(sendPacket); // todo
 
     static ClassDefine<PlayerAPI> builder;

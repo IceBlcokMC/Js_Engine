@@ -1,8 +1,9 @@
-#include "API/PlayerAPI.h"
-#include "API/APIHelper.h"
+#include "api/PlayerAPI.h"
 #include "APIHelper.h"
-#include "Utils/Convert.h"
-#include "Utils/Using.h"
+#include "api/APIHelper.h"
+#include "utils/Convert.h"
+#include "utils/Using.h"
+
 
 namespace jse {
 
@@ -249,9 +250,7 @@ Local<Value> PlayerAPI::resetTitle(Arguments const& args) {
     return Local<Value>();
 }
 
-Local<Value> PlayerAPI::spawnParticle(Arguments const& args) {
-    return Local<Value>();
-}
+Local<Value> PlayerAPI::spawnParticle(Arguments const& args) { return Local<Value>(); }
 
 Local<Value> PlayerAPI::getPing(Arguments const& args) { return ConvertToScriptX(get()->getPing().count()); }
 

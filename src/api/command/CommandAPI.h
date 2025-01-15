@@ -1,7 +1,7 @@
 #pragma once
-#include "API/APIHelper.h"
-#include "Utils/Defines.h"
-#include "Utils/Using.h"
+#include "api/APIHelper.h"
+#include "utils/Defines.h"
+#include "utils/Using.h"
 #include <endstone/command/command.h>
 
 namespace jse {

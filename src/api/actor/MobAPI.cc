@@ -1,6 +1,6 @@
-#include "API/Actor/MobAPI.h"
-#include "Utils/Convert.h"
-#include "Utils/Using.h"
+#include "api/actor/MobAPI.h"
+#include "utils/Convert.h"
+#include "utils/Using.h"
 
 namespace jse {
 

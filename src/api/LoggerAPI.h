@@ -1,12 +1,12 @@
 #pragma once
-#include "Utils/Defines.h"
-#include "Utils/Using.h"
+#include "utils/Defines.h"
+#include "utils/Using.h"
 
 namespace jse {
 
 class LoggerAPI : public ScriptClass {
 public:
-    explicit LoggerAPI() : ScriptClass(ScriptClass::ConstructFromCpp<LoggerAPI>{}){};
+    explicit LoggerAPI() : ScriptClass(ScriptClass::ConstructFromCpp<LoggerAPI>{}) {};
 
     static Local<Object> newLoggerAPI() { return (new LoggerAPI())->getScriptObject(); }
 

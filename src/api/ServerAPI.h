@@ -1,6 +1,6 @@
 #pragma once
-#include "Utils/Defines.h"
-#include "Utils/Using.h"
+#include "utils/Defines.h"
+#include "utils/Using.h"
 #include <endstone/server.h>
 
 namespace jse {
@@ -22,14 +22,14 @@ public:
     METHODS(getName);
     METHODS(getVersion);
     METHODS(getMinecraftVersion);
-    METHODS(getLogger); // todo
-    METHODS(getLanguage); // todo
+    METHODS(getLogger);        // todo
+    METHODS(getLanguage);      // todo
     METHODS(getPluginManager); // todo
     METHODS(getPluginCommand); // todo
     METHODS(getCommandSender); // todo
     METHODS(dispatchCommand);
     METHODS(getScheduler); // todo
-    METHODS(getLevel); // todo
+    METHODS(getLevel);     // todo
     METHODS(getOnlinePlayers);
     METHODS(getMaxPlayers);
     METHODS(setMaxPlayers);
@@ -41,7 +41,7 @@ public:
     METHODS(broadcast);
     METHODS(broadcastMessage);
     METHODS(isPrimaryThread);
-    METHODS(getScoreboard); // todo
+    METHODS(getScoreboard);    // todo
     METHODS(createScoreboard); // todo
     METHODS(getCurrentMillisecondsPerTick);
     METHODS(getAverageMillisecondsPerTick);

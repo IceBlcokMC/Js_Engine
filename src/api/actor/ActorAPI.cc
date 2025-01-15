@@ -1,8 +1,7 @@
 #include "ActorAPI.h"
-#include "API/APIHelper.h"
-#include "API/APIHelper.h"
-#include "Utils/Convert.h"
-#include "Utils/Using.h"
+#include "api/APIHelper.h"
+#include "utils/Convert.h"
+#include "utils/Using.h"
 #include <cstddef>
 #include <sstream>
 
@@ -121,9 +120,7 @@ Local<Value> ActorAPI::removeScoreboardTag(Arguments const& args) try {
 }
 Catch;
 
-Local<Value> ActorAPI::isNameTagVisible(Arguments const& args) {
-    return ConvertToScriptX(get()->isNameTagVisible());
-}
+Local<Value> ActorAPI::isNameTagVisible(Arguments const& args) { return ConvertToScriptX(get()->isNameTagVisible()); }
 
 Local<Value> ActorAPI::setNameTagVisible(Arguments const& args) try {
     CheckArgsCount(args, 1);

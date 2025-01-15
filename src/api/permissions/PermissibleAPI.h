@@ -1,6 +1,6 @@
 #pragma once
-#include "Utils/Defines.h"
-#include "Utils/Using.h"
+#include "utils/Defines.h"
+#include "utils/Using.h"
 #include <endstone/permissions/permissible.h>
 
 namespace jse {

@@ -1,6 +1,6 @@
 #pragma once
-#include "Utils/Defines.h"
-#include "Utils/Using.h"
+#include "utils/Defines.h"
+#include "utils/Using.h"
 
 namespace jse {
 class FileAPI : public ScriptClass {
