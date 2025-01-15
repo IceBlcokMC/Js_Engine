@@ -7,23 +7,23 @@
 
 namespace jse {
 
-Local<Value> PermissionAPI::toString(Arguments const& args) { return ConvertToScriptX("Permission"); }
+Local<Value> PermissionAPI::toString(Arguments const& /* args */) { return ConvertToScriptX("Permission"); }
 
-Local<Value> PermissionAPI::getName(Arguments const& args) {
+Local<Value> PermissionAPI::getName(Arguments const& /* args */) {
     try {
         return ConvertToScriptX(this->mPermission->getName());
     }
     Catch;
 }
 
-Local<Value> PermissionAPI::getChildren(Arguments const& args) {
+Local<Value> PermissionAPI::getChildren(Arguments const& /* args */) {
     try {
         return ConvertToScriptX(this->mPermission->getChildren());
     }
     Catch;
 }
 
-Local<Value> PermissionAPI::getDefault(Arguments const& args) {
+Local<Value> PermissionAPI::getDefault(Arguments const& /* args */) {
     try {
         return ConvertToScriptX(this->mPermission->getDefault());
     }
@@ -38,7 +38,7 @@ Local<Value> PermissionAPI::setDefault(Arguments const& args) {
     Catch;
 }
 
-Local<Value> PermissionAPI::getDescription(Arguments const& args) {
+Local<Value> PermissionAPI::getDescription(Arguments const& /* args */) {
     try {
         return ConvertToScriptX(this->mPermission->getDescription());
     }
@@ -53,7 +53,7 @@ Local<Value> PermissionAPI::setDescription(Arguments const& args) {
     Catch;
 }
 
-Local<Value> PermissionAPI::getPermissibles(Arguments const& args) {
+Local<Value> PermissionAPI::getPermissibles(Arguments const& /* args */) {
     try {
         auto perms = this->mPermission->getPermissibles();
         auto array = Array::newArray(perms.size());
@@ -65,7 +65,7 @@ Local<Value> PermissionAPI::getPermissibles(Arguments const& args) {
     Catch;
 }
 
-Local<Value> PermissionAPI::recalculatePermissibles(Arguments const& args) {
+Local<Value> PermissionAPI::recalculatePermissibles(Arguments const& /* args */) {
     try {
         this->mPermission->recalculatePermissibles();
         return Local<Value>();
@@ -87,7 +87,7 @@ Local<Value> PermissionAPI::addParent(Arguments const& args) {
     Catch;
 }
 
-Local<Value> PermissionAPI::init(Arguments const& args) {
+Local<Value> PermissionAPI::init(Arguments const& /* args */) {
     try {
         // TODO: PluginManager
     }

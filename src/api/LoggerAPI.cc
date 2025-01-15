@@ -1,6 +1,8 @@
 #include "api/LoggerAPI.h"
 #include "api/APIHelper.h"
+#include "endstone/logger.h"
 #include "manager/EngineData.h"
+#include "utils/Convert.h"
 #include <cstddef>
 
 namespace jse {
@@ -41,9 +43,8 @@ void LoggerAPIHelper(endstone::Logger* logger, endstone::Logger::Level level, Ar
 Local<Value> LoggerAPI::toString(Arguments const& /* args */) { return String::newString("<Logger>"); }
 
 Local<Value> LoggerAPI::log(Arguments const& args) {
-    auto level = magic_enum::enum_cast<endstone::Logger::Level>(args[0].asNumber().toInt64());
-    if (!level.has_value()) return Boolean::newBoolean(false);
-    LoggerAPIHelper(get(), *level, args, 1);
+    auto level = ConvertFromScriptX<endstone::Logger::Level>(args[0]);
+    LoggerAPIHelper(get(), level, args, 1);
     return Local<Value>();
 }
 

@@ -10,7 +10,6 @@
 #include <vector>
 
 
-
 namespace jse {
 template <typename T>
 constexpr bool IsReflectable = std::is_aggregate_v<T> && !(requires(T& a) { a.operator[]; });
@@ -143,6 +142,7 @@ void DoReflectConvert(const T& value, Local<Object>& res) {
     });
 }
 // 实现
+#pragma warning(disable : 4702)
 template <typename T>
 Local<Value> ConvertToScriptImpl(const T& value) {
     if constexpr (IsScriptTypeConvertible<T>) {
@@ -154,6 +154,7 @@ Local<Value> ConvertToScriptImpl(const T& value) {
     }
     return Local<Value>();
 }
+#pragma warning(default : 4702)
 
 } // namespace IConvertCppToScriptX
 
@@ -171,7 +172,7 @@ namespace IConvertScriptXToCpp {
 // 基础模板
 template <typename T, typename Enable = void>
 struct FromScriptType {
-    static T Convert(const Local<Value>& value) {
+    static T Convert(const Local<Value>& /* value */) {
         static_assert(sizeof(T) == 0, "Unsupported type conversion");
         return T{};
     }
@@ -230,6 +231,7 @@ struct FromScriptType<std::unordered_map<std::string, V>> {
 };
 
 // enum
+#pragma warning(disable : 4244)
 template <typename T>
 struct FromScriptType<T, std::enable_if_t<std::is_enum_v<T>>> {
     static T Convert(const Local<Value>& value) {
@@ -240,6 +242,7 @@ struct FromScriptType<T, std::enable_if_t<std::is_enum_v<T>>> {
         return enumValue.value();
     }
 };
+#pragma warning(default : 4244)
 
 template <typename T>
 struct FromScriptType<T, std::enable_if_t<IsReflectable<T>>> {

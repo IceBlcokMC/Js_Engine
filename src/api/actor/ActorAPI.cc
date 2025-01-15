@@ -62,49 +62,49 @@ ClassDefine<ActorAPI> ActorAPI::builder =
         .build();
 
 
-Local<Value> ActorAPI::toString(Arguments const& args) { return ConvertToScriptX("<Actor>"); }
+Local<Value> ActorAPI::toString(Arguments const& /* args */) { return ConvertToScriptX("<Actor>"); }
 
-Local<Value> ActorAPI::getType(Arguments const& args) { return ConvertToScriptX(get()->getType()); }
+Local<Value> ActorAPI::getType(Arguments const& /* args */) { return ConvertToScriptX(get()->getType()); }
 
-Local<Value> ActorAPI::getRuntimeId(Arguments const& args) {
+Local<Value> ActorAPI::getRuntimeId(Arguments const& /* args */) {
     return ConvertToScriptX(static_cast<int64_t>(get()->getRuntimeId()));
 }
 
-Local<Value> ActorAPI::getLocation(Arguments const& args) { return Local<Value>(); }
+Local<Value> ActorAPI::getLocation(Arguments const& /* args */) { return Local<Value>(); }
 
-Local<Value> ActorAPI::getVelocity(Arguments const& args) { return Local<Value>(); }
+Local<Value> ActorAPI::getVelocity(Arguments const& /* args */) { return Local<Value>(); }
 
-Local<Value> ActorAPI::isOnGround(Arguments const& args) { return ConvertToScriptX(get()->isOnGround()); }
+Local<Value> ActorAPI::isOnGround(Arguments const& /* args */) { return ConvertToScriptX(get()->isOnGround()); }
 
-Local<Value> ActorAPI::isInWater(Arguments const& args) { return ConvertToScriptX(get()->isInWater()); }
+Local<Value> ActorAPI::isInWater(Arguments const& /* args */) { return ConvertToScriptX(get()->isInWater()); }
 
-Local<Value> ActorAPI::isInLava(Arguments const& args) { return ConvertToScriptX(get()->isInLava()); }
+Local<Value> ActorAPI::isInLava(Arguments const& /* args */) { return ConvertToScriptX(get()->isInLava()); }
 
-Local<Value> ActorAPI::getLevel(Arguments const& args) { return Local<Value>(); }
+Local<Value> ActorAPI::getLevel(Arguments const& /* args */) { return Local<Value>(); }
 
-Local<Value> ActorAPI::getDimension(Arguments const& args) { return Local<Value>(); }
+Local<Value> ActorAPI::getDimension(Arguments const& /* args */) { return Local<Value>(); }
 
-Local<Value> ActorAPI::setRotation(Arguments const& args) { return Local<Value>(); }
+Local<Value> ActorAPI::setRotation(Arguments const& /* args */) { return Local<Value>(); }
 
-Local<Value> ActorAPI::teleport(Arguments const& args) { return Local<Value>(); }
+Local<Value> ActorAPI::teleport(Arguments const& /* args */) { return Local<Value>(); }
 
-Local<Value> ActorAPI::getId(Arguments const& args) { return ConvertToScriptX(get()->getId()); }
+Local<Value> ActorAPI::getId(Arguments const& /* args */) { return ConvertToScriptX(get()->getId()); }
 
-Local<Value> ActorAPI::isDead(Arguments const& args) { return ConvertToScriptX(get()->isDead()); }
+Local<Value> ActorAPI::isDead(Arguments const& /* args */) { return ConvertToScriptX(get()->isDead()); }
 
-Local<Value> ActorAPI::getHealth(Arguments const& args) { return ConvertToScriptX(get()->getHealth()); }
+Local<Value> ActorAPI::getHealth(Arguments const& /* args */) { return ConvertToScriptX(get()->getHealth()); }
 
 Local<Value> ActorAPI::setHealth(Arguments const& args) try {
     CheckArgsCount(args, 1);
     CheckArgType(args[0], ValueKind::kNumber);
-    get()->setHealth(args[0].asNumber().toInt64()).value();
+    get()->setHealth(args[0].asNumber().toInt32()).value();
     return Local<Value>();
 }
 Catch;
 
-Local<Value> ActorAPI::getMaxHealth(Arguments const& args) { return ConvertToScriptX(get()->getMaxHealth()); }
+Local<Value> ActorAPI::getMaxHealth(Arguments const& /* args */) { return ConvertToScriptX(get()->getMaxHealth()); }
 
-Local<Value> ActorAPI::getScoreboardTags(Arguments const& args) { return ConvertToScriptX(get()->getScoreboardTags()); }
+Local<Value> ActorAPI::getScoreboardTags(Arguments const& /* args */) { return ConvertToScriptX(get()->getScoreboardTags()); }
 
 Local<Value> ActorAPI::addScoreboardTag(Arguments const& args) try {
     CheckArgsCount(args, 1);
@@ -120,7 +120,7 @@ Local<Value> ActorAPI::removeScoreboardTag(Arguments const& args) try {
 }
 Catch;
 
-Local<Value> ActorAPI::isNameTagVisible(Arguments const& args) { return ConvertToScriptX(get()->isNameTagVisible()); }
+Local<Value> ActorAPI::isNameTagVisible(Arguments const& /* args */) { return ConvertToScriptX(get()->isNameTagVisible()); }
 
 Local<Value> ActorAPI::setNameTagVisible(Arguments const& args) try {
     CheckArgsCount(args, 1);
@@ -130,7 +130,7 @@ Local<Value> ActorAPI::setNameTagVisible(Arguments const& args) try {
 }
 Catch;
 
-Local<Value> ActorAPI::isNameTagAlwaysVisible(Arguments const& args) {
+Local<Value> ActorAPI::isNameTagAlwaysVisible(Arguments const& /* args */) {
     return ConvertToScriptX(get()->isNameTagAlwaysVisible());
 }
 
@@ -142,7 +142,7 @@ Local<Value> ActorAPI::setNameTagAlwaysVisible(Arguments const& args) try {
 }
 Catch;
 
-Local<Value> ActorAPI::getNameTag(Arguments const& args) { return String::newString(get()->getNameTag()); }
+Local<Value> ActorAPI::getNameTag(Arguments const& /* args */) { return String::newString(get()->getNameTag()); }
 
 Local<Value> ActorAPI::setNameTag(Arguments const& args) try {
     CheckArgsCount(args, 1);
@@ -152,7 +152,7 @@ Local<Value> ActorAPI::setNameTag(Arguments const& args) try {
 }
 Catch;
 
-Local<Value> ActorAPI::getScoreTag(Arguments const& args) { return String::newString(get()->getScoreTag()); }
+Local<Value> ActorAPI::getScoreTag(Arguments const& /* args */) { return String::newString(get()->getScoreTag()); }
 
 Local<Value> ActorAPI::setScoreTag(Arguments const& args) try {
     CheckArgsCount(args, 1);

@@ -51,15 +51,17 @@ Local<Value> JSEAPI::debug(Arguments const& args) {
 Local<Value> JSEAPI::isWindows(const Arguments& /* args */) {
 #if defined(_WIN32) || defined(WIN32)
     return Boolean::newBoolean(true);
-#endif
+#else
     return Boolean::newBoolean(false);
+#endif
 }
 
 Local<Value> JSEAPI::isLinux(const Arguments& /* args */) {
 #if defined(__linux__)
     return Boolean::newBoolean(true);
-#endif
+#else
     return Boolean::newBoolean(false);
+#endif
 }
 
 } // namespace jse

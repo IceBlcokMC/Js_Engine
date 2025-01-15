@@ -37,18 +37,18 @@ ClassDefine<CommandSenderAPI> CommandSenderAPI::builder =
         .build();
 
 
-Local<Value> CommandSenderAPI::toString(Arguments const& args) { return ConvertToScriptX("<CommandSender>"); }
+Local<Value> CommandSenderAPI::toString(Arguments const& /* args */) { return ConvertToScriptX("<CommandSender>"); }
 
-// Local<Value> CommandSenderAPI::asCommandSender(Arguments const& args) {}
+// Local<Value> CommandSenderAPI::asCommandSender(Arguments const& /* args */) {}
 
-Local<Value> CommandSenderAPI::asConsole(Arguments const& args) { return Local<Value>(); }
+Local<Value> CommandSenderAPI::asConsole(Arguments const& /* args */) { return Local<Value>(); }
 
-Local<Value> CommandSenderAPI::asActor(Arguments const& args) {
+Local<Value> CommandSenderAPI::asActor(Arguments const& /* args */) {
     if (mSender->asActor() == nullptr) return Local<Value>();
     return ActorAPI::newActorAPI(mSender->asActor());
 }
 
-Local<Value> CommandSenderAPI::asPlayer(Arguments const& args) {
+Local<Value> CommandSenderAPI::asPlayer(Arguments const& /* args */) {
     if (mSender->asPlayer() == nullptr) return Local<Value>();
     return PlayerAPI::newPlayerAPI(mSender->asPlayer());
 }
@@ -73,9 +73,9 @@ Local<Value> CommandSenderAPI::sendErrorMessage(Arguments const& args) {
     Catch;
 }
 
-Local<Value> CommandSenderAPI::getServer(Arguments const& args) { return Local<Value>(); }
+Local<Value> CommandSenderAPI::getServer(Arguments const& /* args */) { return Local<Value>(); }
 
-Local<Value> CommandSenderAPI::getName(Arguments const& args) {
+Local<Value> CommandSenderAPI::getName(Arguments const& /* args */) {
     try {
         return ConvertToScriptX(this->mSender->getName());
     }

@@ -104,13 +104,13 @@ ClassDefine<PlayerAPI> PlayerAPI::builder =
         .build();
 
 
-Local<Value> PlayerAPI::toString(Arguments const& args) { return ConvertToScriptX("<Player>"); }
+Local<Value> PlayerAPI::toString(Arguments const& /* args */) { return ConvertToScriptX("<Player>"); }
 
-Local<Value> PlayerAPI::getUniqueId(Arguments const& args) { return ConvertToScriptX(get()->getUniqueId().str()); }
+Local<Value> PlayerAPI::getUniqueId(Arguments const& /* args */) { return ConvertToScriptX(get()->getUniqueId().str()); }
 
-Local<Value> PlayerAPI::getXuid(Arguments const& args) { return ConvertToScriptX(get()->getXuid()); }
+Local<Value> PlayerAPI::getXuid(Arguments const& /* args */) { return ConvertToScriptX(get()->getXuid()); }
 
-Local<Value> PlayerAPI::getAddress(Arguments const& args) {
+Local<Value> PlayerAPI::getAddress(Arguments const& /* args */) {
     auto result  = Object::newObject();
     auto address = get()->getAddress();
     result.set("host", ConvertToScriptX(address.getHostname()));
@@ -150,18 +150,18 @@ Local<Value> PlayerAPI::kick(Arguments const& args) {
 Local<Value> PlayerAPI::giveExp(Arguments const& args) {
     CheckArgsCount(args, 1);
     CheckArgType(args[0], ValueKind::kNumber);
-    get()->giveExp(args[0].asNumber().toInt64());
+    get()->giveExp(args[0].asNumber().toInt32());
     return Local<Value>();
 }
 
 Local<Value> PlayerAPI::giveExpLevels(Arguments const& args) {
     CheckArgsCount(args, 1);
     CheckArgType(args[0], ValueKind::kNumber);
-    get()->giveExpLevels(args[0].asNumber().toInt64());
+    get()->giveExpLevels(args[0].asNumber().toInt32());
     return Local<Value>();
 }
 
-Local<Value> PlayerAPI::getExpProgress(Arguments const& args) { return ConvertToScriptX(get()->getExpProgress()); }
+Local<Value> PlayerAPI::getExpProgress(Arguments const& /* args */) { return ConvertToScriptX(get()->getExpProgress()); }
 
 Local<Value> PlayerAPI::setExpProgress(Arguments const& args) {
     CheckArgsCount(args, 1);
@@ -170,18 +170,18 @@ Local<Value> PlayerAPI::setExpProgress(Arguments const& args) {
     return Local<Value>();
 }
 
-Local<Value> PlayerAPI::getExpLevel(Arguments const& args) { return ConvertToScriptX(get()->getExpLevel()); }
+Local<Value> PlayerAPI::getExpLevel(Arguments const& /* args */) { return ConvertToScriptX(get()->getExpLevel()); }
 
 Local<Value> PlayerAPI::setExpLevel(Arguments const& args) {
     CheckArgsCount(args, 1);
     CheckArgType(args[0], ValueKind::kNumber);
-    get()->setExpLevel(args[0].asNumber().toInt64());
+    get()->setExpLevel(args[0].asNumber().toInt32());
     return Local<Value>();
 }
 
-Local<Value> PlayerAPI::getTotalExp(Arguments const& args) { return ConvertToScriptX(get()->getTotalExp()); }
+Local<Value> PlayerAPI::getTotalExp(Arguments const& /* args */) { return ConvertToScriptX(get()->getTotalExp()); }
 
-Local<Value> PlayerAPI::getAllowFlight(Arguments const& args) { return ConvertToScriptX(get()->getAllowFlight()); }
+Local<Value> PlayerAPI::getAllowFlight(Arguments const& /* args */) { return ConvertToScriptX(get()->getAllowFlight()); }
 
 Local<Value> PlayerAPI::setAllowFlight(Arguments const& args) {
     CheckArgsCount(args, 1);
@@ -190,7 +190,7 @@ Local<Value> PlayerAPI::setAllowFlight(Arguments const& args) {
     return Local<Value>();
 }
 
-Local<Value> PlayerAPI::isFlying(Arguments const& args) { return ConvertToScriptX(get()->isFlying()); }
+Local<Value> PlayerAPI::isFlying(Arguments const& /* args */) { return ConvertToScriptX(get()->isFlying()); }
 
 Local<Value> PlayerAPI::setFlying(Arguments const& args) {
     CheckArgsCount(args, 1);
@@ -199,7 +199,7 @@ Local<Value> PlayerAPI::setFlying(Arguments const& args) {
     return Local<Value>();
 }
 
-Local<Value> PlayerAPI::getFlySpeed(Arguments const& args) { return ConvertToScriptX(get()->getFlySpeed()); }
+Local<Value> PlayerAPI::getFlySpeed(Arguments const& /* args */) { return ConvertToScriptX(get()->getFlySpeed()); }
 
 Local<Value> PlayerAPI::setFlySpeed(Arguments const& args) {
     CheckArgsCount(args, 1);
@@ -208,7 +208,7 @@ Local<Value> PlayerAPI::setFlySpeed(Arguments const& args) {
     return Local<Value>();
 }
 
-Local<Value> PlayerAPI::getWalkSpeed(Arguments const& args) { return ConvertToScriptX(get()->getWalkSpeed()); }
+Local<Value> PlayerAPI::getWalkSpeed(Arguments const& /* args */) { return ConvertToScriptX(get()->getWalkSpeed()); }
 
 Local<Value> PlayerAPI::setWalkSpeed(Arguments const& args) {
     CheckArgsCount(args, 1);
@@ -217,9 +217,9 @@ Local<Value> PlayerAPI::setWalkSpeed(Arguments const& args) {
     return Local<Value>();
 }
 
-Local<Value> PlayerAPI::getScoreboard(Arguments const& args) { return Local<Value>(); }
+Local<Value> PlayerAPI::getScoreboard(Arguments const& /* args */) { return Local<Value>(); }
 
-Local<Value> PlayerAPI::setScoreboard(Arguments const& args) { return Local<Value>(); }
+Local<Value> PlayerAPI::setScoreboard(Arguments const& /* args */) { return Local<Value>(); }
 
 Local<Value> PlayerAPI::sendTitle(Arguments const& args) {
     CheckArgsCount(args, 2);
@@ -237,24 +237,24 @@ Local<Value> PlayerAPI::sendTitle(Arguments const& args) {
         get()->sendTitle(
             args[0].asString().toString(),
             args[1].asString().toString(),
-            args[2].asNumber().toInt64(),
-            args[3].asNumber().toInt64(),
-            args[4].asNumber().toInt64()
+            args[2].asNumber().toInt32(),
+            args[3].asNumber().toInt32(),
+            args[4].asNumber().toInt32()
         );
     }
     return Local<Value>();
 }
 
-Local<Value> PlayerAPI::resetTitle(Arguments const& args) {
+Local<Value> PlayerAPI::resetTitle(Arguments const& /* args */) {
     get()->resetTitle();
     return Local<Value>();
 }
 
-Local<Value> PlayerAPI::spawnParticle(Arguments const& args) { return Local<Value>(); }
+Local<Value> PlayerAPI::spawnParticle(Arguments const& /* args */) { return Local<Value>(); }
 
-Local<Value> PlayerAPI::getPing(Arguments const& args) { return ConvertToScriptX(get()->getPing().count()); }
+Local<Value> PlayerAPI::getPing(Arguments const& /* args */) { return ConvertToScriptX(get()->getPing().count()); }
 
-Local<Value> PlayerAPI::updateCommands(Arguments const& args) {
+Local<Value> PlayerAPI::updateCommands(Arguments const& /* args */) {
     get()->updateCommands();
     return Local<Value>();
 }
@@ -265,7 +265,7 @@ Local<Value> PlayerAPI::performCommand(Arguments const& args) {
     return ConvertToScriptX(get()->performCommand(args[0].asString().toString()));
 }
 
-Local<Value> PlayerAPI::getGameMode(Arguments const& args) { return ConvertToScriptX(get()->getGameMode()); }
+Local<Value> PlayerAPI::getGameMode(Arguments const& /* args */) { return ConvertToScriptX(get()->getGameMode()); }
 
 Local<Value> PlayerAPI::setGameMode(Arguments const& args) {
     CheckArgsCount(args, 1);
@@ -274,30 +274,30 @@ Local<Value> PlayerAPI::setGameMode(Arguments const& args) {
     return Local<Value>();
 }
 
-Local<Value> PlayerAPI::getInventory(Arguments const& args) { return Local<Value>(); }
+Local<Value> PlayerAPI::getInventory(Arguments const& /* args */) { return Local<Value>(); }
 
-Local<Value> PlayerAPI::getLocale(Arguments const& args) { return ConvertToScriptX(get()->getLocale()); }
+Local<Value> PlayerAPI::getLocale(Arguments const& /* args */) { return ConvertToScriptX(get()->getLocale()); }
 
-Local<Value> PlayerAPI::getDeviceOS(Arguments const& args) { return ConvertToScriptX(get()->getDeviceOS()); }
+Local<Value> PlayerAPI::getDeviceOS(Arguments const& /* args */) { return ConvertToScriptX(get()->getDeviceOS()); }
 
-Local<Value> PlayerAPI::getDeviceId(Arguments const& args) { return ConvertToScriptX(get()->getDeviceId()); }
+Local<Value> PlayerAPI::getDeviceId(Arguments const& /* args */) { return ConvertToScriptX(get()->getDeviceId()); }
 
-Local<Value> PlayerAPI::getGameVersion(Arguments const& args) { return ConvertToScriptX(get()->getGameVersion()); }
+Local<Value> PlayerAPI::getGameVersion(Arguments const& /* args */) { return ConvertToScriptX(get()->getGameVersion()); }
 
-Local<Value> PlayerAPI::getSkin(Arguments const& args) { return Local<Value>(); }
+Local<Value> PlayerAPI::getSkin(Arguments const& /* args */) { return Local<Value>(); }
 
 Local<Value> PlayerAPI::transfer(Arguments const& args) {
     CheckArgsCount(args, 2);
     CheckArgType(args[0], ValueKind::kString);
     CheckArgType(args[1], ValueKind::kNumber);
-    get()->transfer(args[0].asString().toString(), args[1].asNumber().toInt64());
+    get()->transfer(args[0].asString().toString(), args[1].asNumber().toInt32());
     return Local<Value>();
 }
 
-Local<Value> PlayerAPI::sendForm(Arguments const& args) { return Local<Value>(); }
+Local<Value> PlayerAPI::sendForm(Arguments const& /* args */) { return Local<Value>(); }
 
-Local<Value> PlayerAPI::closeForm(Arguments const& args) { return Local<Value>(); }
+Local<Value> PlayerAPI::closeForm(Arguments const& /* args */) { return Local<Value>(); }
 
-Local<Value> PlayerAPI::sendPacket(Arguments const& args) { return Local<Value>(); }
+Local<Value> PlayerAPI::sendPacket(Arguments const& /* args */) { return Local<Value>(); }
 
 } // namespace jse

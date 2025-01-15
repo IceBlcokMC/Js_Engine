@@ -17,7 +17,6 @@
 #include <uv.h>
 
 
-
 #ifdef _WIN32
 #include <Windows.h>
 #include <shellapi.h>
@@ -28,6 +27,7 @@
 
 namespace jse {
 
+#pragma warning(disable : 4267)
 #ifdef _WIN32
 #pragma comment(lib, "Shell32.lib")
 std::string wstr2str(const std::wstring& ws) {
@@ -65,6 +65,7 @@ std::vector<std::string> GetArgs() {
     return res;
 }
 #endif
+#pragma warning(default : 4267)
 
 NodeManager& NodeManager::getInstance() {
     static NodeManager instance;
@@ -166,8 +167,7 @@ EngineWrapper* NodeManager::newScriptEngine() {
         return nullptr;
     }
 
-    v8::Isolate*       isolate = envSetup->isolate();
-    node::Environment* env     = envSetup->env();
+    v8::Isolate* isolate = envSetup->isolate();
 
     v8::Locker         locker(isolate);
     v8::Isolate::Scope isolateScope(isolate);
@@ -286,7 +286,7 @@ bool NodeManager::NpmInstall(string npmExecuteDir) {
 
     bool success = false;
     try {
-        node::SetProcessExitHandler(env, [&](node::Environment* env_, int exit_code) { node::Stop(env); });
+        node::SetProcessExitHandler(env, [&](node::Environment* /* env_ */, int /* exit_code */) { node::Stop(env); });
         v8::MaybeLocal<v8::Value> loadValue = node::LoadEnvironment(env, compiler.c_str());
         if (loadValue.IsEmpty()) {
             throw std::runtime_error("Failed to load environment");

@@ -21,7 +21,7 @@ ClassDefine<FileAPI> FileAPI::builder = defineClass<FileAPI>("FileAPI")
                                             .function("listDirectory", &FileAPI::listDirectory)
                                             .build();
 
-Local<Value> FileAPI::toString(Arguments const& args) { return String::newString("FileAPI"); }
+Local<Value> FileAPI::toString(Arguments const& /* args */) { return String::newString("FileAPI"); }
 
 Local<Value> FileAPI::readFile(Arguments const& args) {
     CheckArgsCount(args, 1);

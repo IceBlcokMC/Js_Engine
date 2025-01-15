@@ -30,9 +30,9 @@ ClassDefine<PermissibleAPI> PermissibleAPI::builder =
         .build();
 
 
-Local<Value> PermissibleAPI::toString(Arguments const& args) { return ConvertToScriptX("<Permissible>"); };
+Local<Value> PermissibleAPI::toString(Arguments const& /* args */) { return ConvertToScriptX("<Permissible>"); };
 
-Local<Value> PermissibleAPI::isOP(Arguments const& args) {
+Local<Value> PermissibleAPI::isOP(Arguments const& /* args */) {
     try {
         return ConvertToScriptX(this->mPermissible->isOp());
     }
@@ -101,7 +101,7 @@ Local<Value> PermissibleAPI::addAttachment(Arguments const& args) {
     Catch;
 }
 
-Local<Value> PermissibleAPI::removeAttachment(Arguments const& args) {
+Local<Value> PermissibleAPI::removeAttachment(Arguments const& /* args */) {
     try {
         // TODO: PermissionAttachment
         return Local<Value>();
@@ -109,7 +109,7 @@ Local<Value> PermissibleAPI::removeAttachment(Arguments const& args) {
     Catch;
 }
 
-Local<Value> PermissibleAPI::recalculatePermissions(Arguments const& args) {
+Local<Value> PermissibleAPI::recalculatePermissions(Arguments const& /* args */) {
     try {
         this->mPermissible->recalculatePermissions();
         return Local<Value>();
@@ -117,7 +117,7 @@ Local<Value> PermissibleAPI::recalculatePermissions(Arguments const& args) {
     Catch;
 }
 
-Local<Value> PermissibleAPI::getEffectivePermissions(Arguments const& args) {
+Local<Value> PermissibleAPI::getEffectivePermissions(Arguments const& /* args */) {
     try {
         // TODO: PermissionAttachmentInfo
         return Local<Value>();
@@ -125,7 +125,7 @@ Local<Value> PermissibleAPI::getEffectivePermissions(Arguments const& args) {
     Catch;
 }
 
-Local<Value> PermissibleAPI::asCommandSender(Arguments const& args) {
+Local<Value> PermissibleAPI::asCommandSender(Arguments const& /* args */) {
     try {
         // TODO: CommandSender
         return Local<Value>();

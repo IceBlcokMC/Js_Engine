@@ -60,8 +60,8 @@ ClassDefine<MobAPI> MobAPI::builder =
         .build();
 
 
-Local<Value> MobAPI::toString(Arguments const& args) { return ConvertToScriptX("<Mob>"); }
+Local<Value> MobAPI::toString(Arguments const& /* args */) { return ConvertToScriptX("<Mob>"); }
 
-Local<Value> MobAPI::isGliding(Arguments const& args) { return ConvertToScriptX(get()->isGliding()); }
+Local<Value> MobAPI::isGliding(Arguments const& /* args */) { return ConvertToScriptX(get()->isGliding()); }
 
 } // namespace jse

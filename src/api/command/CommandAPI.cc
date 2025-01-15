@@ -32,7 +32,7 @@ ClassDefine<CommandAPI> CommandAPI::builder =
         .build();
 
 
-Local<Value> CommandAPI::toString(Arguments const& args) { return ConvertToScriptX("<Command>"); }
+Local<Value> CommandAPI::toString(Arguments const& /* args */) { return ConvertToScriptX("<Command>"); }
 
 Local<Value> CommandAPI::execute(Arguments const& args) {
     try {
@@ -47,7 +47,7 @@ Local<Value> CommandAPI::execute(Arguments const& args) {
     Catch;
 }
 
-Local<Value> CommandAPI::getName(Arguments const& args) {
+Local<Value> CommandAPI::getName(Arguments const& /* args */) {
     try {
         return ConvertToScriptX(this->mCommand->getName());
     }
@@ -62,7 +62,7 @@ Local<Value> CommandAPI::setName(Arguments const& args) {
     Catch;
 }
 
-Local<Value> CommandAPI::getDescription(Arguments const& args) {
+Local<Value> CommandAPI::getDescription(Arguments const& /* args */) {
     try {
         return ConvertToScriptX(this->mCommand->getDescription());
     }
@@ -77,7 +77,7 @@ Local<Value> CommandAPI::setDescription(Arguments const& args) {
     Catch;
 }
 
-Local<Value> CommandAPI::getAliases(Arguments const& args) {
+Local<Value> CommandAPI::getAliases(Arguments const& /* args */) {
     try {
         return ConvertToScriptX(this->mCommand->getAliases());
     }
@@ -92,7 +92,7 @@ Local<Value> CommandAPI::setAliases(Arguments const& args) {
     Catch;
 }
 
-Local<Value> CommandAPI::getUsages(Arguments const& args) {
+Local<Value> CommandAPI::getUsages(Arguments const& /* args */) {
     try {
         return ConvertToScriptX(this->mCommand->getUsages());
     }
@@ -107,7 +107,7 @@ Local<Value> CommandAPI::setUsages(Arguments const& args) {
     Catch;
 }
 
-Local<Value> CommandAPI::getPermissions(Arguments const& args) {
+Local<Value> CommandAPI::getPermissions(Arguments const& /* args */) {
     try {
         return ConvertToScriptX(this->mCommand->getPermissions());
     }
@@ -143,28 +143,28 @@ Local<Value> CommandAPI::testPermissionSilently(Arguments const& args) {
     Catch;
 }
 
-Local<Value> CommandAPI::registerTo(Arguments const& args) {
+Local<Value> CommandAPI::registerTo(Arguments const& /* args */) {
     try {
         // TODO: CommandMap
     }
     Catch;
 }
 
-Local<Value> CommandAPI::unregisterFrom(Arguments const& args) {
+Local<Value> CommandAPI::unregisterFrom(Arguments const& /* args */) {
     try {
         // TODO: CommandMap
     }
     Catch;
 }
 
-Local<Value> CommandAPI::isRegistered(Arguments const& args) {
+Local<Value> CommandAPI::isRegistered(Arguments const& /* args */) {
     try {
         return ConvertToScriptX(this->mCommand->isRegistered());
     }
     Catch;
 }
 
-Local<Value> CommandAPI::asPluginCommand(Arguments const& args) {
+Local<Value> CommandAPI::asPluginCommand(Arguments const& /* args */) {
     try {
         // TODO: PluginCommand
     }

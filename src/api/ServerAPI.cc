@@ -52,25 +52,25 @@ ClassDefine<ServerAPI> ServerAPI::builder =
         .property("BroadcastChannelUser", []() { return ConvertToScriptX(endstone::Server::BroadcastChannelUser); })
         .build();
 
-Local<Value> ServerAPI::toString(Arguments const& args) { return ConvertToScriptX("<Server>"); }
+Local<Value> ServerAPI::toString(Arguments const& /* args */) { return ConvertToScriptX("<Server>"); }
 
-Local<Value> ServerAPI::getName(Arguments const& args) { return ConvertToScriptX(get()->getName()); }
+Local<Value> ServerAPI::getName(Arguments const& /* args */) { return ConvertToScriptX(get()->getName()); }
 
-Local<Value> ServerAPI::getVersion(Arguments const& args) { return ConvertToScriptX(get()->getVersion()); }
+Local<Value> ServerAPI::getVersion(Arguments const& /* args */) { return ConvertToScriptX(get()->getVersion()); }
 
-Local<Value> ServerAPI::getMinecraftVersion(Arguments const& args) {
+Local<Value> ServerAPI::getMinecraftVersion(Arguments const& /* args */) {
     return ConvertToScriptX(get()->getMinecraftVersion());
 }
 
-Local<Value> ServerAPI::getLogger(Arguments const& args) { return Local<Value>(); }
+Local<Value> ServerAPI::getLogger(Arguments const& /* args */) { return Local<Value>(); }
 
-Local<Value> ServerAPI::getLanguage(Arguments const& args) { return Local<Value>(); }
+Local<Value> ServerAPI::getLanguage(Arguments const& /* args */) { return Local<Value>(); }
 
-Local<Value> ServerAPI::getPluginManager(Arguments const& args) { return Local<Value>(); }
+Local<Value> ServerAPI::getPluginManager(Arguments const& /* args */) { return Local<Value>(); }
 
-Local<Value> ServerAPI::getPluginCommand(Arguments const& args) { return Local<Value>(); }
+Local<Value> ServerAPI::getPluginCommand(Arguments const& /* args */) { return Local<Value>(); }
 
-Local<Value> ServerAPI::getCommandSender(Arguments const& args) { return Local<Value>(); }
+Local<Value> ServerAPI::getCommandSender(Arguments const& /* args */) { return Local<Value>(); }
 
 Local<Value> ServerAPI::dispatchCommand(Arguments const& args) try {
     CheckArgsCount(args, 2);
@@ -83,11 +83,11 @@ Local<Value> ServerAPI::dispatchCommand(Arguments const& args) try {
 }
 Catch;
 
-Local<Value> ServerAPI::getScheduler(Arguments const& args) { return Local<Value>(); }
+Local<Value> ServerAPI::getScheduler(Arguments const& /* args */) { return Local<Value>(); }
 
-Local<Value> ServerAPI::getLevel(Arguments const& args) { return Local<Value>(); }
+Local<Value> ServerAPI::getLevel(Arguments const& /* args */) { return Local<Value>(); }
 
-Local<Value> ServerAPI::getOnlinePlayers(Arguments const& args) {
+Local<Value> ServerAPI::getOnlinePlayers(Arguments const& /* args */) {
     auto result = Array::newArray();
     for (auto* player : get()->getOnlinePlayers()) {
         result.add(PlayerAPI::newPlayerAPI(player));
@@ -95,7 +95,7 @@ Local<Value> ServerAPI::getOnlinePlayers(Arguments const& args) {
     return result;
 }
 
-Local<Value> ServerAPI::getMaxPlayers(Arguments const& args) { return ConvertToScriptX(get()->getMaxPlayers()); }
+Local<Value> ServerAPI::getMaxPlayers(Arguments const& /* args */) { return ConvertToScriptX(get()->getMaxPlayers()); }
 
 Local<Value> ServerAPI::setMaxPlayers(Arguments const& args) {
     CheckArgsCount(args, 1);
@@ -111,19 +111,19 @@ Local<Value> ServerAPI::getPlayer(Arguments const& args) {
     return player ? PlayerAPI::newPlayerAPI(player) : Local<Value>();
 }
 
-Local<Value> ServerAPI::getOnlineMode(Arguments const& args) { return ConvertToScriptX(get()->getOnlineMode()); }
+Local<Value> ServerAPI::getOnlineMode(Arguments const& /* args */) { return ConvertToScriptX(get()->getOnlineMode()); }
 
-Local<Value> ServerAPI::shutdown(Arguments const& args) {
+Local<Value> ServerAPI::shutdown(Arguments const& /* args */) {
     get()->shutdown();
     return Local<Value>();
 }
 
-Local<Value> ServerAPI::reload(Arguments const& args) {
+Local<Value> ServerAPI::reload(Arguments const& /* args */) {
     get()->reload();
     return Local<Value>();
 }
 
-Local<Value> ServerAPI::reloadData(Arguments const& args) {
+Local<Value> ServerAPI::reloadData(Arguments const& /* args */) {
     get()->reloadData();
     return Local<Value>();
 }
@@ -143,46 +143,46 @@ Local<Value> ServerAPI::broadcastMessage(Arguments const& args) {
     return Local<Value>();
 }
 
-Local<Value> ServerAPI::isPrimaryThread(Arguments const& args) { return ConvertToScriptX(get()->isPrimaryThread()); }
+Local<Value> ServerAPI::isPrimaryThread(Arguments const& /* args */) { return ConvertToScriptX(get()->isPrimaryThread()); }
 
-Local<Value> ServerAPI::getScoreboard(Arguments const& args) { return Local<Value>(); }
+Local<Value> ServerAPI::getScoreboard(Arguments const& /* args */) { return Local<Value>(); }
 
-Local<Value> ServerAPI::createScoreboard(Arguments const& args) { return Local<Value>(); }
+Local<Value> ServerAPI::createScoreboard(Arguments const& /* args */) { return Local<Value>(); }
 
-Local<Value> ServerAPI::getCurrentMillisecondsPerTick(Arguments const& args) {
+Local<Value> ServerAPI::getCurrentMillisecondsPerTick(Arguments const& /* args */) {
     return ConvertToScriptX(get()->getCurrentMillisecondsPerTick());
 }
 
-Local<Value> ServerAPI::getAverageMillisecondsPerTick(Arguments const& args) {
+Local<Value> ServerAPI::getAverageMillisecondsPerTick(Arguments const& /* args */) {
     return ConvertToScriptX(get()->getAverageMillisecondsPerTick());
 }
 
-Local<Value> ServerAPI::getCurrentTicksPerSecond(Arguments const& args) {
+Local<Value> ServerAPI::getCurrentTicksPerSecond(Arguments const& /* args */) {
     return ConvertToScriptX(get()->getCurrentTicksPerSecond());
 }
 
-Local<Value> ServerAPI::getAverageTicksPerSecond(Arguments const& args) {
+Local<Value> ServerAPI::getAverageTicksPerSecond(Arguments const& /* args */) {
     return ConvertToScriptX(get()->getAverageTicksPerSecond());
 }
 
-Local<Value> ServerAPI::getCurrentTickUsage(Arguments const& args) {
+Local<Value> ServerAPI::getCurrentTickUsage(Arguments const& /* args */) {
     return ConvertToScriptX(get()->getCurrentTickUsage());
 }
 
-Local<Value> ServerAPI::getAverageTickUsage(Arguments const& args) {
+Local<Value> ServerAPI::getAverageTickUsage(Arguments const& /* args */) {
     return ConvertToScriptX(get()->getAverageTickUsage());
 }
 
-Local<Value> ServerAPI::getStartTime(Arguments const& args) {
+Local<Value> ServerAPI::getStartTime(Arguments const& /* args */) {
     return ConvertToScriptX(get()->getStartTime().time_since_epoch().count());
 }
 
-Local<Value> ServerAPI::createBossBar(Arguments const& args) { return Local<Value>(); }
+Local<Value> ServerAPI::createBossBar(Arguments const& /* args */) { return Local<Value>(); }
 
-Local<Value> ServerAPI::createBlockData(Arguments const& args) { return Local<Value>(); }
+Local<Value> ServerAPI::createBlockData(Arguments const& /* args */) { return Local<Value>(); }
 
-Local<Value> ServerAPI::getBanList(Arguments const& args) { return Local<Value>(); }
+Local<Value> ServerAPI::getBanList(Arguments const& /* args */) { return Local<Value>(); }
 
-Local<Value> ServerAPI::getIpBanList(Arguments const& args) { return Local<Value>(); }
+Local<Value> ServerAPI::getIpBanList(Arguments const& /* args */) { return Local<Value>(); }
 
 } // namespace jse
