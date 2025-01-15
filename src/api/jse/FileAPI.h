@@ -10,8 +10,6 @@ public:
     static Local<Object> newFileAPI() { return (new FileAPI())->getScriptObject(); }
 
 public:
-    METHODS(toString);
-
     static METHODS(readFile);
 
     static METHODS(writeFile);
@@ -34,6 +32,6 @@ public:
 
     static METHODS(listDirectory);
 
-    static ClassDefine<FileAPI> builder;
+    static ClassDefine<void> builder;
 };
 } // namespace jse

@@ -5,23 +5,20 @@
 
 namespace jse {
 
-ClassDefine<FileAPI> FileAPI::builder = defineClass<FileAPI>("FileAPI")
-                                            .constructor(nullptr)
-                                            .instanceFunction("toString", &FileAPI::toString)
-                                            .function("readFile", &FileAPI::readFile)
-                                            .function("writeFile", &FileAPI::writeFile)
-                                            .function("createDirectory", &FileAPI::createDirectory)
-                                            .function("copyFile", &FileAPI::copyFile)
-                                            .function("moveFile", &FileAPI::moveFile)
-                                            .function("delete", &FileAPI::del)
-                                            .function("exists", &FileAPI::exists)
-                                            .function("isDirectory", &FileAPI::isDirectory)
-                                            .function("isFile", &FileAPI::isFile)
-                                            .function("getFileSize", &FileAPI::getFileSize)
-                                            .function("listDirectory", &FileAPI::listDirectory)
-                                            .build();
+ClassDefine<void> FileAPI::builder = defineClass("FileAPI")
+                                         .function("readFile", &FileAPI::readFile)
+                                         .function("writeFile", &FileAPI::writeFile)
+                                         .function("createDirectory", &FileAPI::createDirectory)
+                                         .function("copyFile", &FileAPI::copyFile)
+                                         .function("moveFile", &FileAPI::moveFile)
+                                         .function("delete", &FileAPI::del)
+                                         .function("exists", &FileAPI::exists)
+                                         .function("isDirectory", &FileAPI::isDirectory)
+                                         .function("isFile", &FileAPI::isFile)
+                                         .function("getFileSize", &FileAPI::getFileSize)
+                                         .function("listDirectory", &FileAPI::listDirectory)
+                                         .build();
 
-Local<Value> FileAPI::toString(Arguments const& /* args */) { return String::newString("FileAPI"); }
 
 Local<Value> FileAPI::readFile(Arguments const& args) {
     CheckArgsCount(args, 1);

@@ -24,7 +24,7 @@ inline void BindAPI(ScriptEngine* engine) {
 
     // static class
     engine->registerNativeClass(JSEAPI::builder);
-    engine->registerNativeClass<FileAPI>(FileAPI::builder);
+    engine->registerNativeClass(FileAPI::builder);
 
     // instance class
     engine->registerNativeClass<PluginAPI>(PluginAPI::builder);
