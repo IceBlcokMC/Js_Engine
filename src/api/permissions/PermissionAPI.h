@@ -19,6 +19,7 @@ public:
 
     endstone::Permission* get() { return mPermission; }
 
+public:
     METHODS(toString);
     METHODS(getName);
     METHODS(getChildren);
@@ -30,6 +31,8 @@ public:
     METHODS(recalculatePermissibles);
     METHODS(addParent);
     METHODS(init);
+
+    static ClassDefine<PermissionAPI> builder;
 };
 
 

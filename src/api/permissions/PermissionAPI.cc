@@ -3,9 +3,27 @@
 #include "api/permissions/PermissibleAPI.h"
 #include "utils/Convert.h"
 #include "utils/Defines.h"
+#include "utils/Using.h"
 #include <endstone/permissions/permission_default.h>
 
 namespace jse {
+
+ClassDefine<PermissionAPI> PermissionAPI::builder =
+    defineClass<PermissionAPI>("Permission")
+        .constructor(nullptr)
+        .instanceFunction("toString", &PermissionAPI::toString)
+        .instanceFunction("getName", &PermissionAPI::getName)
+        .instanceFunction("getChildren", &PermissionAPI::getChildren)
+        .instanceFunction("getDefault", &PermissionAPI::getDefault)
+        .instanceFunction("setDefault", &PermissionAPI::setDefault)
+        .instanceFunction("getDescription", &PermissionAPI::getDescription)
+        .instanceFunction("setDescription", &PermissionAPI::setDescription)
+        .instanceFunction("getPermissibles", &PermissionAPI::getPermissibles)
+        .instanceFunction("recalculatePermissibles", &PermissionAPI::recalculatePermissibles)
+        .instanceFunction("addParent", &PermissionAPI::addParent)
+        .instanceFunction("init", &PermissionAPI::init)
+        .build();
+
 
 Local<Value> PermissionAPI::toString(Arguments const& /* args */) { return ConvertToScriptX("Permission"); }
 
