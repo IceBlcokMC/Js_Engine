@@ -2,15 +2,15 @@
 /// <reference path="./enum/LoggerLevel.d.ts"/>
 /// <reference path="./enum/PluginLoadOrder.d.ts"/>
 
-/// <reference path="./API/Actor/Actor.d.ts"/>
-/// <reference path="./API/Actor/Mob.d.ts"/>
-/// <reference path="./API/Command/Command.d.ts"/>
-/// <reference path="./API/Command/CommandSender.d.ts"/>
-/// <reference path="./API/JSE/File.d.ts"/>
-/// <reference path="./API/JSE/JSE.d.ts"/>
-/// <reference path="./API/JSE/Plugin.d.ts"/>
-/// <reference path="./API/JSE/PluginDescription.d.ts"/>
-/// <reference path="./API/Permissions/Permissible.d.ts"/>
-/// <reference path="./API/Permissions/Permission.d.ts"/>
-/// <reference path="./API/Logger.d.ts"/>
-/// <reference path="./API/Player.d.ts"/>
+/// <reference path="./api/actor/Actor.d.ts"/>
+/// <reference path="./api/actor/Mob.d.ts"/>
+/// <reference path="./api/command/Command.d.ts"/>
+/// <reference path="./api/command/CommandSender.d.ts"/>
+/// <reference path="./api/jse/File.d.ts"/>
+/// <reference path="./api/jse/JSE.d.ts"/>
+/// <reference path="./api/jse/Plugin.d.ts"/>
+/// <reference path="./api/jse/PluginDescription.d.ts"/>
+/// <reference path="./api/permissions/Permissible.d.ts"/>
+/// <reference path="./api/permissions/Permission.d.ts"/>
+/// <reference path="./api/Logger.d.ts"/>
+/// <reference path="./api/Player.d.ts"/>
